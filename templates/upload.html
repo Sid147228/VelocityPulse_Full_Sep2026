@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Upload JMeter CSV & Generate Report</h1>
+<p class="subtext">Upload your JMeter CSV file below to generate a custom performance report with RAG analysis.</p>
+
+<!-- File upload form -->
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}">
+  <label>CSV File:</label>
+  <input type="file" name="file" accept=".csv,.jtl" required />
+  <button type="submit">Upload</button>
+</form>
+
+{% if uploaded_file %}
+<!-- Report generation form -->
+<form method="POST" action="{{ url_for('analyze') }}">
+  <input type="hidden" name="file_path" value="{{ uploaded_file_path }}" />
+
+  <label>Report Name:</label>
+  <input type="text" name="report_name" required />
+
+  <label>Green SLA (s):</label>
+  <input type="number" step="0.01" min="0" name="green" value="1.5" required />
+
+  <label>Amber SLA (s):</label>
+  <input type="number" step="0.01" min="0" name="amber" value="3.5" required />
+
+  <label>RAG Based On:</label>
+  <div class="radio-group">
+    <label><input type="radio" name="rag_basis" value="avg" checked /> Avg</label>
+    <label><input type="radio" name="rag_basis" value="p90" /> 90th %</label>
+  </div>
+
+  <label><input type="checkbox" id="includeError" name="include_error" /> Include Error %</label>
+
+  <div id="errorThresholdContainer" style="display:none;">
+    <label>Error % Threshold:</label>
+    <input type="range" name="error_threshold" id="errorThreshold" min="1" max="10" value="5" />
+    <span id="errorValue">5%</span>
+  </div>
+
+  <label>Select Metrics to Display:</label>
+  <div class="checkbox-group">
+    <label><input type="checkbox" name="metrics" value="avg" checked /> Avg</label>
+    <label><input type="checkbox" name="metrics" value="p90" /> 90th %</label>
+    <label><input type="checkbox" name="metrics" value="p95" /> 95th %</label>
+    <label><input type="checkbox" name="metrics" value="error" /> Error %</label>
+    <label><input type="checkbox" name="metrics" value="samples" /> # Samples</label>
+  </div>
+
+  <label>Steady State Start Time (hh:mm:ss):</label>
+  <input type="text" name="start_time" placeholder="hh:mm:ss" />
+
+  <label>Steady State End Time (hh:mm:ss):</label>
+  <input type="text" name="end_time" placeholder="hh:mm:ss" />
+
+  <label>Select Transactions:</label>
+  <select name="transactions" multiple size="6">
+    {% for t in transactions %}
+      <option value="{{ t }}">{{ t }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Generate Report</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const errorCheckbox = document.getElementById('includeError');
+  const errorContainer = document.getElementById('errorThresholdContainer');
+  const errorSlider = document.getElementById('errorThreshold');
+  const errorValue = document.getElementById('errorValue');
+
+  errorCheckbox.addEventListener('change', function () {
+    errorContainer.style.display = this.checked ? 'block' : 'none';
+  });
+
+  errorSlider.addEventListener('input', function () {
+    errorValue.textContent = this.value + '%';
+  });
+
+  errorValue.textContent = errorSlider.value + '%';
+});
+</script>
+{% endif %}
+{% endblock %}

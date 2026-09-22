@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2 class="card-title">🖥️ Server Monitoring Setup</h2>
+
+  <form id="monitorForm" onsubmit="return false;">
+    <div id="serverList"></div>
+
+    <div class="actions">
+      <button id="addServerBtn" type="button" class="btn btn-secondary">➕ Add Server</button>
+      <button id="startBtn" type="button" class="btn btn-primary">▶️ Start Monitoring</button>
+      <button id="stopBtn" type="button" class="btn btn-danger">⏹ Stop Monitoring</button>
+    </div>
+  </form>
+
+  <!-- Status message -->
+  <div id="monitorStatus" style="margin-top:15px; font-weight:bold; color:#2a5298;">
+    ℹ️ Checking monitoring status...
+  </div>
+</div>
+
+<style>
+  .card { background:#f9f9f9; border-radius:8px; padding:20px; max-width:900px; margin:30px auto; box-shadow:0 2px 6px rgba(0,0,0,0.15) }
+  .card-title { margin-bottom:20px; color:#2a5298; text-align:center }
+  .actions { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap }
+  .btn-primary, .btn-secondary, .btn-danger, .btn-info {
+    padding:8px 16px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;
+  }
+  .btn-primary { background:#2a5298; color:#fff; }
+  .btn-secondary { background:#7f8c8d; color:#fff; }
+  .btn-danger { background:#c0392b; color:#fff; }
+  .btn-info { background:#2980b9; color:#fff; }
+  .btn-primary:hover { background:#1e3c72 }
+  .btn-secondary:hover { background:#606060 }
+  .btn-danger:hover { background:#96281b }
+  .btn-info:hover { background:#1c5980 }
+
+  .server-entry { margin:15px 0; padding:12px; border:1px solid #ccc; border-radius:6px; background:#f5f5f5 }
+  .server-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
+  .server-fields { display:grid; grid-template-columns: repeat(2, minmax(240px, 1fr)); gap:10px }
+  .server-fields label { display:block; font-weight:600; color:#333 }
+  .server-fields input, .server-fields select { width:100%; padding:8px; border:1px solid #bbb; border-radius:4px; background:#fff }
+  .delete-btn { background:#e74c3c; color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer }
+  .delete-btn:hover { background:#c0392b }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const serverList = document.getElementById("serverList");
+    const addServerBtn = document.getElementById("addServerBtn");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const status = document.getElementById("monitorStatus");
+
+    let serverCount = 0;
+
+    // Check current monitoring status on page load
+    try {
+      const res = await fetch("/monitor_status");
+      const data = await res.json();
+      if (data.active) {
+        status.textContent = `⚡ Monitoring in progress for ${data.servers} server(s)`;
+      } else {
+        status.textContent = "ℹ️ No monitoring started yet";
+      }
+    } catch (err) {
+      console.error("Failed to fetch monitor status:", err);
+      status.textContent = "❌ Unable to fetch monitoring status";
+    }
+
+    function createServerEntry() {
+      serverCount++;
+      const wrapper = document.createElement("div");
+      wrapper.className = "server-entry";
+
+      const header = document.createElement("div");
+      header.className = "server-header";
+      header.innerHTML = `<h4 style="margin:0;">Server ${serverCount}</h4>`;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "delete-btn";
+      del.textContent = "❌ Delete";
+      del.addEventListener("click", () => wrapper.remove());
+      header.appendChild(del);
+
+      const fields = document.createElement("div");
+      fields.className = "server-fields";
+      fields.innerHTML = `
+        <div>
+          <label>Name</label>
+          <input type="text" name="name" placeholder="e.g., LinuxApp01" required>
+        </div>
+        <div>
+          <label>Host/IP</label>
+          <input type="text" name="host" placeholder="e.g., 10.0.0.5 or localhost" required>
+        </div>
+        <div>
+          <label>OS</label>
+          <select name="os">
+            <option value="linux">Linux</option>
+            <option value="windows">Windows</option>
+          </select>
+        </div>
+        <div>
+          <label>User</label>
+          <input type="text" name="user" placeholder="e.g., perfuser">
+        </div>
+        <div>
+          <label>Password</label>
+          <input type="password" name="password" placeholder="password">
+        </div>
+        <div>
+          <button type="button" class="btn btn-info test-btn">🔍 Test Connection</button>
+        </div>
+      `;
+
+      wrapper.appendChild(header);
+      wrapper.appendChild(fields);
+
+      // Attach test connection handler
+      const testBtn = wrapper.querySelector(".test-btn");
+      testBtn.addEventListener("click", async () => {
+        const server = {
+          host: wrapper.querySelector("input[name='host']").value.trim(),
+          os: wrapper.querySelector("select[name='os']").value,
+          user: wrapper.querySelector("input[name='user']").value.trim(),
+          password: wrapper.querySelector("input[name='password']").value
+        };
+        try {
+          const res = await fetch("/test_connection", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(server)
+          });
+          const data = await res.json();
+          alert(data.status);
+        } catch (err) {
+          alert("❌ Connection test failed");
+        }
+      });
+
+      return wrapper;
+    }
+
+    addServerBtn.addEventListener("click", () => {
+      serverList.appendChild(createServerEntry());
+    });
+
+    startBtn.addEventListener("click", async () => {
+      const entries = Array.from(document.querySelectorAll(".server-entry"));
+      const servers = entries.map(entry => ({
+        name: entry.querySelector("input[name='name']").value.trim(),
+        host: entry.querySelector("input[name='host']").value.trim(),
+        os: entry.querySelector("select[name='os']").value,
+        user: entry.querySelector("input[name='user']").value.trim(),
+        password: entry.querySelector("input[name='password']").value
+      })).filter(s => s.name && s.host);
+
+      if (servers.length === 0) {
+        alert("Please add at least one server with Name and Host/IP.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/start_monitoring", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ servers })
+        });
+        const data = await res.json();
+        console.log("✅ Monitoring started:", data);
+        status.textContent = `✅ Monitoring started for ${data.servers} server(s)`;
+      } catch (err) {
+        console.error("Failed to start monitoring:", err);
+        alert("Failed to start monitoring. Check backend logs and routes.");
+        status.textContent = "❌ Failed to start monitoring";
+      }
+    });
+
+    stopBtn.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/stop_monitoring", { method: "POST" });
+        const data = await res.json();
+        console.log("🛑 Monitoring stopped:", data);
+        status.textContent = "🛑 Monitoring stopped";
+      } catch (err) {
+        console.error("Failed to stop monitoring:", err);
+        alert("Failed to stop monitoring. Check backend logs and routes.");
+        status.textContent = "❌ Failed to stop monitoring";
+      }
+    });
+  });
+</script>
+
+{% endblock %}

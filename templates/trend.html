@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2 class="card-title">📈 Trend Analysis (Last {{ n }} Tests)</h2>
+
+  <form method="get" action="{{ url_for('trend') }}">
+    <label for="metric">Metric:</label>
+    <select name="metric" id="metric">
+      <option value="avg" {% if selected_metric == "avg" %}selected{% endif %}>Avg (s)</option>
+      <option value="p90" {% if selected_metric == "p90" %}selected{% endif %}>90th % (s)</option>
+    </select>
+
+    <label for="transactions">Transactions:</label>
+    <select id="transactions" name="transactions" multiple>
+      {% for txn in all_txns %}
+        <option value="{{ txn }}" {% if txn in selected_txns %}selected{% endif %}>{{ txn }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary">Update Graph</button>
+  </form>
+
+  <h3 class="section-title">Summary Table</h3>
+  <table class="metrics-table">
+    <thead>
+      <tr>
+        <th>S.NO.</th>
+        <th>Transaction</th>
+        <th>Tests Executed</th>
+        <th>Avg of Avg</th>
+        <th>Avg of 90th</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary_table %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ row.transaction }}</td>
+        <td>{{ row.tests_executed }}</td>
+        <td>{{ row.avg_of_avg }}</td>
+        <td>{{ row.avg_of_p90 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3 class="section-title">Trend Graph</h3>
+  <canvas id="trendChart" width="800" height="400"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('trendChart').getContext('2d');
+
+  const colorPalette = [
+    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+    "#f39c12", "#1abc9c", "#c0392b", "#9b59b6", "#34495e"
+  ];
+
+  const chartData = {
+    labels: {% if selected_txns %}
+              {{ txn_trends[selected_txns[0]] | map(attribute='label') | list | tojson }}
+            {% else %}
+              []
+            {% endif %},
+    datasets: [
+      {% for txn in selected_txns %}
+      {% if txn in txn_trends %}
+      {
+        label: "{{ txn }}",
+        data: {{ txn_trends[txn] | map(attribute=selected_metric) | list | tojson }},
+        borderColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
+        backgroundColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        pointBackgroundColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        fill: false
+      },
+      {% endif %}
+      {% endfor %}
+    ]
+  };
+
+  new Chart(ctx, {
+    type: 'line',
+    data: chartData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: {
+          display: true,
+          text: '{{ "Average Response Time (s)" if selected_metric == "avg" else "90th Percentile Response Time (s)" }}'
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Test Date'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '{{ "Avg Response Time (s)" if selected_metric == "avg" else "90th % Response Time (s)" }}'
+          },
+          beginAtZero: false
+        }
+      },
+      elements: {
+        point: {
+          radius: 5,
+          hoverRadius: 7
+        }
+      }
+    }
+  });
+</script>
+
+{% endblock %}

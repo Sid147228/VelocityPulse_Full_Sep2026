@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Flash messages for errors/success -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% if test_running %}
+  <div class="status-banner">🚀 Test in progress…</div>
+  <button disabled class="btn btn-primary">Run Test</button>
+{% else %}
+  <div class="card">
+    <h2 class="card-title">⚡ Trigger JMeter Test</h2>
+    <form action="{{ url_for('run_test') }}" method="post" enctype="multipart/form-data" class="form">
+      
+      <!-- JMX file -->
+      <div class="form-group">
+        <label for="jmx_file">JMX Test Plan:</label>
+        <input type="file" id="jmx_file" name="jmx_file" required class="form-control">
+      </div>
+
+      <!-- Multiple data files -->
+      <div class="form-group">
+        <label for="data_files">Data Files (optional, multiple):</label>
+        <input type="file" id="data_files" name="data_files" multiple class="form-control">
+        <small class="help-text">Select one or more CSV/TSV files referenced in your JMX plan.</small>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary">Start Test</button>
+    </form>
+  </div>
+{% endif %}
+
+<style>
+  .card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 700px;
+    margin: 30px auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .card-title {
+    margin-bottom: 20px;
+    color: #2a5298;
+    text-align: center;
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .help-text {
+    color: #666;
+    font-size: 12px;
+  }
+  .btn-primary {
+    background: #2a5298;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .btn-primary:hover {
+    background: #1e3c72;
+  }
+  .flash-container {
+    max-width: 700px;
+    margin: 20px auto;
+  }
+  .flash {
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .flash.error {
+    background: #ffdddd;
+    color: #a00;
+    border: 1px solid #a00;
+  }
+  .flash.success {
+    background: #ddffdd;
+    color: #060;
+    border: 1px solid #060;
+  }
+</style>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Reports to Compare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fdfdfd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2a5298;
+        }
+        .section {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #2a5298;
+            color: white;
+        }
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #1e3e72;
+        }
+    </style>
+</head>
+<body>
+{% include "_header.html" %}
+<div class="container">
+    <h2>Select Reports to Compare</h2>
+    <form method="GET" action="{{ url_for('compare') }}">
+        <div class="section">
+            <p><strong>Choose exactly 2 reports:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>S.NO.</th>
+                        <th>Report Name</th>
+                        <th>Date</th>
+                        <th>Start and End Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="report_ids" value="{{ loop.index0 }}" class="report-checkbox">
+                        </td>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ report.report_name or report.file_name }}</td>
+                        <td>{{ report.test_date or 'N/A' }}</td>
+                        <td>{{ report.test_period or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn" id="compareBtn" disabled>Compare Reports</button>
+    </form>
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll('.report-checkbox');
+    const compareBtn = document.getElementById('compareBtn');
+
+    function updateButtonState() {
+        const selected = Array.from(checkboxes).filter(cb => cb.checked).length;
+        compareBtn.disabled = selected !== 2;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateButtonState));
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fdfdfd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2a5298;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        .rag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .GREEN { background-color: #c8e6c9; color: #256029; }
+        .AMBER { background-color: #fff9c4; color: #8a6d3b; }
+        .RED { background-color: #ffcdd2; color: #c62828; }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: #2a5298;
+        }
+        .compare-link {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .compare-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2a5298;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .compare-link a:hover {
+            background-color: #1e3e72;
+        }
+        .latest-link {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .latest-link a {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .latest-link a:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Report History</h2>
+
+        {% if reports and reports|length > 0 %}
+        <!-- ✅ Latest Report link -->
+        <div class="latest-link">
+            <a href="{{ url_for('report_latest') }}">View Latest Report</a>
+        </div>
+
+        <table>
+            <thead>
+              <tr>
+                <th>Report Name</th>
+                <th>Timestamp</th>
+                <th>RAG Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for report in reports %}
+              <tr>
+                <td>{{ report.get("name") or report.get("report_name") }}</td>
+                <td>{{ report.get("timestamp") }}</td>
+                <td>
+                  {% if report.get("rag_result") == "GREEN" %}
+                    <span class="rag GREEN">GREEN</span>
+                  {% elif report.get("rag_result") == "AMBER" %}
+                    <span class="rag AMBER">AMBER</span>
+                  {% elif report.get("rag_result") == "RED" %}
+                    <span class="rag RED">RED</span>
+                  {% else %}
+                    <span class="rag">UNKNOWN</span>
+                  {% endif %}
+                </td>
+                <td><a href="{{ url_for('report', report_index=loop.index0) }}">View</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('history', page=page-1) }}">Previous</a>
+            {% endif %}
+            <span>Page {{ page }} of {{ total_pages }}</span>
+            {% if page < total_pages %}
+                <a href="{{ url_for('history', page=page+1) }}">Next</a>
+            {% endif %}
+        </div>
+        {% else %}
+            <p style="text-align:center; margin-top:20px;">No reports found.</p>
+        {% endif %}
+
+        <div class="compare-link">
+            <a href="{{ url_for('select_compare') }}">Compare Reports</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
+  th { background-color: #f8f9fa; }
+  .alert { margin: 10px 0; padding: 10px; border: 1px solid #d6d8db; background-color: #f8f9fa; border-radius: 4px; }
+  .form-inline { margin-bottom: 15px; }
+  .btn { padding: 6px 12px; border-radius: 4px; text-decoration: none; }
+  .btn-primary { background-color: #2a5298; color: #fff; }
+  .btn-primary:hover { background-color: #1d3c72; }
+  .warnings { margin: 15px 0; padding: 10px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; border-radius: 4px; }
+  .warnings ul { margin: 0; padding-left: 20px; }
+  .chart-container { margin-top: 30px; }
+  .definition { margin: 20px 0; padding: 12px; border: 1px solid #cce5ff; background-color: #e9f7ff; border-radius: 4px; color: #004085; }
+  .definition ul { margin: 0; padding-left: 20px; }
+</style>
+
+<h1>Baseline Analysis</h1>
+<p>This page calculates baseline response times (Avg, 90th percentile) across the last <strong>{{ n }}</strong> test reports and proposes SLA thresholds.</p>
+
+<form method="get" action="{{ url_for('baseline') }}" class="form-inline">
+  <label for="n">Number of reports to include:</label>
+  <input type="number" id="n" name="n" value="{{ n }}" min="1" max="50" style="width:80px; margin:0 8px;">
+  <button type="submit" class="btn btn-primary">Recalculate</button>
+</form>
+
+{# ⚠ Show warnings if any #}
+{% if warnings and warnings|length > 0 %}
+<div class="warnings">
+  <strong>⚠ Warnings:</strong>
+  <ul>
+    {% for w in warnings %}
+      <li>{{ w }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{# 📘 Definition of Proposed SLA thresholds #}
+<div class="definition">
+  <strong>Definition of Proposed SLA thresholds:</strong>
+  <ul>
+    <li><b>Avg SLA</b>: Calculated from the baseline average response time.  
+        <em>Green</em> = Baseline Avg × 1.2 (acceptable buffer),  
+        <em>Amber</em> = Baseline Avg × 1.5 (warning threshold).</li>
+    <li><b>90th Percentile SLA</b>: Calculated from the baseline 90th percentile response time.  
+        <em>Green</em> = Baseline P90 × 1.2,  
+        <em>Amber</em> = Baseline P90 × 1.5.</li>
+  </ul>
+  These multipliers provide headroom above the observed baseline to set realistic but challenging SLA targets.
+</div>
+
+{% if baselines %}
+<table>
+  <thead>
+    <tr>
+      <th rowspan="2">Transaction</th>
+      <th rowspan="2">Baseline Avg (s)</th>
+      <th rowspan="2">Baseline 90th % (s)</th>
+      <th rowspan="2">Sample Size</th>
+      <th colspan="2">Proposed SLA Avg (s)</th>
+      <th colspan="2">Proposed SLA 90th % (s)</th>
+    </tr>
+    <tr>
+      <th>Green (×1.2)</th>
+      <th>Amber (×1.5)</th>
+      <th>Green (×1.2)</th>
+      <th>Amber (×1.5)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for txn, vals in baselines.items() %}
+    {% set avg_green = "%.2f"|format(vals.avg * 1.2) if vals.avg is not none else "—" %}
+    {% set avg_amber = "%.2f"|format(vals.avg * 1.5) if vals.avg is not none else "—" %}
+    {% set p90_green = "%.2f"|format(vals.p90 * 1.2) if vals.p90 is not none else "—" %}
+    {% set p90_amber = "%.2f"|format(vals.p90 * 1.5) if vals.p90 is not none else "—" %}
+    <tr>
+      <td>{{ txn }}</td>
+      <td>{{ "%.2f"|format(vals.avg) if vals.avg is not none else "—" }}</td>
+      <td>{{ "%.2f"|format(vals.p90) if vals.p90 is not none else "—" }}</td>
+      <td>{{ vals.sample_size }}</td>
+      <td>{{ avg_green }}</td>
+      <td>{{ avg_amber }}</td>
+      <td>{{ p90_green }}</td>
+      <td>{{ p90_amber }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="chart-container">
+  <h3>Visual Representation</h3>
+  <canvas id="baselineChart" width="900" height="400"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('baselineChart');
+if (ctx) {
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ labels|default([])|tojson }},
+      datasets: [
+        {
+          label: 'Baseline Avg (s)',
+          data: {{ avg_values|default([])|tojson }},
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        },
+        {
+          label: 'Baseline P90 (s)',
+          data: {{ p90_values|default([])|tojson }},
+          backgroundColor: 'rgba(255, 99, 132, 0.6)'
+        },
+        {
+          label: 'SLA Avg Green (×1.2)',
+          data: {{ avg_green|default([])|tojson }},
+          type: 'line',
+          borderColor: 'green',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3
+        },
+        {
+          label: 'SLA Avg Amber (×1.5)',
+          data: {{ avg_amber|default([])|tojson }},
+          type: 'line',
+          borderColor: 'orange',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3
+        },
+        {
+          label: 'SLA P90 Green (×1.2)',
+          data: {{ p90_green|default([])|tojson }},
+          type: 'line',
+          borderColor: 'darkgreen',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3
+        },
+        {
+          label: 'SLA P90 Amber (×1.5)',
+          data: {{ p90_amber|default([])|tojson }},
+          type: 'line',
+          borderColor: 'darkorange',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Baseline vs Proposed SLA Thresholds' },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'Response Time (s)' } },
+        x: { title: { display: true, text: 'Transactions' } }
+      }
+    }
+  });
+}
+</script>
+{% else %}
+<div class="alert">
+  No baseline data available. Try uploading and analyzing more reports first.
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VelocityPulse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+    .navbar {
+      background-color: #2a5298;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-right: 20px;
+      font-weight: 500;
+    }
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+    .navbar .user {
+      margin-left: auto;
+      margin-right: 20px;
+      font-style: italic;
+    }
+    .logout {
+      background-color: #f44336;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .content {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div>
+      <a href="{{ url_for('upload') }}">🏠 Home</a>
+      <a href="{{ url_for('history') }}">📄 Report History</a>
+      <a href="{{ url_for('compare') }}">📊 Compare</a>
+      <a href="{{ url_for('baseline') }}">Baseline Analysis</a>
+      <a href="{{ url_for('about') }}">ℹ️ About Me</a>
+    </div>
+    <div class="user">Logged in as {{ session['user'] }}</div>
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+  </header>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

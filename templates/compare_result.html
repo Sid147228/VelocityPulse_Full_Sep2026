@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comparison Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2a5298;
+        }
+        form.filters {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f4f6f9;
+            border-radius: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        .status {
+            font-weight: bold;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .red { background-color: #e74c3c; }
+        .green { background-color: #2ecc71; }
+        .grey { background-color: #95a5a6; }
+        .observations {
+            margin-top: 30px;
+        }
+        canvas {
+            margin-top: 40px;
+        }
+        .rag-charts {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        .rag-criteria {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .rag-criteria ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+{% include "_header.html" %}
+<div class="container">
+    <h2>Comparison Report</h2>
+    <p>Comparing <strong>{{ r1.name }}</strong> vs <strong>{{ r2.name }}</strong></p>
+
+    <!-- Filters -->
+    <form method="get" action="{{ url_for('compare') }}" class="filters">
+        <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[0] }}">
+        <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[1] }}">
+
+        <label><strong>Metric:</strong>
+            <select name="metric" onchange="this.form.submit()">
+                <option value="Avg (s)" {% if metric == "Avg (s)" %}selected{% endif %}>Avg (s)</option>
+                <option value="90th % (s)" {% if metric == "90th % (s)" %}selected{% endif %}>90th % (s)</option>
+            </select>
+        </label>
+
+        <fieldset style="margin-top:15px;">
+            <legend><strong>Transactions:</strong></legend>
+            {% for txn in all_txns %}
+                <label style="margin-right:10px;">
+                    <input type="checkbox" name="transactions" value="{{ txn }}"
+                           {% if txn in selected_txns %}checked{% endif %}
+                           onchange="this.form.submit()">
+                    {{ txn }}
+                </label>
+            {% endfor %}
+        </fieldset>
+    </form>
+
+    <!-- Comparison Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction</th>
+                <th>{{ r1.name }} ({{ metric }})</th>
+                <th>{{ r2.name }} ({{ metric }})</th>
+                <th>Difference ({{ metric }})</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in comparisons %}
+            <tr>
+                <td>{{ c.transaction }}</td>
+                <td>{{ "%.2f"|format(c.v1) }}</td>
+                <td>{{ "%.2f"|format(c.v2) }}</td>
+                <td>{{ "%.2f"|format(c.diff) }}</td>
+                <td><span class="status {{ c.color }}">{{ c.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Observations -->
+    <div class="observations">
+        <h3>Observations</h3>
+        <ul>
+            {% for obs in observations %}
+                <li>{{ obs }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Comparison Bar Chart -->
+    <canvas id="compareChart" width="900" height="400"></canvas>
+    <script>
+        const labels = {{ comparisons|map(attribute='transaction')|list|tojson }};
+        const data1 = {{ comparisons|map(attribute='v1')|list|tojson }};
+        const data2 = {{ comparisons|map(attribute='v2')|list|tojson }};
+        new Chart(document.getElementById('compareChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: "{{ r1.name }} ({{ metric }})", data: data1, backgroundColor: '#2a5298' },
+                    { label: "{{ r2.name }} ({{ metric }})", data: data2, backgroundColor: '#f39c12' }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Comparison Chart' },
+                    legend: { position: 'bottom' }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+
+    <!-- Overlay Line Chart for Transaction Progress -->
+    {% if compare_progress %}
+    <h3>Transaction Progress Over Time</h3>
+    <img src="{{ url_for('static', filename='reports/graphs/compare_progress.png') }}"
+         alt="Transaction Progress Comparison"
+         style="margin-top: 30px; max-width: 100%;">
+    {% endif %}
+</div>
+</body>
+</html>

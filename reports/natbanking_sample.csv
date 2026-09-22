@@ -1,0 +1,21 @@
+timeStamp,elapsed,label,responseCode,success,threadName,bytes,grpThreads,allThreads,Latency
+1694880000000,1200,LaunchApp_Login,200,true,Thread Group 1-1,512,1,1,100
+1694880001200,800,Login_Login,200,true,Thread Group 1-1,256,1,1,80
+1694880002000,600,Click_Login,200,true,Thread Group 1-1,300,1,1,60
+1694880002600,1500,Transaction_Login,200,true,Thread Group 1-1,1024,1,1,120
+1694880004100,700,Logout_Login,200,true,Thread Group 1-1,200,1,1,70
+1694880010000,1100,LaunchApp_DepositMoney,200,true,Thread Group 1-1,512,1,1,90
+1694880011100,850,Login_DepositMoney,200,true,Thread Group 1-1,256,1,1,75
+1694880011950,650,Click_DepositMoney,200,true,Thread Group 1-1,300,1,1,55
+1694880012600,1800,Transaction_DepositMoney,200,true,Thread Group 1-1,2048,1,1,140
+1694880014400,750,Logout_DepositMoney,200,true,Thread Group 1-1,200,1,1,65
+1694880020000,1150,LaunchApp_WithdrawMoney,200,true,Thread Group 1-1,512,1,1,95
+1694880021150,900,Login_WithdrawMoney,200,true,Thread Group 1-1,256,1,1,85
+1694880022050,700,Click_WithdrawMoney,200,true,Thread Group 1-1,300,1,1,60
+1694880022750,2200,Transaction_WithdrawMoney,200,true,Thread Group 1-1,2048,1,1,160
+1694880024950,800,Logout_WithdrawMoney,200,true,Thread Group 1-1,200,1,1,70
+1694880030000,1000,LaunchApp_CheckBalance,200,true,Thread Group 1-1,512,1,1,85
+1694880031000,850,Login_CheckBalance,200,true,Thread Group 1-1,256,1,1,75
+1694880031850,600,Click_CheckBalance,200,true,Thread Group 1-1,300,1,1,50
+1694880032450,1300,Transaction_CheckBalance,200,true,Thread Group 1-1,1024,1,1,110
+1694880033750,700,Logout_CheckBalance,200,true,Thread Group 1-1,200,1,1,65

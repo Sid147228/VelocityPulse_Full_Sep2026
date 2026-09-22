@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card">
+  <h2 class="card-title">📡 Live Test Progress</h2>
+
+  <!-- Status Banner -->
+  <div id="statusBanner" style="margin-bottom:15px; font-weight:bold; color:#2a5298;">
+    ⏳ Waiting for JMeter results...
+  </div>
+
+  <!-- Stop Test Button -->
+  <form id="stopForm" action="{{ url_for('stop_test') }}" method="post" style="margin-bottom:15px; display:none;">
+    <button class="btn btn-danger">🛑 Stop Test</button>
+  </form>
+
+  <!-- Charts -->
+  <div class="charts">
+    <canvas id="responseChart" width="600" height="300"></canvas>
+    <canvas id="errorChart" width="600" height="300"></canvas>
+  </div>
+
+  <!-- Transaction Metrics Table -->
+  <h3 class="section-title">Transaction Metrics</h3>
+  <table class="metrics-table" id="metricsTable">
+    <thead>
+      <tr>
+        <th>Transaction</th>
+        <th>Samples</th>
+        <th>Avg (ms)</th>
+        <th>90th (ms)</th>
+        <th>95th (ms)</th>
+        <th>Error %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="6">No data yet</td></tr>
+    </tbody>
+  </table>
+
+  <!-- JMeter Logs -->
+  <h3 class="section-title">JMeter Logs</h3>
+  <div class="log-panel" id="logPanel"></div>
+
+  <!-- Summary -->
+  <div class="summary-card" id="summaryCard" style="display:none;">
+    <h3>✅ Test Summary</h3>
+    <p><strong>Duration:</strong> <span id="duration"></span></p>
+    <p><strong>Start Time:</strong> <span id="startTime"></span></p>
+    <p><strong>End Time:</strong> <span id="endTime"></span></p>
+    <p><strong>Concurrent Users:</strong> <span id="users"></span></p>
+
+    <h4>Final Transaction Metrics</h4>
+    <table class="metrics-table" id="finalMetricsTable">
+      <thead>
+        <tr>
+          <th>Transaction</th>
+          <th>Samples</th>
+          <th>Avg (ms)</th>
+          <th>90th (ms)</th>
+          <th>95th (ms)</th>
+          <th>Error %</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="btn btn-primary" onclick="generateReport()">📄 Generate Report</button>
+  </div>
+</div>
+
+<!-- Server Monitoring -->
+<h3 class="section-title">Server Monitoring Stats</h3>
+<div class="charts">
+  <canvas id="cpuChart" width="600" height="300"></canvas>
+  <canvas id="memChart" width="600" height="300"></canvas>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+  const socket = io({ transports: ['websocket'] });
+
+  // JMeter charts
+  const responseCtx = document.getElementById('responseChart').getContext('2d');
+  const errorCtx = document.getElementById('errorChart').getContext('2d');
+
+  const responseChart = new Chart(responseCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Response Time (ms)', data: [] }] } });
+  const errorChart = new Chart(errorCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Error %', data: [] }] } });
+
+  // Transaction table updates
+  socket.on('metrics_update', function(data) {
+    document.getElementById('statusBanner').innerText = "📊 Receiving live metrics...";
+    const tbody = document.querySelector('#metricsTable tbody');
+    tbody.innerHTML = '';
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.label}</td>
+        <td>${row.samples}</td>
+        <td>${row.avg}</td>
+        <td>${row.p90}</td>
+        <td>${row.p95}</td>
+        <td>${row.error_pct}%</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  // Progress chart updates
+  socket.on('progress_update', function(data) {
+    document.getElementById('statusBanner').innerText = "🚀 Test running...";
+    document.getElementById('stopForm').style.display = 'block';
+
+    responseChart.data.labels.push(data.timestamp);
+    responseChart.data.datasets[0].data.push(data.response_time);
+    responseChart.update();
+
+    errorChart.data.labels.push(data.timestamp);
+    errorChart.data.datasets[0].data.push(data.error_rate);
+    errorChart.update();
+  });
+
+  // Logs
+  socket.on('log_update', function(data) {
+    document.getElementById('statusBanner').innerText = "📝 Streaming JMeter logs...";
+    const logPanel = document.getElementById('logPanel');
+    logPanel.innerHTML += data.line + "<br>";
+    logPanel.scrollTop = logPanel.scrollHeight;
+  });
+
+  // Heartbeat
+  socket.on('heartbeat', function(data) {
+    document.getElementById('statusBanner').innerText = "⏳ Test still running...";
+  });
+
+  // Completion
+  socket.on('test_complete', function(summary) {
+    document.getElementById('statusBanner').innerText = "✅ Test finished";
+    document.getElementById('stopForm').style.display = 'none';
+    document.getElementById('summaryCard').style.display = 'block';
+    document.getElementById('duration').innerText = summary.duration;
+    document.getElementById('startTime').innerText = summary.start;
+    document.getElementById('endTime').innerText = summary.end;
+    document.getElementById('users').innerText = summary.users;
+
+    const tbody = document.querySelector('#finalMetricsTable tbody');
+    tbody.innerHTML = '';
+    summary.metrics.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${row.label}</td>
+        <td>${row.samples}</td>
+        <td>${row.avg}</td>
+        <td>${row.p90}</td>
+        <td>${row.p95}</td>
+        <td>${row.error_pct}%</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  // Generate report
+  function generateReport() {
+    window.location.href = "{{ url_for('generate_report') }}";
+  }
+
+  // Monitoring charts
+  const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+  const memCtx = document.getElementById('memChart').getContext('2d');
+
+  const cpuChart = new Chart(cpuCtx, { type: 'line', data: { labels: [], datasets: [] } });
+  const memChart = new Chart(memCtx, { type: 'line', data: { labels: [], datasets: [] } });
+
+  function ensureDataset(chart, serverName, label, color) {
+    let ds = chart.data.datasets.find(d => d.label === serverName + " " + label);
+    if (!ds) {
+      ds = { label: serverName + " " + label, data: [], borderColor: color, fill: false };
+      chart.data.datasets.push(ds);
+    }
+    return ds;
+  }
+
+  // FIXED: listen for server_metrics without broadcast flag issues
+  socket.on('server_metrics', function(data) {
+    console.log("Received metrics:", data); // debug log
+    const timestamp = new Date().toLocaleTimeString();
+    if (!cpuChart.data.labels.includes(timestamp)) {
+      cpuChart.data.labels.push(timestamp);
+      memChart.data.labels.push(timestamp);
+    }
+    const color = "rgba(" + (50 + Math.floor(Math.random()*200)) + ",100,200,1)";
+    const cpuDs = ensureDataset(cpuChart, data.server, "CPU", color);
+    cpuDs.data.push(data.cpu);
+    const memDs = ensureDataset(memChart, data.server, "Memory", color);
+    memDs.data.push(data.mem);
+    cpuChart.update();
+    memChart.update();
+  });
+</script>
+
+{% endblock %}

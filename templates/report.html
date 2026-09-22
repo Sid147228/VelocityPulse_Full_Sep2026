@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set is_pdf = is_pdf|default(false) %}
+
+<style>
+  .subtext { color: #555; margin-bottom: 10px; }
+  .report-meta p { margin: 4px 0; }
+  .rag { font-weight: bold; padding: 2px 6px; border-radius: 4px; color: #fff; }
+  .rag-green { background-color: #28a745; }
+  .rag-amber { background-color: #ffc107; color: #000; }
+  .rag-red { background-color: #dc3545; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
+  .alert { margin: 10px 0; padding: 10px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; border-radius: 4px; }
+  .graph-section { margin-top: 30px; }
+  .graph-section canvas, .graph-section img { max-width: 100%; height: auto; margin: 12px 0; }
+  .section { margin-top: 24px; }
+</style>
+
+<h1>Test Report</h1>
+<h2>Report summary</h2>
+<p class="subtext">Customized performance report based on selected transactions and SLA thresholds.</p>
+
+<div class="report-meta">
+  <p><strong>Report name:</strong> {{ report_name if report_name else (file_name if file_name else 'Untitled Report') }}</p>
+  <p><strong>Overall RAG status:</strong>
+    {% if rag_result == 'RED' %}
+      <span class="rag rag-red">RED</span>
+    {% elif rag_result == 'AMBER' %}
+      <span class="rag rag-amber">AMBER</span>
+    {% elif rag_result == 'GREEN' %}
+      <span class="rag rag-green">GREEN</span>
+    {% else %}
+      <span class="rag">UNKNOWN</span>
+    {% endif %}
+  </p>
+  <p><strong>Test date:</strong> {{ test_date or 'Not available' }}</p>
+  <p><strong>Test period:</strong> {{ test_period or 'Not available' }}</p>
+  <p><strong>Total duration:</strong> {{ total_duration or 'Not available' }}</p>
+  <p><strong>Concurrent users:</strong> {{ concurrent_users if concurrent_users is not none else 'Not available' }}</p>
+  <p><strong>Steady state:</strong> {{ steady_state or 'Not available' }}</p>
+</div>
+
+{# Safe defaults for chart data #}
+{% set chart_time_labels = chart_time_labels or [] %}
+{% set series_avg_by_txn = series_avg_by_txn or {} %}
+{% set series_p90_by_txn = series_p90_by_txn or {} %}
+{% set series_error_rate_by_txn = series_error_rate_by_txn or {} %}
+{% set series_throughput_over_time = series_throughput_over_time or [] %}
+{% set rag_counts = rag_counts or {'GREEN': 0, 'AMBER': 0, 'RED': 0} %}
+
+<div class="section">
+  <h3>Transaction summary</h3>
+  {% if summary|length == 0 %}
+    <div class="alert"><strong>Heads up:</strong> No transaction summary data to display.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction</th>
+          <th>Avg (s)</th>
+          <th>P90 (s)</th>
+          <th>P95 (s)</th>
+          <th>Error %</th>
+          <th>RAG</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in summary %}
+        <tr>
+          <td>{{ row.get("Transaction") }}</td>
+          <td>
+            {% if row.get("Avg (s)") is not none %}
+              {{ "%.2f"|format(row.get("Avg (s)")|float) }}
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if row.get("90th % (s)") is not none %}
+              {{ "%.2f"|format(row.get("90th % (s)")|float) }}
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if row.get("95th % (s)") is not none %}
+              {{ "%.2f"|format(row.get("95th % (s)")|float) }}
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if row.get("Error %") is not none %}
+              {{ "%.2f"|format(row.get("Error %")|float) }}
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if row.get("RAG") == 'RED' %}
+              <span class="rag rag-red">RED</span>
+            {% elif row.get("RAG") == 'AMBER' %}
+              <span class="rag rag-amber">AMBER</span>
+            {% elif row.get("RAG") == 'GREEN' %}
+              <span class="rag rag-green">GREEN</span>
+            {% else %}
+              <span class="rag">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+
+<div class="section">
+  <h3>RAG distribution</h3>
+  {% set total_rag = (rag_counts['GREEN'] + rag_counts['AMBER'] + rag_counts['RED']) %}
+  {% if total_rag == 0 %}
+    <div class="alert">No RAG data available.</div>
+  {% else %}
+    {% if is_pdf %}
+      <img src="{{ url_for('static', filename='reports/graphs/rag_pie.png', _external=True) }}" 
+           alt="RAG distribution">
+    {% else %}
+      <canvas id="ragPieChart" width="300" height="300" style="max-width:300px;max-height:300px;"></canvas>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        (function() {
+          const ctx = document.getElementById('ragPieChart');
+          if (!ctx) return;
+          const data = {{ rag_counts|tojson }};
+          new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: ['GREEN','AMBER','RED'],
+              datasets: [{
+                data: [data.GREEN || 0, data.AMBER || 0, data.RED || 0],
+                backgroundColor: ['#28a745','#ffc107','#dc3545']
+              }]
+            },
+            options: {
+              plugins: {
+                title: { display: true, text: 'RAG distribution' },
+                legend: { position: 'bottom' }
+              }
+            }
+          });
+        })();
+      </script>
+    {% endif %}
+  {% endif %}
+</div>
+
+<div class="graph-section">
+  <h3>Performance graphs</h3>
+  {% if chart_time_labels|length == 0 %}
+    <div class="alert">
+      <strong>Note:</strong> No time-series data available for graphs. Showing static fallbacks.
+    </div>
+    <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png') }}" alt="Response Time Distribution">
+    <img src="{{ url_for('static', filename='reports/graphs/error_trend.png') }}" alt="Error Trend Over Time">
+    <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png') }}" alt="SLA Heatmap">
+    <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png') }}" alt="Threads Over Time">
+    <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png') }}" alt="Transaction Progress">
+  {% else %}
+    {% if is_pdf %}
+      <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png', _external=True) }}" alt="Response Time Distribution">
+      <img src="{{ url_for('static', filename='reports/graphs/error_trend.png', _external=True) }}" alt="Error Trend Over Time">
+      <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png', _external=True) }}" alt="SLA Heatmap">
+      <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png', _external=True) }}" alt="Threads Over Time">
+      <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png', _external=True) }}" alt="Transaction Progress">
+    {% else %}
+      <canvas id="avgByTxnChart"></canvas>
+      <canvas id="p90ByTxnChart"></canvas>
+      <canvas id="errorRateChart"></canvas>
+            <canvas id="throughputChart"></canvas>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% if not is_pdf %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const palette = ['#2a5298','#dc3545','#28a745','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#6610f2','#e83e8c'];
+
+  function lineDatasetsFromSeries(seriesObj) {
+    const txns = Object.keys(seriesObj);
+    return txns
+      .filter(txn => Array.isArray(seriesObj[txn]) && seriesObj[txn].some(v => v !== null))
+      .map((txn, idx) => ({
+        label: txn,
+        data: seriesObj[txn] || [],
+        borderColor: palette[idx % palette.length],
+        backgroundColor: palette[idx % palette.length],
+        tension: 0.2,
+        spanGaps: true,
+        fill: false
+      }));
+  }
+
+  const timeLabels = {{ chart_time_labels|tojson }};
+  const avgSeries = {{ series_avg_by_txn|tojson }};
+  const p90Series = {{ series_p90_by_txn|tojson }};
+  const errorSeries = {{ series_error_rate_by_txn|tojson }};
+  const throughput = {{ series_throughput_over_time|tojson }};
+
+  if (timeLabels.length > 0) {
+    new Chart(document.getElementById('avgByTxnChart'), {
+      type: 'line',
+      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(avgSeries) },
+      options: { plugins: { title: { display: true, text: 'Average response time (s) by transaction' } } }
+    });
+
+    new Chart(document.getElementById('p90ByTxnChart'), {
+      type: 'line',
+      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(p90Series) },
+      options: { plugins: { title: { display: true, text: 'P90 response time (s) by transaction' } } }
+    });
+
+    new Chart(document.getElementById('errorRateChart'), {
+      type: 'line',
+      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(errorSeries) },
+      options: { plugins: { title: { display: true, text: 'Error rate (%) by transaction' } } }
+    });
+
+    new Chart(document.getElementById('throughputChart'), {
+      type: 'line',
+      data: { labels: timeLabels, datasets: [
+        { label: 'Throughput (requests/min)', data: throughput, borderColor: '#2a5298', fill: true }
+      ]},
+      options: { plugins: { title: { display: true, text: 'Throughput over time' } } }
+    });
+  }
+</script>
+{% endif %}
+{% endblock %}
+

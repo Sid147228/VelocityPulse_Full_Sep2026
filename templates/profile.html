@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile - VelocityPulse</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, {{ user }}</h2>
+
+    <h3>Your Settings</h3>
+    <p><strong>Default Green SLA:</strong> {{ settings[1] }} s</p>
+    <p><strong>Default Amber SLA:</strong> {{ settings[2] }} s</p>
+    <p><strong>Preferred Metrics:</strong> {{ settings[3] }}</p>
+
+    <h3>Your Reports</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Report Name</th>
+          <th>Timestamp</th>
+          <th>RAG</th>
+          <th>Export</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for id, name, timestamp, rag in reports %}
+        <tr>
+          <td>{{ name }}</td>
+          <td>{{ timestamp }}</td>
+          <td><span class="rag {{ rag }}">{{ rag }}</span></td>
+          <td>
+            <a href="/export/excel/{{ id }}">Excel</a> |
+            <a href="/export/pdf/{{ id }}">PDF</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p><a href="/upload">← Back to Upload</a></p>
+    <p><a href="/logout">Logout</a></p>
+  </div>
+</body>
+</html>

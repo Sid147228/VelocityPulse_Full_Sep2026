@@ -1,0 +1,31 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="{{ url_for('upload') }}" class="nav-link">Upload</a>
+    <a href="{{ url_for('history') }}" class="nav-link">History</a>
+    <a href="{{ url_for('compare') }}" class="nav-link">Compare</a>
+    <a href="{{ url_for('baseline') }}" class="nav-link">Baseline</a>
+    <a href="{{ url_for('run_test') }}" class="nav-link">Live Test</a>
+    <a href="{{ url_for('live_progress') }}" class="nav-link">Progress</a>
+    <a href="{{ url_for('monitor') }}">🖥️ Monitoring</a>
+
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    background: #2a5298;
+    padding: 12px 20px;
+  }
+  .nav-container {
+    display: flex;
+    gap: 20px;
+  }
+  .nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+</style>

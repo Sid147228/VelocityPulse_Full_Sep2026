@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VelocityPulse | Comparison Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding: 0; }
+    header { background-color: #2a5298; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header nav a { color: white; text-decoration: none; margin-right: 20px; font-weight: 500; }
+    header nav a:hover { text-decoration: underline; }
+    .user { font-style: italic; }
+    .logout { background-color: #f44336; padding: 6px 12px; border-radius: 4px; font-weight: bold; color: white; text-decoration: none; }
+    .container { max-width: 1200px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    h2 { text-align: center; color: #2a5298; }
+    h3 { margin-top: 30px; color: #2a5298; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
+    .rag { font-weight: bold; padding: 2px 6px; border-radius: 4px; color: #fff; }
+    .rag-green { background-color: #28a745; }
+    .rag-amber { background-color: #ffc107; color: #000; }
+    .rag-red { background-color: #dc3545; }
+
+    form.filters { margin: 20px 0; }
+    .form-group { margin-bottom: 15px; }
+    .transaction-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .checkbox-item { display: flex; align-items: center; gap: 6px; background: #f9f9f9; padding: 6px 10px; border-radius: 4px; border: 1px solid #ddd; }
+    .btn-primary { background-color: #2a5298; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-primary:hover { background-color: #1d3c72; }
+    .toggle-select { margin-bottom: 10px; cursor: pointer; color: #2a5298; font-weight: 500; display: inline-block; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{{ url_for('upload') }}">🏠 Home</a>
+      <a href="{{ url_for('history') }}">📄 Report History</a>
+      <a href="{{ url_for('compare') }}">📊 Compare</a>
+      <a href="{{ url_for('about') }}">ℹ️ About Me</a>
+    </nav>
+    <div class="user">Logged in as {{ session['user'] }}</div>
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+  </header>
+
+  <div class="container">
+    <h2>Comparison Report</h2>
+
+    <!-- Summary subtitle for quick context -->
+    <p style="text-align:center; color:#555;">
+      Comparing {{ r1.name }} ({{ r1.test_date }}) vs {{ r2.name }} ({{ r2.test_date }}) — Metric: {{ metric }}
+    </p>
+
+    <!-- Test Details -->
+    <h3>Test Details</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>{{ r1.name }} ({{ r1.test_date }})</th>
+          <th>{{ r2.name }} ({{ r2.test_date }})</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Test Date</strong></td><td>{{ r1.test_date }}</td><td>{{ r2.test_date }}</td></tr>
+        <tr><td><strong>Duration</strong></td><td>{{ r1.total_duration }}</td><td>{{ r2.total_duration }}</td></tr>
+        <tr><td><strong>Concurrent Users</strong></td><td>{{ r1.concurrent_users or 'N/A' }}</td><td>{{ r2.concurrent_users or 'N/A' }}</td></tr>
+        <tr>
+          <td><strong>RAG Status</strong></td>
+          <td>
+            {% if r1.rag_result == 'GREEN' %}<span class="rag rag-green">GREEN</span>
+            {% elif r1.rag_result == 'AMBER' %}<span class="rag rag-amber">AMBER</span>
+            {% else %}<span class="rag rag-red">RED</span>{% endif %}
+          </td>
+          <td>
+            {% if r2.rag_result == 'GREEN' %}<span class="rag rag-green">GREEN</span>
+            {% elif r2.rag_result == 'AMBER' %}<span class="rag rag-amber">AMBER</span>
+            {% else %}<span class="rag rag-red">RED</span>{% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td><strong>RAG Criteria</strong></td>
+          <td>≤ {{ r1.green }}s = GREEN<br>≤ {{ r1.amber }}s = AMBER<br>{% if r1.error_threshold %}Error % > {{ r1.error_threshold }} = RED{% endif %}</td>
+          <td>≤ {{ r2.green }}s = GREEN<br>≤ {{ r2.amber }}s = AMBER<br>{% if r2.error_threshold %}Error % > {{ r2.error_threshold }} = RED{% endif %}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Filters -->
+    <form method="get" action="{{ url_for('compare') }}" class="filters">
+      <!-- Preserve selected report ids (from querystring) -->
+      <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[0] }}">
+      <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[1] }}">
+
+      <div class="form-group">
+        <label for="metric"><strong>Metric:</strong></label>
+        <select name="metric" id="metric">
+          {% for m in ["Avg (s)", "90th % (s)", "95th % (s)", "Error %"] %}
+            <option value="{{ m }}" {% if metric == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label><strong>Transactions:</strong></label>
+        <div class="toggle-select" onclick="toggleAll(this)">Select/Deselect All</div>
+        <div class="transaction-list">
+          {% for txn in all_txns %}
+            <div class="checkbox-item">
+              <input type="checkbox" id="txn_{{ loop.index }}" name="transactions" value="{{ txn }}"
+                     {% if txn in selected_txns %}checked{% endif %}>
+              <label for="txn_{{ loop.index }}">{{ txn }}</label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Update</button>
+    </form>
+
+    <!-- Transactions Comparison -->
+    <h3>Transactions Comparison</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction</th>
+          <th>{{ r1.name }} ({{ metric }})</th>
+          <th>{{ r2.name }} ({{ metric }})</th>
+          <th>Difference</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in comparisons %}
+        <tr>
+          <td>{{ row.transaction }}</td>
+          <td>{{ row.v1 }}</td>
+          <td>{{ row.v2 }}</td>
+          <td>{{ row.diff }}</td>
+          <td style="color: {{ row.color }}">{{ row.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Observations -->
+    <h3>Observations</h3>
+    <ul>
+      {% for obs in observations %}
+        <li>{{ obs }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <script>
+    function toggleAll(el) {
+      const list = el.nextElementSibling;
+      const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => cb.checked = !allChecked);
+    }
+  </script>
+</body>
+</html>
