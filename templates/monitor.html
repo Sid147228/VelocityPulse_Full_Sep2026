@@ -9,8 +9,9 @@
 
     <div class="actions">
       <button id="addServerBtn" type="button" class="btn btn-secondary">➕ Add Server</button>
-      <button id="startBtn" type="button" class="btn btn-primary">▶️ Start Monitoring</button>
+      <button id="startBtn" type="button" class="btn btn-primary" disabled>▶️ Start Monitoring</button>
       <button id="stopBtn" type="button" class="btn btn-danger">⏹ Stop Monitoring</button>
+      <a href="{{ url_for('run_test') }}" class="btn btn-info">➡️ Go to Run Test</a>
     </div>
   </form>
 
@@ -55,6 +56,11 @@
 
     let serverCount = 0;
 
+    function updateStartButton() {
+      const entries = Array.from(document.querySelectorAll(".server-entry"));
+      startBtn.disabled = entries.length === 0;
+    }
+
     // Check current monitoring status on page load
     try {
       const res = await fetch("/monitor_status");
@@ -81,7 +87,7 @@
       del.type = "button";
       del.className = "delete-btn";
       del.textContent = "❌ Delete";
-      del.addEventListener("click", () => wrapper.remove());
+      del.addEventListener("click", () => { wrapper.remove(); updateStartButton(); });
       header.appendChild(del);
 
       const fields = document.createElement("div");
@@ -145,6 +151,7 @@
 
     addServerBtn.addEventListener("click", () => {
       serverList.appendChild(createServerEntry());
+      updateStartButton();
     });
 
     startBtn.addEventListener("click", async () => {

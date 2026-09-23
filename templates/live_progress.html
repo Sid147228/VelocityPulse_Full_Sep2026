@@ -10,7 +10,7 @@
   </div>
 
   <!-- Stop Test Button -->
-  <form id="stopForm" action="{{ url_for('stop_test') }}" method="post" style="margin-bottom:15px; display:none;">
+  <form id="stopForm" action="{{ url_for('stop_test') }}" method="post" style="margin-bottom:15px; display:{{ 'block' if test_running else 'none' }};">
     <button class="btn btn-danger">🛑 Stop Test</button>
   </form>
 
@@ -80,7 +80,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <script>
-  const socket = io({ transports: ['websocket'] });
+  // Let Socket.IO negotiate polling or WebSocket. Forcing WebSocket can leave
+  // the page permanently disconnected on some local Flask-SocketIO setups.
+  const socket = io();
+  socket.on('connect', function() {
+    document.getElementById('statusBanner').innerText = "🔌 Live connection established";
+  });
+  socket.on('connect_error', function() {
+    document.getElementById('statusBanner').innerText = "⏳ Waiting for live connection…";
+  });
 
   // JMeter charts
   const responseCtx = document.getElementById('responseChart').getContext('2d');
@@ -160,6 +168,41 @@
       tbody.appendChild(tr);
     });
   });
+
+  socket.on('test_stopped', function(summary) {
+    document.getElementById('statusBanner').innerText = "🛑 Test stopped";
+    document.getElementById('stopForm').style.display = 'none';
+  });
+
+  // HTTP snapshot fallback. This also restores metrics when the page is
+  // opened after the test has already started or Socket.IO reconnects.
+  async function refreshLiveSnapshot() {
+    try {
+      const response = await fetch("{{ url_for('live_status') }}", { cache: 'no-store' });
+      if (!response.ok) throw new Error();
+      const snapshot = await response.json();
+      const stopForm = document.getElementById('stopForm');
+      stopForm.style.display = snapshot.running ? 'block' : 'none';
+      if (snapshot.running) {
+        document.getElementById('statusBanner').innerText = "🚀 Test running…";
+      }
+      const tbody = document.querySelector('#metricsTable tbody');
+      if (snapshot.metrics && snapshot.metrics.length) {
+        tbody.innerHTML = '';
+        snapshot.metrics.forEach(row => {
+          const tr = document.createElement('tr');
+          [row.label, row.samples, row.avg, row.p90, row.p95, row.error_pct + '%'].forEach(value => {
+            const td = document.createElement('td'); td.textContent = value; tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+    } catch (error) {
+      // Socket.IO remains the primary live stream; do not replace its data.
+    }
+    window.setTimeout(refreshLiveSnapshot, 1000);
+  }
+  refreshLiveSnapshot();
 
   // Generate report
   function generateReport() {

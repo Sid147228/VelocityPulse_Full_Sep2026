@@ -1,5 +1,1024 @@
 [
   {
+    "report_name": "Test3_Sep23",
+    "file_name": "velocitypulse_09_partial_recovery.csv",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 240,
+        "Avg (s)": 1.33,
+        "90th % (s)": 1.89,
+        "95th % (s)": 2.06,
+        "Error %": 4.17,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 240,
+        "Avg (s)": 2.92,
+        "90th % (s)": 4.23,
+        "95th % (s)": 4.81,
+        "Error %": 14.17,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 240,
+        "Avg (s)": 0.66,
+        "90th % (s)": 0.97,
+        "95th % (s)": 1.07,
+        "Error %": 3.33,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 240,
+        "Avg (s)": 0.41,
+        "90th % (s)": 0.56,
+        "95th % (s)": 0.62,
+        "Error %": 5.42,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 240,
+        "Avg (s)": 1.09,
+        "90th % (s)": 1.52,
+        "95th % (s)": 1.7,
+        "Error %": 7.5,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 240,
+        "Avg (s)": 0.87,
+        "90th % (s)": 1.27,
+        "95th % (s)": 1.51,
+        "Error %": 4.17,
+        "RAG": "RED"
+      }
+    ],
+    "rag_result": "RED",
+    "test_date": "09-09-2026",
+    "test_period": "09-09-2026 11:00:00 to 09-09-2026 11:03:59",
+    "total_duration": "0:03:59.675000",
+    "concurrent_users": 20,
+    "steady_state": "Yes",
+    "rag_counts": {
+      "GREEN": 1,
+      "AMBER": 0,
+      "RED": 5
+    },
+    "chart_time_labels": [
+      "10:00",
+      "10:01",
+      "10:02",
+      "10:03"
+    ],
+    "series_avg_by_txn": {
+      "Add to Cart": [
+        1.338,
+        1.402,
+        1.284,
+        1.288
+      ],
+      "Checkout": [
+        3.005,
+        2.947,
+        2.806,
+        2.928
+      ],
+      "Login": [
+        0.621,
+        0.667,
+        0.678,
+        0.693
+      ],
+      "Logout": [
+        0.449,
+        0.408,
+        0.402,
+        0.388
+      ],
+      "Search Products": [
+        1.121,
+        1.064,
+        1.14,
+        1.023
+      ],
+      "View Product": [
+        0.858,
+        0.796,
+        0.908,
+        0.929
+      ]
+    },
+    "series_p90_by_txn": {
+      "Add to Cart": [
+        1.955,
+        1.993,
+        1.865,
+        1.698
+      ],
+      "Checkout": [
+        4.179,
+        4.156,
+        3.83,
+        4.519
+      ],
+      "Login": [
+        0.889,
+        0.947,
+        1.005,
+        0.998
+      ],
+      "Logout": [
+        0.595,
+        0.551,
+        0.533,
+        0.552
+      ],
+      "Search Products": [
+        1.558,
+        1.469,
+        1.676,
+        1.371
+      ],
+      "View Product": [
+        1.33,
+        1.133,
+        1.267,
+        1.349
+      ]
+    },
+    "series_error_rate_by_txn": {
+      "Add to Cart": [
+        5.0,
+        6.667,
+        1.667,
+        3.333
+      ],
+      "Checkout": [
+        18.333,
+        10.0,
+        10.0,
+        18.333
+      ],
+      "Login": [
+        1.667,
+        8.333,
+        0.0,
+        3.333
+      ],
+      "Logout": [
+        3.333,
+        6.667,
+        10.0,
+        1.667
+      ],
+      "Search Products": [
+        8.333,
+        5.0,
+        11.667,
+        5.0
+      ],
+      "View Product": [
+        3.333,
+        10.0,
+        1.667,
+        1.667
+      ]
+    },
+    "series_throughput_over_time": [
+      360,
+      360,
+      360,
+      360
+    ],
+    "labels": [
+      "Add to Cart",
+      "Checkout",
+      "Login",
+      "Logout",
+      "Search Products",
+      "View Product"
+    ],
+    "avg_values": [
+      1.33,
+      2.92,
+      0.66,
+      0.41,
+      1.09,
+      0.87
+    ],
+    "p90_values": [
+      1.89,
+      4.23,
+      0.97,
+      0.56,
+      1.52,
+      1.27
+    ],
+    "p95_values": [
+      2.06,
+      4.81,
+      1.07,
+      0.62,
+      1.7,
+      1.51
+    ],
+    "error_values": [
+      4.17,
+      14.17,
+      3.33,
+      5.42,
+      7.5,
+      4.17
+    ],
+    "timestamp": "2026-09-23T11:21:21.970097"
+  },
+  {
+    "report_name": "Live Test run_e07ff2c6",
+    "file_name": "results.jtl",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 60,
+        "Avg (s)": "0.98",
+        "90th % (s)": "1.25",
+        "95th % (s)": "1.33",
+        "Error %": "5.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 60,
+        "Avg (s)": "1.37",
+        "90th % (s)": "1.65",
+        "95th % (s)": "1.66",
+        "Error %": "5.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 60,
+        "Avg (s)": "0.73",
+        "90th % (s)": "0.90",
+        "95th % (s)": "1.24",
+        "Error %": "5.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 60,
+        "Avg (s)": "0.47",
+        "90th % (s)": "0.77",
+        "95th % (s)": "0.83",
+        "Error %": "0.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 60,
+        "Avg (s)": "0.81",
+        "90th % (s)": "1.13",
+        "95th % (s)": "1.18",
+        "Error %": "3.33",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 60,
+        "Avg (s)": "0.72",
+        "90th % (s)": "1.01",
+        "95th % (s)": "1.05",
+        "Error %": "1.67",
+        "RAG": "GREEN"
+      }
+    ],
+    "rag_result": "GREEN",
+    "test_date": "23-09-2026",
+    "test_period": "23-09-2026 11:16:33 to 23-09-2026 11:17:38",
+    "total_duration": "0:01:05.821000",
+    "concurrent_users": 5,
+    "steady_state": "Yes",
+    "timestamp": "2026-09-23T11:20:31.441324"
+  },
+  {
+    "report_name": "Test3_Sep23",
+    "file_name": "velocitypulse_08_severe_degradation.csv",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 240,
+        "Avg (s)": 2.94,
+        "90th % (s)": 4.17,
+        "95th % (s)": 4.62,
+        "Error %": 20.83,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 240,
+        "Avg (s)": 3.96,
+        "90th % (s)": 5.64,
+        "95th % (s)": 6.12,
+        "Error %": 58.33,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 240,
+        "Avg (s)": 1.53,
+        "90th % (s)": 2.21,
+        "95th % (s)": 2.54,
+        "Error %": 20.42,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 240,
+        "Avg (s)": 1.01,
+        "90th % (s)": 1.46,
+        "95th % (s)": 1.56,
+        "Error %": 17.08,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 240,
+        "Avg (s)": 2.58,
+        "90th % (s)": 3.71,
+        "95th % (s)": 4.43,
+        "Error %": 38.75,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 240,
+        "Avg (s)": 2.07,
+        "90th % (s)": 2.93,
+        "95th % (s)": 3.27,
+        "Error %": 19.58,
+        "RAG": "RED"
+      }
+    ],
+    "rag_result": "RED",
+    "test_date": "08-09-2026",
+    "test_period": "08-09-2026 11:00:00 to 08-09-2026 11:03:59",
+    "total_duration": "0:03:59.675000",
+    "concurrent_users": 20,
+    "steady_state": "Yes",
+    "rag_counts": {
+      "GREEN": 0,
+      "AMBER": 0,
+      "RED": 6
+    },
+    "chart_time_labels": [
+      "10:00",
+      "10:01",
+      "10:02",
+      "10:03"
+    ],
+    "series_avg_by_txn": {
+      "Add to Cart": [
+        2.878,
+        2.971,
+        2.927,
+        2.975
+      ],
+      "Checkout": [
+        3.818,
+        4.03,
+        3.925,
+        4.086
+      ],
+      "Login": [
+        1.5,
+        1.559,
+        1.549,
+        1.519
+      ],
+      "Logout": [
+        1.006,
+        1.032,
+        1.034,
+        0.978
+      ],
+      "Search Products": [
+        2.428,
+        2.435,
+        2.749,
+        2.691
+      ],
+      "View Product": [
+        1.909,
+        2.116,
+        2.222,
+        2.019
+      ]
+    },
+    "series_p90_by_txn": {
+      "Add to Cart": [
+        4.194,
+        4.036,
+        4.207,
+        3.994
+      ],
+      "Checkout": [
+        5.306,
+        5.274,
+        5.291,
+        5.707
+      ],
+      "Login": [
+        2.169,
+        2.286,
+        2.232,
+        2.065
+      ],
+      "Logout": [
+        1.541,
+        1.533,
+        1.411,
+        1.326
+      ],
+      "Search Products": [
+        3.542,
+        3.322,
+        3.8,
+        4.056
+      ],
+      "View Product": [
+        2.766,
+        2.926,
+        3.109,
+        2.71
+      ]
+    },
+    "series_error_rate_by_txn": {
+      "Add to Cart": [
+        21.667,
+        20.0,
+        18.333,
+        23.333
+      ],
+      "Checkout": [
+        60.0,
+        46.667,
+        60.0,
+        66.667
+      ],
+      "Login": [
+        25.0,
+        13.333,
+        23.333,
+        20.0
+      ],
+      "Logout": [
+        15.0,
+        15.0,
+        18.333,
+        20.0
+      ],
+      "Search Products": [
+        41.667,
+        40.0,
+        33.333,
+        40.0
+      ],
+      "View Product": [
+        18.333,
+        23.333,
+        16.667,
+        20.0
+      ]
+    },
+    "series_throughput_over_time": [
+      360,
+      360,
+      360,
+      360
+    ],
+    "labels": [
+      "Add to Cart",
+      "Checkout",
+      "Login",
+      "Logout",
+      "Search Products",
+      "View Product"
+    ],
+    "avg_values": [
+      2.94,
+      3.96,
+      1.53,
+      1.01,
+      2.58,
+      2.07
+    ],
+    "p90_values": [
+      4.17,
+      5.64,
+      2.21,
+      1.46,
+      3.71,
+      2.93
+    ],
+    "p95_values": [
+      4.62,
+      6.12,
+      2.54,
+      1.56,
+      4.43,
+      3.27
+    ],
+    "error_values": [
+      20.83,
+      58.33,
+      20.42,
+      17.08,
+      38.75,
+      19.58
+    ],
+    "timestamp": "2026-09-23T09:52:17.392457"
+  },
+  {
+    "report_name": "Test2_Sep23",
+    "file_name": "velocitypulse_03_checkout_slow.csv",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 240,
+        "Avg (s)": 1.0,
+        "90th % (s)": 1.41,
+        "95th % (s)": 1.55,
+        "Error %": 1.25,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 240,
+        "Avg (s)": 4.24,
+        "90th % (s)": 6.01,
+        "95th % (s)": 6.5,
+        "Error %": 4.58,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 240,
+        "Avg (s)": 0.54,
+        "90th % (s)": 0.75,
+        "95th % (s)": 0.81,
+        "Error %": 1.67,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 240,
+        "Avg (s)": 0.33,
+        "90th % (s)": 0.45,
+        "95th % (s)": 0.56,
+        "Error %": 0.83,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 240,
+        "Avg (s)": 0.9,
+        "90th % (s)": 1.25,
+        "95th % (s)": 1.42,
+        "Error %": 2.92,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 240,
+        "Avg (s)": 0.7,
+        "90th % (s)": 1.01,
+        "95th % (s)": 1.14,
+        "Error %": 0.42,
+        "RAG": "GREEN"
+      }
+    ],
+    "rag_result": "RED",
+    "test_date": "03-09-2026",
+    "test_period": "03-09-2026 11:00:00 to 03-09-2026 11:03:59",
+    "total_duration": "0:03:59.675000",
+    "concurrent_users": 20,
+    "steady_state": "Yes",
+    "rag_counts": {
+      "GREEN": 5,
+      "AMBER": 0,
+      "RED": 1
+    },
+    "chart_time_labels": [
+      "10:00",
+      "10:01",
+      "10:02",
+      "10:03"
+    ],
+    "series_avg_by_txn": {
+      "Add to Cart": [
+        0.993,
+        1.004,
+        0.99,
+        1.002
+      ],
+      "Checkout": [
+        4.131,
+        4.144,
+        4.532,
+        4.174
+      ],
+      "Login": [
+        0.546,
+        0.541,
+        0.517,
+        0.541
+      ],
+      "Logout": [
+        0.324,
+        0.314,
+        0.332,
+        0.349
+      ],
+      "Search Products": [
+        0.904,
+        0.945,
+        0.892,
+        0.868
+      ],
+      "View Product": [
+        0.74,
+        0.631,
+        0.696,
+        0.747
+      ]
+    },
+    "series_p90_by_txn": {
+      "Add to Cart": [
+        1.346,
+        1.332,
+        1.419,
+        1.451
+      ],
+      "Checkout": [
+        5.852,
+        5.334,
+        6.183,
+        6.36
+      ],
+      "Login": [
+        0.756,
+        0.731,
+        0.747,
+        0.717
+      ],
+      "Logout": [
+        0.446,
+        0.434,
+        0.482,
+        0.48
+      ],
+      "Search Products": [
+        1.32,
+        1.252,
+        1.192,
+        1.209
+      ],
+      "View Product": [
+        0.997,
+        0.891,
+        1.059,
+        1.095
+      ]
+    },
+    "series_error_rate_by_txn": {
+      "Add to Cart": [
+        1.667,
+        0.0,
+        1.667,
+        1.667
+      ],
+      "Checkout": [
+        8.333,
+        3.333,
+        5.0,
+        1.667
+      ],
+      "Login": [
+        1.667,
+        3.333,
+        1.667,
+        0.0
+      ],
+      "Logout": [
+        1.667,
+        0.0,
+        1.667,
+        0.0
+      ],
+      "Search Products": [
+        5.0,
+        5.0,
+        1.667,
+        0.0
+      ],
+      "View Product": [
+        1.667,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "series_throughput_over_time": [
+      360,
+      360,
+      360,
+      360
+    ],
+    "labels": [
+      "Add to Cart",
+      "Checkout",
+      "Login",
+      "Logout",
+      "Search Products",
+      "View Product"
+    ],
+    "avg_values": [
+      1.0,
+      4.24,
+      0.54,
+      0.33,
+      0.9,
+      0.7
+    ],
+    "p90_values": [
+      1.41,
+      6.01,
+      0.75,
+      0.45,
+      1.25,
+      1.01
+    ],
+    "p95_values": [
+      1.55,
+      6.5,
+      0.81,
+      0.56,
+      1.42,
+      1.14
+    ],
+    "error_values": [
+      1.25,
+      4.58,
+      1.67,
+      0.83,
+      2.92,
+      0.42
+    ],
+    "timestamp": "2026-09-23T09:41:35.530464"
+  },
+  {
+    "report_name": "Test1_Sep23",
+    "file_name": "velocitypulse_02_healthy_load.csv",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 240,
+        "Avg (s)": 0.9,
+        "90th % (s)": 1.27,
+        "95th % (s)": 1.4,
+        "Error %": 0.83,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 240,
+        "Avg (s)": 1.22,
+        "90th % (s)": 1.73,
+        "95th % (s)": 1.96,
+        "Error %": 1.67,
+        "RAG": "AMBER"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 240,
+        "Avg (s)": 0.48,
+        "90th % (s)": 0.68,
+        "95th % (s)": 0.75,
+        "Error %": 0.83,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 240,
+        "Avg (s)": 0.3,
+        "90th % (s)": 0.43,
+        "95th % (s)": 0.49,
+        "Error %": 1.25,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 240,
+        "Avg (s)": 0.77,
+        "90th % (s)": 1.09,
+        "95th % (s)": 1.16,
+        "Error %": 1.25,
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 240,
+        "Avg (s)": 0.65,
+        "90th % (s)": 0.95,
+        "95th % (s)": 1.06,
+        "Error %": 0.42,
+        "RAG": "GREEN"
+      }
+    ],
+    "rag_result": "AMBER",
+    "test_date": "02-09-2026",
+    "test_period": "02-09-2026 11:00:00 to 02-09-2026 11:03:59",
+    "total_duration": "0:03:59.675000",
+    "concurrent_users": 20,
+    "steady_state": "Yes",
+    "rag_counts": {
+      "GREEN": 5,
+      "AMBER": 1,
+      "RED": 0
+    },
+    "chart_time_labels": [
+      "10:00",
+      "10:01",
+      "10:02",
+      "10:03"
+    ],
+    "series_avg_by_txn": {
+      "Add to Cart": [
+        0.915,
+        0.854,
+        0.959,
+        0.879
+      ],
+      "Checkout": [
+        1.178,
+        1.279,
+        1.195,
+        1.242
+      ],
+      "Login": [
+        0.46,
+        0.501,
+        0.464,
+        0.476
+      ],
+      "Logout": [
+        0.305,
+        0.324,
+        0.307,
+        0.278
+      ],
+      "Search Products": [
+        0.74,
+        0.809,
+        0.758,
+        0.756
+      ],
+      "View Product": [
+        0.69,
+        0.654,
+        0.644,
+        0.609
+      ]
+    },
+    "series_p90_by_txn": {
+      "Add to Cart": [
+        1.243,
+        1.159,
+        1.307,
+        1.211
+      ],
+      "Checkout": [
+        1.52,
+        1.777,
+        1.822,
+        1.73
+      ],
+      "Login": [
+        0.61,
+        0.745,
+        0.676,
+        0.662
+      ],
+      "Logout": [
+        0.405,
+        0.487,
+        0.436,
+        0.349
+      ],
+      "Search Products": [
+        1.03,
+        1.115,
+        1.134,
+        1.013
+      ],
+      "View Product": [
+        1.014,
+        0.923,
+        0.978,
+        0.79
+      ]
+    },
+    "series_error_rate_by_txn": {
+      "Add to Cart": [
+        1.667,
+        1.667,
+        0.0,
+        0.0
+      ],
+      "Checkout": [
+        1.667,
+        3.333,
+        0.0,
+        1.667
+      ],
+      "Login": [
+        1.667,
+        0.0,
+        0.0,
+        1.667
+      ],
+      "Logout": [
+        1.667,
+        3.333,
+        0.0,
+        0.0
+      ],
+      "Search Products": [
+        1.667,
+        1.667,
+        1.667,
+        0.0
+      ],
+      "View Product": [
+        0.0,
+        0.0,
+        0.0,
+        1.667
+      ]
+    },
+    "series_throughput_over_time": [
+      360,
+      360,
+      360,
+      360
+    ],
+    "labels": [
+      "Add to Cart",
+      "Checkout",
+      "Login",
+      "Logout",
+      "Search Products",
+      "View Product"
+    ],
+    "avg_values": [
+      0.9,
+      1.22,
+      0.48,
+      0.3,
+      0.77,
+      0.65
+    ],
+    "p90_values": [
+      1.27,
+      1.73,
+      0.68,
+      0.43,
+      1.09,
+      0.95
+    ],
+    "p95_values": [
+      1.4,
+      1.96,
+      0.75,
+      0.49,
+      1.16,
+      1.06
+    ],
+    "error_values": [
+      0.83,
+      1.67,
+      0.83,
+      1.25,
+      1.25,
+      0.42
+    ],
+    "timestamp": "2026-09-23T09:40:48.833189"
+  },
+  {
     "report_name": "GET_SimpleScript",
     "file_name": "results.jtl",
     "summary": [

@@ -1,0 +1,15 @@
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+Creating summariser <summary>
+Created the tree successfully using C:\Users\MAILS\OneDrive\Desktop\JMeterTestResultsAccelerator_Working19thNov - LIVETEST (4)\JMeterTestResultsAccelerator_FinalCode_Sep2026 - 23rd\uploads\run_70f0b8ec0c594222b70e8d33674078ea\VelocityPulse_Local_Synthetic_Test.jmx
+Starting standalone test @ 2026 Sep 23 12:08:50 BST (1790161730714)
+Waiting for possible Shutdown/StopTestNow/HeapDump/ThreadDump message on port 4445
+summary +     38 in 00:00:09 =    4.2/s Avg:   852 Min:   197 Max:  1649 Err:     0 (0.00%) Active: 5 Started: 5 Finished: 0
+summary +    181 in 00:00:30 =    6.0/s Avg:   827 Min:   160 Max:  1747 Err:     7 (3.87%) Active: 5 Started: 5 Finished: 0
+summary =    219 in 00:00:39 =    5.6/s Avg:   832 Min:   160 Max:  1747 Err:     7 (3.20%)
+summary +    141 in 00:00:25 =    5.7/s Avg:   847 Min:   158 Max:  1696 Err:     6 (4.26%) Active: 0 Started: 5 Finished: 5
+summary =    360 in 00:01:04 =    5.6/s Avg:   838 Min:   158 Max:  1747 Err:    13 (3.61%)
+Tidying up ...    @ 2026 Sep 23 12:09:54 BST (1790161794852)
+... end of run

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
-import os, json, uuid, subprocess, threading, time
+import os, json, uuid, subprocess, threading, time, csv
 import pandas as pd
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -525,12 +525,16 @@ def make_run_dir():
 def run_test():
     global test_running, current_process
     if request.method == "POST":
+        if test_running and current_process and current_process.poll() is None:
+            flash("A JMeter test is already running. Open Live Progress to monitor it.", "warning")
+            return redirect(url_for("live_progress"))
         test_running = True
         transaction_stats.clear()  # reset metrics
         run_dir = make_run_dir()
 
         jmx_file = request.files.get("jmx_file")
         if not jmx_file or jmx_file.filename == "":
+            test_running = False
             flash("❌ Please select a JMX test plan.", "error")
             return redirect(url_for("run_test"))
         jmx_path = os.path.join(run_dir, jmx_file.filename)
@@ -561,6 +565,8 @@ def run_test():
             return redirect(url_for("live_progress"))
 
         except Exception as e:
+            test_running = False
+            current_process = None
             flash(f"❌ Unexpected error: {str(e)}", "error")
             return redirect(url_for("run_test"))
 
@@ -576,6 +582,20 @@ def start_jmeter(jmx_path, data_files, results_file, jmeter_log):
 @app.route("/live_progress")
 def live_progress():
     return render_template("live_progress.html")
+
+@app.route("/live_status")
+def live_status():
+    """HTTP fallback and page-refresh snapshot for live progress."""
+    process_alive = bool(current_process and current_process.poll() is None)
+    return jsonify({
+        "running": bool(test_running and process_alive),
+        "test_running": bool(test_running),
+        "metrics": compute_summary(),
+        "monitoring": {
+            "active": monitoring_active,
+            "servers": len(monitoring_threads)
+        }
+    })
 
 transaction_stats = defaultdict(list)
 
@@ -613,45 +633,71 @@ def follow_file(f):
         yield line
 
 def tail_results(results_file):
+    global test_running, current_process
     start_time = time.time()
-    while not os.path.exists(results_file):
+    wait_until = time.time() + 30
+    while not os.path.exists(results_file) and time.time() < wait_until:
         print("Waiting for results.jtl...")
         time.sleep(1)
+    if not os.path.exists(results_file):
+        test_running = False
+        socketio.emit("test_complete", {"duration": "0 sec", "start": "", "end": "", "users": "N/A", "metrics": []})
+        return
     print("Found results file:", results_file)
 
     last_emit = time.time()
-    with open(results_file, "r") as f:
-        for line in follow_file(f):
-            if line.startswith("timeStamp"):
+    with open(results_file, "r", encoding="utf-8", errors="replace") as f:
+        header_seen = False
+        while True:
+            line = f.readline()
+            if line:
+                if line.startswith("timeStamp"):
+                    header_seen = True
+                    continue
+                if not header_seen:
+                    continue
+
+                try:
+                    parts = next(csv.reader([line]))
+                except csv.Error:
+                    continue
+                if len(parts) < 8:
+                    continue
+
+                try:
+                    timestamp = parts[0]
+                    response_time = float(parts[1])  # elapsed (ms)
+                    label = parts[2]
+                    success = (parts[7].lower() == "true")
+                except (ValueError, IndexError):
+                    continue
+
+                update_metrics(label, response_time, success)
+
+                socketio.emit("progress_update", {
+                    "timestamp": timestamp,
+                    "response_time": response_time,
+                    "error_rate": 0 if success else 100
+                })
+
+                socketio.emit("metrics_update", compute_summary())
+
+                if time.time() - last_emit > 120:
+                    socketio.emit("heartbeat", {"status": "running"})
+                    last_emit = time.time()
                 continue
 
-            parts = line.strip().split(",")
-            if len(parts) < 8:
-                continue
-
-            try:
-                timestamp = parts[0]
-                response_time = float(parts[1])  # elapsed (ms)
-                label = parts[2]
-                success = (parts[7].lower() == "true")
-            except ValueError as e:
-                print("Skipping line due to parse error:", line.strip(), e)
-                continue
-
-            update_metrics(label, response_time, success)
-
-            socketio.emit("progress_update", {
-                "timestamp": timestamp,
-                "response_time": response_time,
-                "error_rate": 0 if success else 100
-            })
-
-            socketio.emit("metrics_update", compute_summary())
-
-            # Heartbeat every 120 seconds to keep UI alive
-            if time.time() - last_emit > 120:
-                socketio.emit("heartbeat", {"status": "running"})
-                last_emit = time.time()
+            process_alive = bool(current_process and current_process.poll() is None)
+            if not process_alive:
+                # Allow the OS to flush the final JTL lines before completing.
+                end_position = f.tell()
+                time.sleep(1)
+                f.seek(0, os.SEEK_END)
+                if f.tell() == end_position:
+                    break
+                f.seek(end_position)
+            else:
+                time.sleep(0.25)
 
     duration = round(time.time() - start_time, 2)
     summary = {
@@ -661,14 +707,25 @@ def tail_results(results_file):
         "users": "N/A",
         "metrics": compute_summary()
     }
+    test_running = False
+    current_process = None
     socketio.emit("test_complete", summary)
 
 def tail_logs(log_file):
-    while not os.path.exists(log_file):
+    wait_until = time.time() + 30
+    while not os.path.exists(log_file) and time.time() < wait_until:
         time.sleep(1)
-    with open(log_file, "r") as f:
-        for line in follow_file(f):
-            socketio.emit("log_update", {"line": line.strip()})
+    if not os.path.exists(log_file):
+        return
+    with open(log_file, "r", encoding="utf-8", errors="replace") as f:
+        while True:
+            line = f.readline()
+            if line:
+                socketio.emit("log_update", {"line": line.strip()})
+            elif current_process and current_process.poll() is None:
+                time.sleep(0.5)
+            else:
+                break
 
 @app.route("/generate_report")
 def generate_report():
@@ -733,6 +790,7 @@ def stop_test():
             pass
         current_process = None
         test_running = False
+        socketio.emit("test_stopped", {"status": "stopped", "metrics": compute_summary()})
         flash("🛑 Test stopped successfully", "info")
     else:
         flash("No active test to stop", "warning")

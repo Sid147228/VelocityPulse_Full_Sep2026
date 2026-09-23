@@ -1,54 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Select Reports to Compare</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VelocityPulse | Select Reports to Compare</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #fdfdfd;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #2a5298;
-        }
-        .section {
-            margin-top: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #2a5298;
-            color: white;
-        }
-        .btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #2a5298;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #1e3e72;
-        }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f6f8; }
+        header { background: #2a5298; color: white; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+        header nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; flex: 1 1 680px; }
+        header nav a { color: white; text-decoration: none; font-weight: 500; white-space: nowrap; }
+        header nav a:hover, header nav a:focus-visible { text-decoration: underline; }
+        .account { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .user { font-style: italic; }
+        .logout { background: #f44336; padding: 6px 12px; border-radius: 4px; font-weight: bold; color: white; text-decoration: none; }
+        .container { max-width: 900px; margin: 40px auto; padding: 20px; background: #fdfdfd; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2a5298; }
+        .section { margin-top: 30px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #2a5298; color: white; }
+        .btn { margin-top: 20px; padding: 10px 20px; background-color: #2a5298; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover:not(:disabled) { background-color: #1e3e72; }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+        @media (max-width: 640px) { header { padding: 12px; } .container { margin: 16px 8px; } }
     </style>
 </head>
 <body>
-{% include "_header.html" %}
+<header>
+    <nav aria-label="Main navigation">
+        <a href="{{ url_for('upload') }}">🏠 Home</a>
+        <a href="{{ url_for('history') }}">📄 Report History</a>
+        <a href="{{ url_for('select_compare') }}" aria-current="page">📊 Compare</a>
+        <a href="{{ url_for('trend') }}">📈 Trends Analysis</a>
+        <a href="{{ url_for('run_test') }}">▶️ Run Test</a>
+        <a href="{{ url_for('monitor') }}">🖥️ Monitor</a>
+        <a href="{{ url_for('about') }}">ℹ️ About Me</a>
+    </nav>
+    <div class="account">
+        <div class="user">Logged in as {{ session.get('user', 'Guest') }}</div>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+</header>
 <div class="container">
     <h2>Select Reports to Compare</h2>
     <form method="GET" action="{{ url_for('compare') }}">
@@ -56,20 +49,12 @@
             <p><strong>Choose exactly 2 reports:</strong></p>
             <table>
                 <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>S.NO.</th>
-                        <th>Report Name</th>
-                        <th>Date</th>
-                        <th>Start and End Time</th>
-                    </tr>
+                    <tr><th>Select</th><th>S.NO.</th><th>Report Name</th><th>Date</th><th>Start and End Time</th></tr>
                 </thead>
                 <tbody>
                     {% for report in reports %}
                     <tr>
-                        <td>
-                            <input type="checkbox" name="report_ids" value="{{ loop.index0 }}" class="report-checkbox">
-                        </td>
+                        <td><input type="checkbox" name="report_ids" value="{{ loop.index0 }}" class="report-checkbox" aria-label="Select {{ report.report_name or report.file_name }}"></td>
                         <td>{{ loop.index }}</td>
                         <td>{{ report.report_name or report.file_name }}</td>
                         <td>{{ report.test_date or 'N/A' }}</td>
@@ -82,16 +67,13 @@
         <button type="submit" class="btn" id="compareBtn" disabled>Compare Reports</button>
     </form>
 </div>
-
 <script>
     const checkboxes = document.querySelectorAll('.report-checkbox');
     const compareBtn = document.getElementById('compareBtn');
-
     function updateButtonState() {
         const selected = Array.from(checkboxes).filter(cb => cb.checked).length;
         compareBtn.disabled = selected !== 2;
     }
-
     checkboxes.forEach(cb => cb.addEventListener('change', updateButtonState));
 </script>
 </body>
