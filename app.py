@@ -50,6 +50,94 @@ def save_report(report_data):
     history.insert(0, report_data)  # newest first
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
+
+
+def build_report_chart_data(df, summary):
+    """Build the chart payload expected by the shared report.html template.
+
+    Both uploaded CSV reports and live JMeter reports use the same report
+    template. Keeping this payload construction in one helper prevents live
+    reports from losing RAG distribution and time-series charts.
+    """
+    chart_df = df.copy()
+    chart_df.columns = [str(c).strip().lower() for c in chart_df.columns]
+
+    if "timestamp" in chart_df.columns:
+        chart_df["timestamp"] = pd.to_datetime(
+            chart_df["timestamp"], unit="ms", errors="coerce"
+        )
+    elif "timestamp" not in chart_df.columns and "timestamp" in df.columns:
+        chart_df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+
+    if "elapsed" in chart_df.columns:
+        chart_df["elapsed"] = pd.to_numeric(chart_df["elapsed"], errors="coerce")
+    if "success" in chart_df.columns:
+        chart_df["success"] = chart_df["success"].astype(str).str.lower().isin(["true", "1"])
+    else:
+        chart_df["success"] = True
+
+    if "label" not in chart_df.columns or "timestamp" not in chart_df.columns:
+        return {
+            "rag_counts": {
+                "GREEN": sum(1 for row in summary if row.get("RAG") == "GREEN"),
+                "AMBER": sum(1 for row in summary if row.get("RAG") == "AMBER"),
+                "RED": sum(1 for row in summary if row.get("RAG") == "RED"),
+            },
+            "chart_time_labels": [],
+            "series_avg_by_txn": {},
+            "series_p90_by_txn": {},
+            "series_error_rate_by_txn": {},
+            "series_throughput_over_time": [],
+            "labels": [row.get("Transaction") for row in summary],
+            "avg_values": [row.get("Avg (s)") for row in summary],
+            "p90_values": [row.get("90th % (s)") for row in summary],
+            "p95_values": [row.get("95th % (s)") for row in summary],
+            "error_values": [row.get("Error %") for row in summary],
+        }
+
+    chart_df = chart_df.dropna(subset=["timestamp"]).sort_values("timestamp")
+    time_index = chart_df["timestamp"].dt.floor("min")
+    time_labels = sorted(time_index.dropna().unique())
+    labels_fmt = [ts.strftime("%H:%M") for ts in time_labels]
+
+    series_avg_by_txn, series_p90_by_txn, series_error_rate_by_txn = {}, {}, {}
+    if "elapsed" in chart_df.columns:
+        for txn, group in chart_df.groupby("label"):
+            grouped = group.groupby(group["timestamp"].dt.floor("min"))
+            avg_ms = grouped["elapsed"].mean()
+            p90_ms = grouped["elapsed"].quantile(0.90)
+            error_rate = grouped["success"].apply(lambda values: 100.0 * ((~values).sum() / len(values)))
+            series_avg_by_txn[txn] = [
+                round(avg_ms.get(t) / 1000.0, 3) if pd.notnull(avg_ms.get(t)) else None
+                for t in time_labels
+            ]
+            series_p90_by_txn[txn] = [
+                round(p90_ms.get(t) / 1000.0, 3) if pd.notnull(p90_ms.get(t)) else None
+                for t in time_labels
+            ]
+            series_error_rate_by_txn[txn] = [
+                round(error_rate.get(t), 3) if pd.notnull(error_rate.get(t)) else None
+                for t in time_labels
+            ]
+
+    throughput = chart_df.groupby(chart_df["timestamp"].dt.floor("min")).size()
+    return {
+        "rag_counts": {
+            "GREEN": sum(1 for row in summary if row.get("RAG") == "GREEN"),
+            "AMBER": sum(1 for row in summary if row.get("RAG") == "AMBER"),
+            "RED": sum(1 for row in summary if row.get("RAG") == "RED"),
+        },
+        "chart_time_labels": labels_fmt,
+        "series_avg_by_txn": series_avg_by_txn,
+        "series_p90_by_txn": series_p90_by_txn,
+        "series_error_rate_by_txn": series_error_rate_by_txn,
+        "series_throughput_over_time": [int(throughput.get(t, 0)) for t in time_labels],
+        "labels": [row.get("Transaction") for row in summary],
+        "avg_values": [row.get("Avg (s)") for row in summary],
+        "p90_values": [row.get("90th % (s)") for row in summary],
+        "p95_values": [row.get("95th % (s)") for row in summary],
+        "error_values": [row.get("Error %") for row in summary],
+    }
 @app.route("/about")
 def about():
     try:
@@ -744,18 +832,27 @@ def generate_report():
         flash("Results file not found.", "error")
         return redirect(url_for("live_progress"))
 
-    green, amber, rag_basis = 2.0, 5.0, "avg"
+    # Use the same defaults as the Home-page report form.
+    green, amber, rag_basis = 1.5, 3.5, "avg"
     summary, test_rag = parse_jmeter_csv(results_file, green, amber, rag_basis)
     summary, test_rag = evaluate_sla(summary, green, amber, rag_basis)
 
     df = pd.read_csv(results_file)
     df['timeStamp'] = pd.to_numeric(df['timeStamp'], errors='coerce').fillna(0).astype(int)
-    start_ts, end_ts = df['timeStamp'].min(), df['timeStamp'].max()
-    start_dt, end_dt = datetime.fromtimestamp(start_ts/1000.0), datetime.fromtimestamp(end_ts/1000.0)
-    test_date = start_dt.strftime("%d-%m-%Y")
-    test_period = f"{start_dt.strftime('%d-%m-%Y %H:%M:%S')} to {end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
-    total_duration = str(end_dt - start_dt)
-    concurrent_users = int(df["allThreads"].max()) if "allThreads" in df.columns else None
+    if not df.empty:
+        start_ts, end_ts = df['timeStamp'].min(), df['timeStamp'].max()
+        start_dt, end_dt = datetime.fromtimestamp(start_ts/1000.0), datetime.fromtimestamp(end_ts/1000.0)
+        test_date = start_dt.strftime("%d-%m-%Y")
+        test_period = f"{start_dt.strftime('%d-%m-%Y %H:%M:%S')} to {end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
+        total_duration = str(end_dt - start_dt)
+        concurrent_users = int(df["allThreads"].max()) if "allThreads" in df.columns else None
+        steady_state = "Yes" if len(df) > 100 else "No"
+    else:
+        test_date = test_period = total_duration = "Not Available"
+        concurrent_users = None
+        steady_state = "Unknown"
+
+    chart_data = build_report_chart_data(df, summary)
 
     report_data = {
         "report_name": f"Live Test {latest_run}",
@@ -766,7 +863,8 @@ def generate_report():
         "test_period": test_period,
         "total_duration": total_duration,
         "concurrent_users": concurrent_users,
-        "steady_state": "Yes" if len(df) > 100 else "No",
+        "steady_state": steady_state,
+        **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
 
