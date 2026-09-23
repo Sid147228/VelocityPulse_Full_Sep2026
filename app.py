@@ -138,6 +138,102 @@ def build_report_chart_data(df, summary):
         "p95_values": [row.get("95th % (s)") for row in summary],
         "error_values": [row.get("Error %") for row in summary],
     }
+
+
+def _metric(row, key):
+    try:
+        return float(row.get(key, 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def build_report_observations(summary, rag_result):
+    """Create concise, deterministic observations for the report UI."""
+    observations = []
+    if not summary:
+        return [{"type": "warning", "title": "No transaction data", "text": "No valid transaction samples were available for analysis."}]
+
+    total_samples = sum(int(_metric(row, "#Samples")) for row in summary)
+    slowest = max(summary, key=lambda row: _metric(row, "Avg (s)"))
+    highest_p95 = max(summary, key=lambda row: _metric(row, "95th % (s)"))
+    highest_error = max(summary, key=lambda row: _metric(row, "Error %"))
+
+    status_type = {"GREEN": "success", "AMBER": "warning", "RED": "danger"}.get(rag_result, "info")
+    observations.append({
+        "type": status_type,
+        "title": f"Overall result: {rag_result or 'UNKNOWN'}",
+        "text": f"The test analysed {len(summary)} transaction(s) and {total_samples} sample(s)."
+    })
+
+    if rag_result in ("RED", "AMBER"):
+        affected = [row for row in summary if row.get("RAG") in ("RED", "AMBER")]
+        names = ", ".join(str(row.get("Transaction")) for row in affected[:4])
+        suffix = " and more" if len(affected) > 4 else ""
+        observations.append({
+            "type": "danger" if rag_result == "RED" else "warning",
+            "title": "SLA attention required",
+            "text": f"{len(affected)} transaction(s) require attention: {names}{suffix}."
+        })
+    else:
+        observations.append({
+            "type": "success",
+            "title": "SLA performance is healthy",
+            "text": "All analysed transactions are within the configured response-time thresholds."
+        })
+
+    observations.append({
+        "type": "info",
+        "title": f"Slowest average response: {slowest.get('Transaction')}",
+        "text": f"Average response time was {_metric(slowest, 'Avg (s)'):.2f}s."
+    })
+
+    if _metric(highest_p95, "95th % (s)") > _metric(highest_p95, "Avg (s)") * 1.5:
+        observations.append({
+            "type": "warning",
+            "title": f"Latency spikes: {highest_p95.get('Transaction')}",
+            "text": f"P95 reached {_metric(highest_p95, '95th % (s)'):.2f}s versus an average of {_metric(highest_p95, 'Avg (s)'):.2f}s."
+        })
+
+    if _metric(highest_error, "Error %") > 0:
+        observations.append({
+            "type": "danger" if _metric(highest_error, "Error %") >= 5 else "warning",
+            "title": f"Highest error rate: {highest_error.get('Transaction')}",
+            "text": f"The transaction recorded {_metric(highest_error, 'Error %'):.2f}% errors."
+        })
+    return observations
+
+
+def build_trend_observations(txn_trends):
+    """Summarise oldest-to-newest transaction movement in concise bullets."""
+    movements = []
+    for txn, points in txn_trends.items():
+        valid = [p for p in points if p.get("avg", 0) > 0]
+        if len(valid) < 2:
+            continue
+        oldest, latest = valid[-1], valid[0]  # reports are newest first
+        baseline = oldest["avg"]
+        change = ((latest["avg"] - baseline) / baseline * 100) if baseline else 0
+        movements.append((txn, change, baseline, latest["avg"], len(valid)))
+
+    observations = []
+    if not movements:
+        return [{"type": "info", "title": "Insufficient trend history", "text": "At least two tests with valid data are needed to identify transaction trends."}]
+
+    degrading = sorted([m for m in movements if m[1] > 10], key=lambda m: m[1], reverse=True)
+    improving = sorted([m for m in movements if m[1] < -10], key=lambda m: m[1])
+    stable = [m for m in movements if -10 <= m[1] <= 10]
+
+    if degrading:
+        txn, change, old, new, count = degrading[0]
+        observations.append({"type": "danger", "title": f"Regression detected: {txn}", "text": f"Average response time increased by {change:.1f}% ({old:.2f}s to {new:.2f}s) across {count} tests."})
+        if len(degrading) > 1:
+            observations.append({"type": "warning", "title": "Additional degrading transactions", "text": ", ".join(f"{m[0]} (+{m[1]:.1f}%)" for m in degrading[1:4])})
+    if improving:
+        txn, change, old, new, count = improving[0]
+        observations.append({"type": "success", "title": f"Improvement detected: {txn}", "text": f"Average response time reduced by {abs(change):.1f}% ({old:.2f}s to {new:.2f}s) across {count} tests."})
+    if stable:
+        observations.append({"type": "info", "title": "Stable transactions", "text": f"{len(stable)} transaction(s) changed by no more than 10% between the oldest and latest test."})
+    return observations
 @app.route("/about")
 def about():
     try:
@@ -294,6 +390,7 @@ def analyze():
         "file_name": os.path.basename(file_path),
         "summary": filtered,
         "rag_result": test_rag,
+        "observations": build_report_observations(filtered, test_rag),
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
@@ -331,6 +428,10 @@ def report(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
+        report_data.setdefault(
+            "observations",
+            build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
+        )
         return render_template("report.html", report_index=report_index, **report_data)
     flash("Report not found")
     return redirect(url_for("history"))
@@ -360,6 +461,10 @@ def export_report_pdf(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
+        report_data.setdefault(
+            "observations",
+            build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
+        )
         rendered = render_template("report.html",
                                    report_index=report_index,
                                    is_pdf=True,
@@ -515,7 +620,9 @@ def trend():
             txn_trends.setdefault(txn, []).append({
                 "label": test_label,
                 "avg": float(row.get("Avg (s)", 0)),
-                "p90": float(row.get("90th % (s)", 0))
+                "p90": float(row.get("90th % (s)", 0)),
+                "error": float(row.get("Error %", 0)),
+                "rag": row.get("RAG", "UNKNOWN")
             })
 
     # Build summary table
@@ -538,6 +645,8 @@ def trend():
     if not selected_txns:
         selected_txns = sorted(all_txns)
 
+    trend_observations = build_trend_observations(txn_trends)
+
     return render_template(
         "trend.html",
         summary_table=summary_table,
@@ -545,7 +654,8 @@ def trend():
         all_txns=sorted(all_txns),
         selected_metric=selected_metric,
         selected_txns=selected_txns,
-        n=n
+        n=n,
+        trend_observations=trend_observations
     )
 @app.route("/baseline")
 def baseline():
@@ -859,6 +969,7 @@ def generate_report():
         "file_name": os.path.basename(results_file),
         "summary": summary,
         "rag_result": test_rag,
+        "observations": build_report_observations(summary, test_rag),
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,

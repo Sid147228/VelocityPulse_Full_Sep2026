@@ -16,6 +16,13 @@
   .graph-section { margin-top: 30px; }
   .graph-section canvas, .graph-section img { max-width: 100%; height: auto; margin: 12px 0; }
   .section { margin-top: 24px; }
+  .observations-grid { display: grid; gap: 10px; margin-top: 12px; }
+  .observation { border-left: 5px solid #2a5298; background: #f5f8fc; border-radius: 6px; padding: 12px 14px; }
+  .observation-title { font-weight: 700; color: #1e3c72; margin-bottom: 4px; }
+  .observation-text { color: #334155; line-height: 1.45; }
+  .observation--success { border-left-color: #28a745; background: #effaf1; }
+  .observation--warning { border-left-color: #e0a800; background: #fff9e8; }
+  .observation--danger { border-left-color: #dc3545; background: #fff1f2; }
 </style>
 
 <h1>Test Report</h1>
@@ -40,6 +47,20 @@
   <p><strong>Total duration:</strong> {{ total_duration or 'Not available' }}</p>
   <p><strong>Concurrent users:</strong> {{ concurrent_users if concurrent_users is not none else 'Not available' }}</p>
   <p><strong>Steady state:</strong> {{ steady_state or 'Not available' }}</p>
+</div>
+
+<div class="section">
+  <h3>Performance observations</h3>
+  <div class="observations-grid">
+    {% for observation in observations|default([]) %}
+      <div class="observation observation--{{ observation.type|default('info') }}">
+        <div class="observation-title">{{ observation.title }}</div>
+        <div class="observation-text">{{ observation.text }}</div>
+      </div>
+    {% else %}
+      <div class="observation"><div class="observation-text">No observations are available for this report.</div></div>
+    {% endfor %}
+  </div>
 </div>
 
 {# Safe defaults for chart data #}

@@ -1,0 +1,1441 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1788256800000,417,Login,200,OK,Thread Group 1-1,text,true,,2468,122,1,1,https://example.com/login,292,0,37
+1788256800135,540,Search Products,200,OK,Thread Group 1-1,text,true,,2064,186,1,1,https://example.com/search-products,378,0,39
+1788256800270,392,View Product,200,OK,Thread Group 1-1,text,true,,2292,200,1,1,https://example.com/view-product,274,0,34
+1788256800405,665,Add to Cart,200,OK,Thread Group 1-1,text,true,,1167,175,1,1,https://example.com/add-to-cart,465,0,30
+1788256800540,809,Checkout,200,OK,Thread Group 1-1,text,true,,1876,228,1,1,https://example.com/checkout,566,0,17
+1788256800675,150,Logout,200,OK,Thread Group 1-1,text,true,,1802,146,1,1,https://example.com/logout,105,0,29
+1788256801000,375,Login,200,OK,Thread Group 1-2,text,true,,2340,159,2,2,https://example.com/login,262,0,21
+1788256801135,439,Search Products,200,OK,Thread Group 1-2,text,true,,1813,167,2,2,https://example.com/search-products,307,0,25
+1788256801270,417,View Product,200,OK,Thread Group 1-2,text,true,,2824,121,2,2,https://example.com/view-product,292,0,48
+1788256801405,546,Add to Cart,200,OK,Thread Group 1-2,text,true,,1022,200,2,2,https://example.com/add-to-cart,382,0,22
+1788256801540,929,Checkout,200,OK,Thread Group 1-2,text,true,,998,94,2,2,https://example.com/checkout,650,0,47
+1788256801675,148,Logout,200,OK,Thread Group 1-2,text,true,,1465,219,2,2,https://example.com/logout,104,0,35
+1788256802000,356,Login,200,OK,Thread Group 1-3,text,true,,2910,207,3,3,https://example.com/login,249,0,20
+1788256802135,577,Search Products,200,OK,Thread Group 1-3,text,true,,2580,170,3,3,https://example.com/search-products,404,0,21
+1788256802270,479,View Product,200,OK,Thread Group 1-3,text,true,,830,140,3,3,https://example.com/view-product,335,0,42
+1788256802405,763,Add to Cart,200,OK,Thread Group 1-3,text,true,,1491,128,3,3,https://example.com/add-to-cart,534,0,31
+1788256802540,843,Checkout,200,OK,Thread Group 1-3,text,true,,822,210,3,3,https://example.com/checkout,590,0,45
+1788256802675,269,Logout,200,OK,Thread Group 1-3,text,true,,1290,187,3,3,https://example.com/logout,188,0,31
+1788256803000,366,Login,200,OK,Thread Group 1-4,text,true,,2455,120,4,4,https://example.com/login,256,0,24
+1788256803135,409,Search Products,200,OK,Thread Group 1-4,text,true,,1156,199,4,4,https://example.com/search-products,286,0,29
+1788256803270,538,View Product,200,OK,Thread Group 1-4,text,true,,2474,126,4,4,https://example.com/view-product,377,0,13
+1788256803405,579,Add to Cart,200,OK,Thread Group 1-4,text,true,,2555,224,4,4,https://example.com/add-to-cart,405,0,31
+1788256803540,928,Checkout,200,OK,Thread Group 1-4,text,true,,2204,185,4,4,https://example.com/checkout,650,0,46
+1788256803675,142,Logout,200,OK,Thread Group 1-4,text,true,,1433,157,4,4,https://example.com/logout,99,0,19
+1788256804000,256,Login,200,OK,Thread Group 1-5,text,true,,2012,181,5,5,https://example.com/login,179,0,20
+1788256804135,534,Search Products,200,OK,Thread Group 1-5,text,true,,1007,103,5,5,https://example.com/search-products,374,0,18
+1788256804270,422,View Product,200,OK,Thread Group 1-5,text,true,,1626,225,5,5,https://example.com/view-product,295,0,39
+1788256804405,944,Add to Cart,200,OK,Thread Group 1-5,text,true,,1049,121,5,5,https://example.com/add-to-cart,661,0,15
+1788256804540,1062,Checkout,200,OK,Thread Group 1-5,text,true,,1386,113,5,5,https://example.com/checkout,743,0,40
+1788256804675,228,Logout,200,OK,Thread Group 1-5,text,true,,1798,232,5,5,https://example.com/logout,160,0,13
+1788256805000,323,Login,200,OK,Thread Group 1-6,text,true,,1775,81,6,6,https://example.com/login,226,0,50
+1788256805135,716,Search Products,200,OK,Thread Group 1-6,text,true,,2305,239,6,6,https://example.com/search-products,501,0,11
+1788256805270,334,View Product,200,OK,Thread Group 1-6,text,true,,2312,222,6,6,https://example.com/view-product,234,0,38
+1788256805405,962,Add to Cart,200,OK,Thread Group 1-6,text,true,,1702,101,6,6,https://example.com/add-to-cart,673,0,26
+1788256805540,1017,Checkout,200,OK,Thread Group 1-6,text,true,,2145,195,6,6,https://example.com/checkout,712,0,40
+1788256805675,285,Logout,200,OK,Thread Group 1-6,text,true,,795,134,6,6,https://example.com/logout,200,0,34
+1788256806000,312,Login,200,OK,Thread Group 1-7,text,true,,945,92,7,7,https://example.com/login,218,0,40
+1788256806135,518,Search Products,200,OK,Thread Group 1-7,text,true,,2693,134,7,7,https://example.com/search-products,363,0,27
+1788256806270,457,View Product,200,OK,Thread Group 1-7,text,true,,2940,100,7,7,https://example.com/view-product,320,0,21
+1788256806405,657,Add to Cart,200,OK,Thread Group 1-7,text,true,,1432,171,7,7,https://example.com/add-to-cart,460,0,42
+1788256806540,1002,Checkout,200,OK,Thread Group 1-7,text,true,,1934,233,7,7,https://example.com/checkout,701,0,34
+1788256806675,152,Logout,200,OK,Thread Group 1-7,text,true,,982,127,7,7,https://example.com/logout,106,0,32
+1788256807000,352,Login,200,OK,Thread Group 1-8,text,true,,1170,123,8,8,https://example.com/login,246,0,49
+1788256807135,255,Search Products,200,OK,Thread Group 1-8,text,true,,2127,137,8,8,https://example.com/search-products,178,0,41
+1788256807270,525,View Product,200,OK,Thread Group 1-8,text,true,,708,111,8,8,https://example.com/view-product,368,0,23
+1788256807405,597,Add to Cart,200,OK,Thread Group 1-8,text,true,,1590,124,8,8,https://example.com/add-to-cart,418,0,15
+1788256807540,888,Checkout,200,OK,Thread Group 1-8,text,true,,1128,94,8,8,https://example.com/checkout,622,0,27
+1788256807675,237,Logout,200,OK,Thread Group 1-8,text,true,,2799,190,8,8,https://example.com/logout,166,0,15
+1788256808000,264,Login,200,OK,Thread Group 1-9,text,true,,796,102,9,9,https://example.com/login,185,0,25
+1788256808135,761,Search Products,200,OK,Thread Group 1-9,text,true,,2343,178,9,9,https://example.com/search-products,533,0,21
+1788256808270,363,View Product,200,OK,Thread Group 1-9,text,true,,973,177,9,9,https://example.com/view-product,254,0,47
+1788256808405,310,Add to Cart,200,OK,Thread Group 1-9,text,true,,2963,215,9,9,https://example.com/add-to-cart,217,0,15
+1788256808540,1462,Checkout,200,OK,Thread Group 1-9,text,true,,1399,105,9,9,https://example.com/checkout,1023,0,29
+1788256808675,272,Logout,200,OK,Thread Group 1-9,text,true,,1044,219,9,9,https://example.com/logout,190,0,41
+1788256809000,317,Login,200,OK,Thread Group 1-10,text,true,,2505,113,10,10,https://example.com/login,222,0,14
+1788256809135,803,Search Products,200,OK,Thread Group 1-10,text,true,,2720,145,10,10,https://example.com/search-products,562,0,33
+1788256809270,478,View Product,200,OK,Thread Group 1-10,text,true,,863,101,10,10,https://example.com/view-product,335,0,48
+1788256809405,476,Add to Cart,200,OK,Thread Group 1-10,text,true,,998,178,10,10,https://example.com/add-to-cart,333,0,47
+1788256809540,1047,Checkout,200,OK,Thread Group 1-10,text,true,,2961,230,10,10,https://example.com/checkout,733,0,26
+1788256809675,230,Logout,200,OK,Thread Group 1-10,text,true,,885,169,10,10,https://example.com/logout,161,0,23
+1788256810000,452,Login,200,OK,Thread Group 1-11,text,true,,880,122,11,11,https://example.com/login,316,0,42
+1788256810135,561,Search Products,200,OK,Thread Group 1-11,text,true,,1978,229,11,11,https://example.com/search-products,393,0,30
+1788256810270,552,View Product,200,OK,Thread Group 1-11,text,true,,2093,159,11,11,https://example.com/view-product,386,0,34
+1788256810405,741,Add to Cart,200,OK,Thread Group 1-11,text,true,,1324,155,11,11,https://example.com/add-to-cart,519,0,31
+1788256810540,1370,Checkout,200,OK,Thread Group 1-11,text,true,,2401,178,11,11,https://example.com/checkout,959,0,33
+1788256810675,266,Logout,200,OK,Thread Group 1-11,text,true,,1175,87,11,11,https://example.com/logout,186,0,10
+1788256811000,278,Login,200,OK,Thread Group 1-12,text,true,,1331,174,12,12,https://example.com/login,195,0,24
+1788256811135,459,Search Products,200,OK,Thread Group 1-12,text,true,,1082,211,12,12,https://example.com/search-products,321,0,28
+1788256811270,536,View Product,200,OK,Thread Group 1-12,text,true,,2153,164,12,12,https://example.com/view-product,375,0,25
+1788256811405,683,Add to Cart,200,OK,Thread Group 1-12,text,true,,1344,106,12,12,https://example.com/add-to-cart,478,0,15
+1788256811540,656,Checkout,200,OK,Thread Group 1-12,text,true,,2361,206,12,12,https://example.com/checkout,459,0,12
+1788256811675,271,Logout,200,OK,Thread Group 1-12,text,true,,769,183,12,12,https://example.com/logout,190,0,45
+1788256812000,307,Login,200,OK,Thread Group 1-13,text,true,,2722,94,13,13,https://example.com/login,215,0,39
+1788256812135,476,Search Products,200,OK,Thread Group 1-13,text,true,,1034,197,13,13,https://example.com/search-products,333,0,34
+1788256812270,460,View Product,200,OK,Thread Group 1-13,text,true,,2080,142,13,13,https://example.com/view-product,322,0,29
+1788256812405,924,Add to Cart,200,OK,Thread Group 1-13,text,true,,1906,124,13,13,https://example.com/add-to-cart,647,0,16
+1788256812540,756,Checkout,200,OK,Thread Group 1-13,text,true,,2452,204,13,13,https://example.com/checkout,529,0,44
+1788256812675,217,Logout,200,OK,Thread Group 1-13,text,true,,799,129,13,13,https://example.com/logout,152,0,19
+1788256813000,336,Login,200,OK,Thread Group 1-14,text,true,,2502,175,14,14,https://example.com/login,235,0,31
+1788256813135,472,Search Products,200,OK,Thread Group 1-14,text,true,,789,158,14,14,https://example.com/search-products,330,0,50
+1788256813270,508,View Product,200,OK,Thread Group 1-14,text,true,,1890,200,14,14,https://example.com/view-product,356,0,18
+1788256813405,941,Add to Cart,200,OK,Thread Group 1-14,text,true,,738,89,14,14,https://example.com/add-to-cart,659,0,21
+1788256813540,538,Checkout,200,OK,Thread Group 1-14,text,true,,2670,111,14,14,https://example.com/checkout,377,0,26
+1788256813675,219,Logout,200,OK,Thread Group 1-14,text,true,,2624,160,14,14,https://example.com/logout,153,0,11
+1788256814000,360,Login,200,OK,Thread Group 1-15,text,true,,2460,210,15,15,https://example.com/login,252,0,44
+1788256814135,491,Search Products,200,OK,Thread Group 1-15,text,true,,2217,80,15,15,https://example.com/search-products,344,0,24
+1788256814270,517,View Product,200,OK,Thread Group 1-15,text,true,,2993,195,15,15,https://example.com/view-product,362,0,21
+1788256814405,882,Add to Cart,200,OK,Thread Group 1-15,text,true,,841,231,15,15,https://example.com/add-to-cart,617,0,12
+1788256814540,538,Checkout,200,OK,Thread Group 1-15,text,true,,1982,165,15,15,https://example.com/checkout,377,0,31
+1788256814675,236,Logout,200,OK,Thread Group 1-15,text,true,,1671,169,15,15,https://example.com/logout,165,0,17
+1788256815000,195,Login,200,OK,Thread Group 1-16,text,true,,2295,99,16,16,https://example.com/login,136,0,20
+1788256815135,614,Search Products,200,OK,Thread Group 1-16,text,true,,2912,193,16,16,https://example.com/search-products,430,0,21
+1788256815270,636,View Product,200,OK,Thread Group 1-16,text,true,,2174,232,16,16,https://example.com/view-product,445,0,14
+1788256815405,772,Add to Cart,200,OK,Thread Group 1-16,text,true,,1199,96,16,16,https://example.com/add-to-cart,540,0,19
+1788256815540,651,Checkout,200,OK,Thread Group 1-16,text,true,,846,219,16,16,https://example.com/checkout,456,0,16
+1788256815675,222,Logout,200,OK,Thread Group 1-16,text,true,,2199,210,16,16,https://example.com/logout,155,0,17
+1788256816000,284,Login,200,OK,Thread Group 1-17,text,true,,2935,103,17,17,https://example.com/login,199,0,44
+1788256816135,560,Search Products,200,OK,Thread Group 1-17,text,true,,1395,235,17,17,https://example.com/search-products,392,0,10
+1788256816270,280,View Product,200,OK,Thread Group 1-17,text,true,,1621,102,17,17,https://example.com/view-product,196,0,16
+1788256816405,929,Add to Cart,200,OK,Thread Group 1-17,text,true,,1203,139,17,17,https://example.com/add-to-cart,650,0,12
+1788256816540,678,Checkout,200,OK,Thread Group 1-17,text,true,,2829,94,17,17,https://example.com/checkout,475,0,43
+1788256816675,139,Logout,200,OK,Thread Group 1-17,text,true,,873,110,17,17,https://example.com/logout,97,0,17
+1788256817000,442,Login,200,OK,Thread Group 1-18,text,true,,1548,156,18,18,https://example.com/login,309,0,24
+1788256817135,533,Search Products,200,OK,Thread Group 1-18,text,true,,1054,229,18,18,https://example.com/search-products,373,0,13
+1788256817270,343,View Product,200,OK,Thread Group 1-18,text,true,,1675,121,18,18,https://example.com/view-product,240,0,46
+1788256817405,671,Add to Cart,200,OK,Thread Group 1-18,text,true,,1223,111,18,18,https://example.com/add-to-cart,470,0,39
+1788256817540,623,Checkout,200,OK,Thread Group 1-18,text,true,,835,162,18,18,https://example.com/checkout,436,0,16
+1788256817675,153,Logout,200,OK,Thread Group 1-18,text,true,,1923,150,18,18,https://example.com/logout,107,0,39
+1788256818000,228,Login,200,OK,Thread Group 1-19,text,true,,1340,189,19,19,https://example.com/login,160,0,37
+1788256818135,647,Search Products,200,OK,Thread Group 1-19,text,true,,2653,124,19,19,https://example.com/search-products,453,0,32
+1788256818270,420,View Product,200,OK,Thread Group 1-19,text,true,,2418,135,19,19,https://example.com/view-product,294,0,45
+1788256818405,741,Add to Cart,200,OK,Thread Group 1-19,text,true,,1919,114,19,19,https://example.com/add-to-cart,519,0,43
+1788256818540,1251,Checkout,200,OK,Thread Group 1-19,text,true,,1202,235,19,19,https://example.com/checkout,876,0,41
+1788256818675,145,Logout,200,OK,Thread Group 1-19,text,true,,1714,148,19,19,https://example.com/logout,102,0,48
+1788256819000,289,Login,200,OK,Thread Group 1-20,text,true,,1677,130,20,20,https://example.com/login,202,0,14
+1788256819135,323,Search Products,200,OK,Thread Group 1-20,text,true,,2727,110,20,20,https://example.com/search-products,226,0,19
+1788256819270,497,View Product,200,OK,Thread Group 1-20,text,true,,969,125,20,20,https://example.com/view-product,348,0,44
+1788256819405,560,Add to Cart,200,OK,Thread Group 1-20,text,true,,2378,186,20,20,https://example.com/add-to-cart,392,0,45
+1788256819540,953,Checkout,200,OK,Thread Group 1-20,text,true,,2428,217,20,20,https://example.com/checkout,667,0,12
+1788256819675,323,Logout,200,OK,Thread Group 1-20,text,true,,1040,139,20,20,https://example.com/logout,226,0,50
+1788256820000,233,Login,200,OK,Thread Group 1-1,text,true,,1628,226,20,20,https://example.com/login,163,0,45
+1788256820135,518,Search Products,200,OK,Thread Group 1-1,text,true,,1089,195,20,20,https://example.com/search-products,363,0,26
+1788256820270,572,View Product,200,OK,Thread Group 1-1,text,true,,1777,229,20,20,https://example.com/view-product,400,0,47
+1788256820405,678,Add to Cart,200,OK,Thread Group 1-1,text,true,,934,228,20,20,https://example.com/add-to-cart,475,0,50
+1788256820540,897,Checkout,200,OK,Thread Group 1-1,text,true,,1534,127,20,20,https://example.com/checkout,628,0,47
+1788256820675,253,Logout,200,OK,Thread Group 1-1,text,true,,1056,106,20,20,https://example.com/logout,177,0,20
+1788256821000,503,Login,200,OK,Thread Group 1-2,text,true,,2707,140,20,20,https://example.com/login,352,0,39
+1788256821135,707,Search Products,200,OK,Thread Group 1-2,text,true,,1545,196,20,20,https://example.com/search-products,495,0,19
+1788256821270,457,View Product,200,OK,Thread Group 1-2,text,true,,2127,215,20,20,https://example.com/view-product,320,0,47
+1788256821405,590,Add to Cart,200,OK,Thread Group 1-2,text,true,,2886,186,20,20,https://example.com/add-to-cart,413,0,31
+1788256821540,585,Checkout,200,OK,Thread Group 1-2,text,true,,1456,97,20,20,https://example.com/checkout,410,0,25
+1788256821675,112,Logout,200,OK,Thread Group 1-2,text,true,,1565,86,20,20,https://example.com/logout,78,0,39
+1788256822000,318,Login,200,OK,Thread Group 1-3,text,true,,1290,165,20,20,https://example.com/login,223,0,21
+1788256822135,510,Search Products,200,OK,Thread Group 1-3,text,true,,2085,234,20,20,https://example.com/search-products,357,0,38
+1788256822270,299,View Product,200,OK,Thread Group 1-3,text,true,,2661,129,20,20,https://example.com/view-product,209,0,29
+1788256822405,830,Add to Cart,200,OK,Thread Group 1-3,text,true,,2905,162,20,20,https://example.com/add-to-cart,581,0,29
+1788256822540,915,Checkout,200,OK,Thread Group 1-3,text,true,,2212,178,20,20,https://example.com/checkout,640,0,45
+1788256822675,155,Logout,200,OK,Thread Group 1-3,text,true,,957,110,20,20,https://example.com/logout,108,0,42
+1788256823000,419,Login,200,OK,Thread Group 1-4,text,true,,2699,95,20,20,https://example.com/login,293,0,13
+1788256823135,382,Search Products,200,OK,Thread Group 1-4,text,true,,2693,205,20,20,https://example.com/search-products,267,0,31
+1788256823270,434,View Product,200,OK,Thread Group 1-4,text,true,,1875,187,20,20,https://example.com/view-product,304,0,45
+1788256823405,399,Add to Cart,200,OK,Thread Group 1-4,text,true,,2085,139,20,20,https://example.com/add-to-cart,279,0,21
+1788256823540,593,Checkout,200,OK,Thread Group 1-4,text,true,,1216,205,20,20,https://example.com/checkout,415,0,10
+1788256823675,343,Logout,200,OK,Thread Group 1-4,text,true,,1869,149,20,20,https://example.com/logout,240,0,17
+1788256824000,592,Login,200,OK,Thread Group 1-5,text,true,,1145,177,20,20,https://example.com/login,414,0,17
+1788256824135,659,Search Products,200,OK,Thread Group 1-5,text,true,,1782,110,20,20,https://example.com/search-products,461,0,37
+1788256824270,625,View Product,200,OK,Thread Group 1-5,text,true,,1125,233,20,20,https://example.com/view-product,438,0,34
+1788256824405,763,Add to Cart,200,OK,Thread Group 1-5,text,true,,2903,188,20,20,https://example.com/add-to-cart,534,0,26
+1788256824540,774,Checkout,200,OK,Thread Group 1-5,text,true,,2964,216,20,20,https://example.com/checkout,542,0,42
+1788256824675,149,Logout,200,OK,Thread Group 1-5,text,true,,1411,119,20,20,https://example.com/logout,104,0,18
+1788256825000,162,Login,200,OK,Thread Group 1-6,text,true,,2786,80,20,20,https://example.com/login,113,0,36
+1788256825135,409,Search Products,200,OK,Thread Group 1-6,text,true,,2464,153,20,20,https://example.com/search-products,286,0,22
+1788256825270,471,View Product,200,OK,Thread Group 1-6,text,true,,2782,180,20,20,https://example.com/view-product,330,0,22
+1788256825405,488,Add to Cart,200,OK,Thread Group 1-6,text,true,,1586,95,20,20,https://example.com/add-to-cart,342,0,45
+1788256825540,599,Checkout,200,OK,Thread Group 1-6,text,true,,1578,114,20,20,https://example.com/checkout,419,0,12
+1788256825675,110,Logout,200,OK,Thread Group 1-6,text,true,,909,240,20,20,https://example.com/logout,77,0,41
+1788256826000,329,Login,200,OK,Thread Group 1-7,text,true,,1789,123,20,20,https://example.com/login,230,0,30
+1788256826135,496,Search Products,200,OK,Thread Group 1-7,text,true,,1218,139,20,20,https://example.com/search-products,347,0,17
+1788256826270,401,View Product,200,OK,Thread Group 1-7,text,true,,1781,173,20,20,https://example.com/view-product,281,0,45
+1788256826405,739,Add to Cart,200,OK,Thread Group 1-7,text,true,,1903,229,20,20,https://example.com/add-to-cart,517,0,22
+1788256826540,1080,Checkout,200,OK,Thread Group 1-7,text,true,,1510,207,20,20,https://example.com/checkout,756,0,24
+1788256826675,168,Logout,200,OK,Thread Group 1-7,text,true,,2405,165,20,20,https://example.com/logout,118,0,42
+1788256827000,305,Login,200,OK,Thread Group 1-8,text,true,,2004,203,20,20,https://example.com/login,214,0,11
+1788256827135,479,Search Products,200,OK,Thread Group 1-8,text,true,,2793,130,20,20,https://example.com/search-products,335,0,43
+1788256827270,520,View Product,200,OK,Thread Group 1-8,text,true,,1393,171,20,20,https://example.com/view-product,364,0,14
+1788256827405,414,Add to Cart,200,OK,Thread Group 1-8,text,true,,1761,123,20,20,https://example.com/add-to-cart,290,0,23
+1788256827540,885,Checkout,200,OK,Thread Group 1-8,text,true,,2768,178,20,20,https://example.com/checkout,620,0,11
+1788256827675,231,Logout,200,OK,Thread Group 1-8,text,true,,2058,153,20,20,https://example.com/logout,162,0,40
+1788256828000,421,Login,200,OK,Thread Group 1-9,text,true,,1341,126,20,20,https://example.com/login,295,0,14
+1788256828135,642,Search Products,200,OK,Thread Group 1-9,text,true,,2312,93,20,20,https://example.com/search-products,449,0,12
+1788256828270,436,View Product,200,OK,Thread Group 1-9,text,true,,1760,189,20,20,https://example.com/view-product,305,0,16
+1788256828405,588,Add to Cart,200,OK,Thread Group 1-9,text,true,,2335,143,20,20,https://example.com/add-to-cart,412,0,46
+1788256828540,1093,Checkout,200,OK,Thread Group 1-9,text,true,,2967,171,20,20,https://example.com/checkout,765,0,50
+1788256828675,331,Logout,200,OK,Thread Group 1-9,text,true,,1179,90,20,20,https://example.com/logout,232,0,25
+1788256829000,434,Login,200,OK,Thread Group 1-10,text,true,,1061,152,20,20,https://example.com/login,304,0,11
+1788256829135,726,Search Products,200,OK,Thread Group 1-10,text,true,,999,217,20,20,https://example.com/search-products,508,0,16
+1788256829270,570,View Product,200,OK,Thread Group 1-10,text,true,,909,105,20,20,https://example.com/view-product,399,0,13
+1788256829405,1034,Add to Cart,200,OK,Thread Group 1-10,text,true,,1210,187,20,20,https://example.com/add-to-cart,724,0,46
+1788256829540,1036,Checkout,200,OK,Thread Group 1-10,text,true,,2425,193,20,20,https://example.com/checkout,725,0,49
+1788256829675,214,Logout,200,OK,Thread Group 1-10,text,true,,2980,120,20,20,https://example.com/logout,150,0,42
+1788256830000,516,Login,200,OK,Thread Group 1-11,text,true,,1440,137,20,20,https://example.com/login,361,0,11
+1788256830135,464,Search Products,200,OK,Thread Group 1-11,text,true,,1750,93,20,20,https://example.com/search-products,325,0,29
+1788256830270,230,View Product,200,OK,Thread Group 1-11,text,true,,2126,128,20,20,https://example.com/view-product,161,0,36
+1788256830405,560,Add to Cart,200,OK,Thread Group 1-11,text,true,,2216,207,20,20,https://example.com/add-to-cart,392,0,10
+1788256830540,1129,Checkout,200,OK,Thread Group 1-11,text,true,,1019,136,20,20,https://example.com/checkout,790,0,29
+1788256830675,250,Logout,200,OK,Thread Group 1-11,text,true,,1015,122,20,20,https://example.com/logout,175,0,18
+1788256831000,245,Login,200,OK,Thread Group 1-12,text,true,,2473,177,20,20,https://example.com/login,172,0,27
+1788256831135,388,Search Products,200,OK,Thread Group 1-12,text,true,,1007,209,20,20,https://example.com/search-products,272,0,41
+1788256831270,623,View Product,200,OK,Thread Group 1-12,text,true,,1797,82,20,20,https://example.com/view-product,436,0,36
+1788256831405,606,Add to Cart,200,OK,Thread Group 1-12,text,true,,1644,106,20,20,https://example.com/add-to-cart,424,0,10
+1788256831540,1015,Checkout,200,OK,Thread Group 1-12,text,true,,977,106,20,20,https://example.com/checkout,710,0,42
+1788256831675,140,Logout,200,OK,Thread Group 1-12,text,true,,2016,144,20,20,https://example.com/logout,98,0,16
+1788256832000,157,Login,200,OK,Thread Group 1-13,text,true,,1101,89,20,20,https://example.com/login,110,0,24
+1788256832135,343,Search Products,200,OK,Thread Group 1-13,text,true,,1696,224,20,20,https://example.com/search-products,240,0,31
+1788256832270,442,View Product,200,OK,Thread Group 1-13,text,true,,2236,195,20,20,https://example.com/view-product,309,0,27
+1788256832405,704,Add to Cart,200,OK,Thread Group 1-13,text,true,,1608,140,20,20,https://example.com/add-to-cart,493,0,10
+1788256832540,714,Checkout,200,OK,Thread Group 1-13,text,true,,1127,233,20,20,https://example.com/checkout,500,0,32
+1788256832675,134,Logout,200,OK,Thread Group 1-13,text,true,,1925,92,20,20,https://example.com/logout,94,0,23
+1788256833000,215,Login,200,OK,Thread Group 1-14,text,true,,2120,196,20,20,https://example.com/login,150,0,27
+1788256833135,582,Search Products,200,OK,Thread Group 1-14,text,true,,2344,225,20,20,https://example.com/search-products,407,0,15
+1788256833270,427,View Product,200,OK,Thread Group 1-14,text,true,,2106,111,20,20,https://example.com/view-product,299,0,16
+1788256833405,434,Add to Cart,200,OK,Thread Group 1-14,text,true,,1484,114,20,20,https://example.com/add-to-cart,304,0,38
+1788256833540,910,Checkout,200,OK,Thread Group 1-14,text,true,,1348,232,20,20,https://example.com/checkout,637,0,20
+1788256833675,153,Logout,200,OK,Thread Group 1-14,text,true,,2669,110,20,20,https://example.com/logout,107,0,22
+1788256834000,400,Login,200,OK,Thread Group 1-15,text,true,,1435,226,20,20,https://example.com/login,280,0,39
+1788256834135,236,Search Products,200,OK,Thread Group 1-15,text,true,,1292,161,20,20,https://example.com/search-products,165,0,41
+1788256834270,672,View Product,200,OK,Thread Group 1-15,text,true,,1181,154,20,20,https://example.com/view-product,470,0,27
+1788256834405,699,Add to Cart,200,OK,Thread Group 1-15,text,true,,2518,149,20,20,https://example.com/add-to-cart,489,0,14
+1788256834540,576,Checkout,200,OK,Thread Group 1-15,text,true,,2878,200,20,20,https://example.com/checkout,403,0,26
+1788256834675,228,Logout,200,OK,Thread Group 1-15,text,true,,743,184,20,20,https://example.com/logout,160,0,21
+1788256835000,644,Login,200,OK,Thread Group 1-16,text,true,,2000,220,20,20,https://example.com/login,451,0,41
+1788256835135,561,Search Products,200,OK,Thread Group 1-16,text,true,,1136,193,20,20,https://example.com/search-products,393,0,30
+1788256835270,663,View Product,200,OK,Thread Group 1-16,text,true,,1171,90,20,20,https://example.com/view-product,464,0,26
+1788256835405,716,Add to Cart,200,OK,Thread Group 1-16,text,true,,1583,98,20,20,https://example.com/add-to-cart,501,0,46
+1788256835540,978,Checkout,200,OK,Thread Group 1-16,text,true,,1812,185,20,20,https://example.com/checkout,685,0,40
+1788256835675,180,Logout,200,OK,Thread Group 1-16,text,true,,3000,165,20,20,https://example.com/logout,126,0,44
+1788256836000,485,Login,200,OK,Thread Group 1-17,text,true,,2572,212,20,20,https://example.com/login,340,0,20
+1788256836135,527,Search Products,200,OK,Thread Group 1-17,text,true,,1098,168,20,20,https://example.com/search-products,369,0,15
+1788256836270,316,View Product,200,OK,Thread Group 1-17,text,true,,1618,155,20,20,https://example.com/view-product,221,0,41
+1788256836405,541,Add to Cart,200,OK,Thread Group 1-17,text,true,,2211,110,20,20,https://example.com/add-to-cart,379,0,23
+1788256836540,665,Checkout,200,OK,Thread Group 1-17,text,true,,1572,147,20,20,https://example.com/checkout,465,0,27
+1788256836675,187,Logout,200,OK,Thread Group 1-17,text,true,,1957,232,20,20,https://example.com/logout,131,0,47
+1788256837000,191,Login,200,OK,Thread Group 1-18,text,true,,1337,122,20,20,https://example.com/login,134,0,45
+1788256837135,490,Search Products,200,OK,Thread Group 1-18,text,true,,1982,157,20,20,https://example.com/search-products,343,0,14
+1788256837270,744,View Product,200,OK,Thread Group 1-18,text,true,,1528,195,20,20,https://example.com/view-product,521,0,33
+1788256837405,331,Add to Cart,200,OK,Thread Group 1-18,text,true,,813,216,20,20,https://example.com/add-to-cart,232,0,35
+1788256837540,1345,Checkout,200,OK,Thread Group 1-18,text,true,,1997,183,20,20,https://example.com/checkout,941,0,23
+1788256837675,180,Logout,200,OK,Thread Group 1-18,text,true,,2690,160,20,20,https://example.com/logout,126,0,32
+1788256838000,223,Login,200,OK,Thread Group 1-19,text,true,,733,120,20,20,https://example.com/login,156,0,30
+1788256838135,449,Search Products,200,OK,Thread Group 1-19,text,true,,2454,211,20,20,https://example.com/search-products,314,0,28
+1788256838270,284,View Product,200,OK,Thread Group 1-19,text,true,,1363,90,20,20,https://example.com/view-product,199,0,33
+1788256838405,606,Add to Cart,200,OK,Thread Group 1-19,text,true,,1951,217,20,20,https://example.com/add-to-cart,424,0,28
+1788256838540,1251,Checkout,200,OK,Thread Group 1-19,text,true,,2878,230,20,20,https://example.com/checkout,876,0,46
+1788256838675,178,Logout,200,OK,Thread Group 1-19,text,true,,2617,176,20,20,https://example.com/logout,125,0,45
+1788256839000,427,Login,200,OK,Thread Group 1-20,text,true,,2441,183,20,20,https://example.com/login,299,0,30
+1788256839135,574,Search Products,200,OK,Thread Group 1-20,text,true,,2749,163,20,20,https://example.com/search-products,402,0,28
+1788256839270,277,View Product,200,OK,Thread Group 1-20,text,true,,1431,170,20,20,https://example.com/view-product,194,0,43
+1788256839405,604,Add to Cart,200,OK,Thread Group 1-20,text,true,,1616,221,20,20,https://example.com/add-to-cart,423,0,24
+1788256839540,912,Checkout,200,OK,Thread Group 1-20,text,true,,988,117,20,20,https://example.com/checkout,638,0,46
+1788256839675,352,Logout,200,OK,Thread Group 1-20,text,true,,2452,216,20,20,https://example.com/logout,246,0,32
+1788256840000,259,Login,200,OK,Thread Group 1-1,text,true,,2916,122,20,20,https://example.com/login,181,0,36
+1788256840135,622,Search Products,200,OK,Thread Group 1-1,text,true,,797,180,20,20,https://example.com/search-products,435,0,14
+1788256840270,623,View Product,200,OK,Thread Group 1-1,text,true,,2545,202,20,20,https://example.com/view-product,436,0,21
+1788256840405,658,Add to Cart,200,OK,Thread Group 1-1,text,true,,2309,85,20,20,https://example.com/add-to-cart,461,0,15
+1788256840540,1830,Checkout,200,OK,Thread Group 1-1,text,true,,2776,176,20,20,https://example.com/checkout,1281,0,12
+1788256840675,490,Logout,200,OK,Thread Group 1-1,text,true,,2835,97,20,20,https://example.com/logout,343,0,23
+1788256841000,249,Login,200,OK,Thread Group 1-2,text,true,,2657,142,20,20,https://example.com/login,174,0,36
+1788256841135,609,Search Products,200,OK,Thread Group 1-2,text,true,,1858,145,20,20,https://example.com/search-products,426,0,41
+1788256841270,497,View Product,200,OK,Thread Group 1-2,text,true,,1827,119,20,20,https://example.com/view-product,348,0,35
+1788256841405,804,Add to Cart,200,OK,Thread Group 1-2,text,true,,876,110,20,20,https://example.com/add-to-cart,563,0,43
+1788256841540,1065,Checkout,200,OK,Thread Group 1-2,text,true,,1110,128,20,20,https://example.com/checkout,746,0,41
+1788256841675,103,Logout,200,OK,Thread Group 1-2,text,true,,2628,188,20,20,https://example.com/logout,72,0,29
+1788256842000,336,Login,200,OK,Thread Group 1-3,text,true,,1767,199,20,20,https://example.com/login,235,0,18
+1788256842135,574,Search Products,200,OK,Thread Group 1-3,text,true,,2404,87,20,20,https://example.com/search-products,402,0,25
+1788256842270,436,View Product,200,OK,Thread Group 1-3,text,true,,1732,185,20,20,https://example.com/view-product,305,0,24
+1788256842405,884,Add to Cart,200,OK,Thread Group 1-3,text,true,,1545,97,20,20,https://example.com/add-to-cart,619,0,32
+1788256842540,708,Checkout,200,OK,Thread Group 1-3,text,true,,2399,131,20,20,https://example.com/checkout,496,0,47
+1788256842675,195,Logout,200,OK,Thread Group 1-3,text,true,,1002,153,20,20,https://example.com/logout,136,0,17
+1788256843000,299,Login,200,OK,Thread Group 1-4,text,true,,2299,156,20,20,https://example.com/login,209,0,11
+1788256843135,364,Search Products,200,OK,Thread Group 1-4,text,true,,1228,166,20,20,https://example.com/search-products,255,0,36
+1788256843270,454,View Product,200,OK,Thread Group 1-4,text,true,,1260,120,20,20,https://example.com/view-product,318,0,13
+1788256843405,403,Add to Cart,200,OK,Thread Group 1-4,text,true,,1604,103,20,20,https://example.com/add-to-cart,282,0,43
+1788256843540,852,Checkout,200,OK,Thread Group 1-4,text,true,,2818,135,20,20,https://example.com/checkout,596,0,39
+1788256843675,230,Logout,200,OK,Thread Group 1-4,text,true,,2513,115,20,20,https://example.com/logout,161,0,16
+1788256844000,360,Login,200,OK,Thread Group 1-5,text,true,,1944,133,20,20,https://example.com/login,252,0,41
+1788256844135,633,Search Products,200,OK,Thread Group 1-5,text,true,,2875,85,20,20,https://example.com/search-products,443,0,43
+1788256844270,689,View Product,200,OK,Thread Group 1-5,text,true,,1545,188,20,20,https://example.com/view-product,482,0,36
+1788256844405,385,Add to Cart,200,OK,Thread Group 1-5,text,true,,2289,117,20,20,https://example.com/add-to-cart,270,0,14
+1788256844540,659,Checkout,200,OK,Thread Group 1-5,text,true,,2279,117,20,20,https://example.com/checkout,461,0,46
+1788256844675,212,Logout,200,OK,Thread Group 1-5,text,true,,1028,115,20,20,https://example.com/logout,148,0,13
+1788256845000,350,Login,200,OK,Thread Group 1-6,text,true,,2203,83,20,20,https://example.com/login,245,0,34
+1788256845135,916,Search Products,200,OK,Thread Group 1-6,text,true,,2966,146,20,20,https://example.com/search-products,641,0,27
+1788256845270,642,View Product,200,OK,Thread Group 1-6,text,true,,956,239,20,20,https://example.com/view-product,449,0,27
+1788256845405,618,Add to Cart,200,OK,Thread Group 1-6,text,true,,2960,227,20,20,https://example.com/add-to-cart,433,0,16
+1788256845540,758,Checkout,200,OK,Thread Group 1-6,text,true,,1119,103,20,20,https://example.com/checkout,531,0,18
+1788256845675,304,Logout,200,OK,Thread Group 1-6,text,true,,1822,172,20,20,https://example.com/logout,213,0,19
+1788256846000,426,Login,200,OK,Thread Group 1-7,text,true,,1388,232,20,20,https://example.com/login,298,0,34
+1788256846135,461,Search Products,200,OK,Thread Group 1-7,text,true,,2693,145,20,20,https://example.com/search-products,323,0,46
+1788256846270,909,View Product,200,OK,Thread Group 1-7,text,true,,1510,176,20,20,https://example.com/view-product,636,0,43
+1788256846405,964,Add to Cart,200,OK,Thread Group 1-7,text,true,,1029,231,20,20,https://example.com/add-to-cart,675,0,10
+1788256846540,515,Checkout,200,OK,Thread Group 1-7,text,true,,1451,84,20,20,https://example.com/checkout,360,0,50
+1788256846675,166,Logout,200,OK,Thread Group 1-7,text,true,,2933,219,20,20,https://example.com/logout,116,0,22
+1788256847000,466,Login,200,OK,Thread Group 1-8,text,true,,2973,83,20,20,https://example.com/login,326,0,18
+1788256847135,1009,Search Products,200,OK,Thread Group 1-8,text,true,,859,95,20,20,https://example.com/search-products,706,0,29
+1788256847270,258,View Product,200,OK,Thread Group 1-8,text,true,,2411,231,20,20,https://example.com/view-product,181,0,31
+1788256847405,1446,Add to Cart,200,OK,Thread Group 1-8,text,true,,2502,231,20,20,https://example.com/add-to-cart,1012,0,37
+1788256847540,746,Checkout,200,OK,Thread Group 1-8,text,true,,2010,111,20,20,https://example.com/checkout,522,0,32
+1788256847675,134,Logout,200,OK,Thread Group 1-8,text,true,,919,227,20,20,https://example.com/logout,94,0,38
+1788256848000,378,Login,200,OK,Thread Group 1-9,text,true,,1230,218,20,20,https://example.com/login,265,0,39
+1788256848135,717,Search Products,200,OK,Thread Group 1-9,text,true,,1392,217,20,20,https://example.com/search-products,502,0,23
+1788256848270,362,View Product,200,OK,Thread Group 1-9,text,true,,2589,240,20,20,https://example.com/view-product,253,0,23
+1788256848405,516,Add to Cart,200,OK,Thread Group 1-9,text,true,,743,203,20,20,https://example.com/add-to-cart,361,0,43
+1788256848540,1558,Checkout,200,OK,Thread Group 1-9,text,true,,1485,139,20,20,https://example.com/checkout,1091,0,47
+1788256848675,156,Logout,200,OK,Thread Group 1-9,text,true,,1956,177,20,20,https://example.com/logout,109,0,23
+1788256849000,505,Login,200,OK,Thread Group 1-10,text,true,,1950,150,20,20,https://example.com/login,354,0,42
+1788256849135,384,Search Products,200,OK,Thread Group 1-10,text,true,,1858,128,20,20,https://example.com/search-products,269,0,29
+1788256849270,531,View Product,200,OK,Thread Group 1-10,text,true,,1300,126,20,20,https://example.com/view-product,372,0,21
+1788256849405,598,Add to Cart,200,OK,Thread Group 1-10,text,true,,948,202,20,20,https://example.com/add-to-cart,419,0,28
+1788256849540,985,Checkout,200,OK,Thread Group 1-10,text,true,,2873,143,20,20,https://example.com/checkout,690,0,47
+1788256849675,188,Logout,200,OK,Thread Group 1-10,text,true,,2766,132,20,20,https://example.com/logout,132,0,38
+1788256850000,361,Login,200,OK,Thread Group 1-11,text,true,,2947,181,20,20,https://example.com/login,253,0,24
+1788256850135,764,Search Products,200,OK,Thread Group 1-11,text,true,,1913,145,20,20,https://example.com/search-products,535,0,29
+1788256850270,319,View Product,200,OK,Thread Group 1-11,text,true,,1016,89,20,20,https://example.com/view-product,223,0,11
+1788256850405,696,Add to Cart,200,OK,Thread Group 1-11,text,true,,1701,170,20,20,https://example.com/add-to-cart,487,0,41
+1788256850540,811,Checkout,200,OK,Thread Group 1-11,text,true,,2593,97,20,20,https://example.com/checkout,568,0,36
+1788256850675,445,Logout,200,OK,Thread Group 1-11,text,true,,1288,222,20,20,https://example.com/logout,312,0,25
+1788256851000,273,Login,200,OK,Thread Group 1-12,text,true,,2856,122,20,20,https://example.com/login,191,0,29
+1788256851135,477,Search Products,200,OK,Thread Group 1-12,text,true,,1236,100,20,20,https://example.com/search-products,334,0,49
+1788256851270,326,View Product,200,OK,Thread Group 1-12,text,true,,1354,114,20,20,https://example.com/view-product,228,0,17
+1788256851405,566,Add to Cart,200,OK,Thread Group 1-12,text,true,,2147,201,20,20,https://example.com/add-to-cart,396,0,29
+1788256851540,915,Checkout,200,OK,Thread Group 1-12,text,true,,2859,147,20,20,https://example.com/checkout,640,0,45
+1788256851675,234,Logout,200,OK,Thread Group 1-12,text,true,,2035,142,20,20,https://example.com/logout,164,0,12
+1788256852000,482,Login,200,OK,Thread Group 1-13,text,true,,2854,146,20,20,https://example.com/login,337,0,13
+1788256852135,450,Search Products,200,OK,Thread Group 1-13,text,true,,1255,213,20,20,https://example.com/search-products,315,0,48
+1788256852270,628,View Product,200,OK,Thread Group 1-13,text,true,,1383,134,20,20,https://example.com/view-product,440,0,32
+1788256852405,789,Add to Cart,200,OK,Thread Group 1-13,text,true,,2121,240,20,20,https://example.com/add-to-cart,552,0,28
+1788256852540,1597,Checkout,200,OK,Thread Group 1-13,text,true,,2966,223,20,20,https://example.com/checkout,1118,0,33
+1788256852675,144,Logout,200,OK,Thread Group 1-13,text,true,,2464,202,20,20,https://example.com/logout,101,0,28
+1788256853000,403,Login,200,OK,Thread Group 1-14,text,true,,1003,85,20,20,https://example.com/login,282,0,47
+1788256853135,385,Search Products,200,OK,Thread Group 1-14,text,true,,1691,191,20,20,https://example.com/search-products,270,0,18
+1788256853270,450,View Product,200,OK,Thread Group 1-14,text,true,,1757,146,20,20,https://example.com/view-product,315,0,16
+1788256853405,921,Add to Cart,200,OK,Thread Group 1-14,text,true,,1122,125,20,20,https://example.com/add-to-cart,645,0,12
+1788256853540,943,Checkout,200,OK,Thread Group 1-14,text,true,,839,114,20,20,https://example.com/checkout,660,0,13
+1788256853675,209,Logout,200,OK,Thread Group 1-14,text,true,,1796,114,20,20,https://example.com/logout,146,0,24
+1788256854000,415,Login,200,OK,Thread Group 1-15,text,true,,1227,217,20,20,https://example.com/login,290,0,15
+1788256854135,682,Search Products,200,OK,Thread Group 1-15,text,true,,1236,162,20,20,https://example.com/search-products,477,0,40
+1788256854270,510,View Product,200,OK,Thread Group 1-15,text,true,,957,153,20,20,https://example.com/view-product,357,0,36
+1788256854405,644,Add to Cart,200,OK,Thread Group 1-15,text,true,,1437,162,20,20,https://example.com/add-to-cart,451,0,15
+1788256854540,896,Checkout,200,OK,Thread Group 1-15,text,true,,2574,232,20,20,https://example.com/checkout,627,0,15
+1788256854675,146,Logout,200,OK,Thread Group 1-15,text,true,,1718,83,20,20,https://example.com/logout,102,0,41
+1788256855000,292,Login,200,OK,Thread Group 1-16,text,true,,1740,197,20,20,https://example.com/login,204,0,27
+1788256855135,373,Search Products,200,OK,Thread Group 1-16,text,true,,743,186,20,20,https://example.com/search-products,261,0,43
+1788256855270,639,View Product,200,OK,Thread Group 1-16,text,true,,950,165,20,20,https://example.com/view-product,447,0,40
+1788256855405,523,Add to Cart,200,OK,Thread Group 1-16,text,true,,2129,96,20,20,https://example.com/add-to-cart,366,0,44
+1788256855540,1065,Checkout,200,OK,Thread Group 1-16,text,true,,2012,213,20,20,https://example.com/checkout,746,0,44
+1788256855675,146,Logout,200,OK,Thread Group 1-16,text,true,,825,134,20,20,https://example.com/logout,102,0,14
+1788256856000,210,Login,200,OK,Thread Group 1-17,text,true,,865,85,20,20,https://example.com/login,147,0,46
+1788256856135,816,Search Products,200,OK,Thread Group 1-17,text,true,,935,187,20,20,https://example.com/search-products,571,0,33
+1788256856270,467,View Product,200,OK,Thread Group 1-17,text,true,,2855,107,20,20,https://example.com/view-product,327,0,24
+1788256856405,613,Add to Cart,200,OK,Thread Group 1-17,text,true,,915,89,20,20,https://example.com/add-to-cart,429,0,34
+1788256856540,777,Checkout,200,OK,Thread Group 1-17,text,true,,2210,210,20,20,https://example.com/checkout,544,0,47
+1788256856675,285,Logout,200,OK,Thread Group 1-17,text,true,,1566,126,20,20,https://example.com/logout,200,0,15
+1788256857000,316,Login,200,OK,Thread Group 1-18,text,true,,2920,87,20,20,https://example.com/login,221,0,32
+1788256857135,486,Search Products,200,OK,Thread Group 1-18,text,true,,2569,95,20,20,https://example.com/search-products,340,0,29
+1788256857270,383,View Product,200,OK,Thread Group 1-18,text,true,,2048,204,20,20,https://example.com/view-product,268,0,37
+1788256857405,836,Add to Cart,200,OK,Thread Group 1-18,text,true,,2332,99,20,20,https://example.com/add-to-cart,585,0,18
+1788256857540,787,Checkout,200,OK,Thread Group 1-18,text,true,,1320,218,20,20,https://example.com/checkout,551,0,19
+1788256857675,251,Logout,200,OK,Thread Group 1-18,text,true,,2088,222,20,20,https://example.com/logout,176,0,29
+1788256858000,292,Login,200,OK,Thread Group 1-19,text,true,,2817,155,20,20,https://example.com/login,204,0,45
+1788256858135,627,Search Products,200,OK,Thread Group 1-19,text,true,,2718,206,20,20,https://example.com/search-products,439,0,37
+1788256858270,561,View Product,200,OK,Thread Group 1-19,text,true,,873,109,20,20,https://example.com/view-product,393,0,24
+1788256858405,649,Add to Cart,200,OK,Thread Group 1-19,text,true,,2796,155,20,20,https://example.com/add-to-cart,454,0,45
+1788256858540,864,Checkout,200,OK,Thread Group 1-19,text,true,,744,92,20,20,https://example.com/checkout,605,0,28
+1788256858675,288,Logout,200,OK,Thread Group 1-19,text,true,,2406,233,20,20,https://example.com/logout,202,0,47
+1788256859000,414,Login,200,OK,Thread Group 1-20,text,true,,2610,220,20,20,https://example.com/login,290,0,40
+1788256859135,616,Search Products,200,OK,Thread Group 1-20,text,true,,1787,196,20,20,https://example.com/search-products,431,0,21
+1788256859270,423,View Product,200,OK,Thread Group 1-20,text,true,,1432,100,20,20,https://example.com/view-product,296,0,48
+1788256859405,972,Add to Cart,200,OK,Thread Group 1-20,text,true,,894,191,20,20,https://example.com/add-to-cart,680,0,13
+1788256859540,818,Checkout,200,OK,Thread Group 1-20,text,true,,1871,237,20,20,https://example.com/checkout,573,0,21
+1788256859675,156,Logout,200,OK,Thread Group 1-20,text,true,,1529,131,20,20,https://example.com/logout,109,0,22
+1788256860000,271,Login,200,OK,Thread Group 1-1,text,true,,2221,126,20,20,https://example.com/login,190,0,21
+1788256860135,598,Search Products,200,OK,Thread Group 1-1,text,true,,2912,87,20,20,https://example.com/search-products,419,0,50
+1788256860270,514,View Product,200,OK,Thread Group 1-1,text,true,,2644,169,20,20,https://example.com/view-product,360,0,39
+1788256860405,734,Add to Cart,200,OK,Thread Group 1-1,text,true,,1095,237,20,20,https://example.com/add-to-cart,514,0,48
+1788256860540,676,Checkout,200,OK,Thread Group 1-1,text,true,,2222,183,20,20,https://example.com/checkout,473,0,15
+1788256860675,197,Logout,200,OK,Thread Group 1-1,text,true,,1460,86,20,20,https://example.com/logout,138,0,42
+1788256861000,470,Login,200,OK,Thread Group 1-2,text,true,,2829,106,20,20,https://example.com/login,329,0,26
+1788256861135,584,Search Products,200,OK,Thread Group 1-2,text,true,,1148,188,20,20,https://example.com/search-products,409,0,19
+1788256861270,404,View Product,200,OK,Thread Group 1-2,text,true,,2969,164,20,20,https://example.com/view-product,283,0,23
+1788256861405,916,Add to Cart,200,OK,Thread Group 1-2,text,true,,990,194,20,20,https://example.com/add-to-cart,641,0,23
+1788256861540,1312,Checkout,200,OK,Thread Group 1-2,text,true,,2635,111,20,20,https://example.com/checkout,918,0,50
+1788256861675,215,Logout,200,OK,Thread Group 1-2,text,true,,2957,110,20,20,https://example.com/logout,150,0,12
+1788256862000,347,Login,200,OK,Thread Group 1-3,text,true,,1233,211,20,20,https://example.com/login,243,0,10
+1788256862135,711,Search Products,200,OK,Thread Group 1-3,text,true,,1669,129,20,20,https://example.com/search-products,498,0,27
+1788256862270,375,View Product,200,OK,Thread Group 1-3,text,true,,1324,105,20,20,https://example.com/view-product,262,0,37
+1788256862405,651,Add to Cart,200,OK,Thread Group 1-3,text,true,,2293,113,20,20,https://example.com/add-to-cart,456,0,11
+1788256862540,576,Checkout,200,OK,Thread Group 1-3,text,true,,2593,130,20,20,https://example.com/checkout,403,0,32
+1788256862675,254,Logout,200,OK,Thread Group 1-3,text,true,,975,98,20,20,https://example.com/logout,178,0,34
+1788256863000,377,Login,200,OK,Thread Group 1-4,text,true,,2541,108,20,20,https://example.com/login,264,0,48
+1788256863135,407,Search Products,200,OK,Thread Group 1-4,text,true,,1121,89,20,20,https://example.com/search-products,285,0,10
+1788256863270,563,View Product,200,OK,Thread Group 1-4,text,true,,703,144,20,20,https://example.com/view-product,394,0,38
+1788256863405,472,Add to Cart,200,OK,Thread Group 1-4,text,true,,1686,163,20,20,https://example.com/add-to-cart,330,0,27
+1788256863540,915,Checkout,200,OK,Thread Group 1-4,text,true,,1352,191,20,20,https://example.com/checkout,640,0,48
+1788256863675,118,Logout,200,OK,Thread Group 1-4,text,true,,1278,129,20,20,https://example.com/logout,83,0,18
+1788256864000,414,Login,200,OK,Thread Group 1-5,text,true,,2742,149,20,20,https://example.com/login,290,0,48
+1788256864135,629,Search Products,200,OK,Thread Group 1-5,text,true,,2843,101,20,20,https://example.com/search-products,440,0,32
+1788256864270,419,View Product,200,OK,Thread Group 1-5,text,true,,2289,224,20,20,https://example.com/view-product,293,0,24
+1788256864405,571,Add to Cart,200,OK,Thread Group 1-5,text,true,,1110,113,20,20,https://example.com/add-to-cart,400,0,20
+1788256864540,736,Checkout,200,OK,Thread Group 1-5,text,true,,2191,235,20,20,https://example.com/checkout,515,0,32
+1788256864675,238,Logout,200,OK,Thread Group 1-5,text,true,,2483,180,20,20,https://example.com/logout,167,0,14
+1788256865000,357,Login,200,OK,Thread Group 1-6,text,true,,2363,128,20,20,https://example.com/login,250,0,25
+1788256865135,448,Search Products,200,OK,Thread Group 1-6,text,true,,701,145,20,20,https://example.com/search-products,314,0,23
+1788256865270,355,View Product,200,OK,Thread Group 1-6,text,true,,2641,122,20,20,https://example.com/view-product,248,0,15
+1788256865405,652,Add to Cart,200,OK,Thread Group 1-6,text,true,,1583,201,20,20,https://example.com/add-to-cart,456,0,27
+1788256865540,1700,Checkout,200,OK,Thread Group 1-6,text,true,,1829,232,20,20,https://example.com/checkout,1190,0,23
+1788256865675,199,Logout,200,OK,Thread Group 1-6,text,true,,1781,201,20,20,https://example.com/logout,139,0,37
+1788256866000,233,Login,200,OK,Thread Group 1-7,text,true,,1407,185,20,20,https://example.com/login,163,0,15
+1788256866135,380,Search Products,200,OK,Thread Group 1-7,text,true,,2245,98,20,20,https://example.com/search-products,266,0,36
+1788256866270,472,View Product,200,OK,Thread Group 1-7,text,true,,2758,204,20,20,https://example.com/view-product,330,0,25
+1788256866405,466,Add to Cart,200,OK,Thread Group 1-7,text,true,,2299,147,20,20,https://example.com/add-to-cart,326,0,45
+1788256866540,779,Checkout,200,OK,Thread Group 1-7,text,true,,2602,137,20,20,https://example.com/checkout,545,0,12
+1788256866675,145,Logout,200,OK,Thread Group 1-7,text,true,,1893,141,20,20,https://example.com/logout,102,0,19
+1788256867000,310,Login,200,OK,Thread Group 1-8,text,true,,2306,212,20,20,https://example.com/login,217,0,34
+1788256867135,583,Search Products,200,OK,Thread Group 1-8,text,true,,2035,236,20,20,https://example.com/search-products,408,0,11
+1788256867270,462,View Product,200,OK,Thread Group 1-8,text,true,,2721,119,20,20,https://example.com/view-product,323,0,24
+1788256867405,623,Add to Cart,200,OK,Thread Group 1-8,text,true,,2103,90,20,20,https://example.com/add-to-cart,436,0,21
+1788256867540,769,Checkout,200,OK,Thread Group 1-8,text,true,,1389,196,20,20,https://example.com/checkout,538,0,47
+1788256867675,214,Logout,200,OK,Thread Group 1-8,text,true,,1872,192,20,20,https://example.com/logout,150,0,19
+1788256868000,380,Login,200,OK,Thread Group 1-9,text,true,,2429,197,20,20,https://example.com/login,266,0,15
+1788256868135,597,Search Products,200,OK,Thread Group 1-9,text,true,,1115,104,20,20,https://example.com/search-products,418,0,38
+1788256868270,379,View Product,200,OK,Thread Group 1-9,text,true,,1292,97,20,20,https://example.com/view-product,265,0,15
+1788256868405,374,Add to Cart,200,OK,Thread Group 1-9,text,true,,2045,197,20,20,https://example.com/add-to-cart,262,0,36
+1788256868540,978,Checkout,200,OK,Thread Group 1-9,text,true,,2094,228,20,20,https://example.com/checkout,685,0,12
+1788256868675,115,Logout,200,OK,Thread Group 1-9,text,true,,2746,236,20,20,https://example.com/logout,80,0,20
+1788256869000,197,Login,200,OK,Thread Group 1-10,text,true,,1167,117,20,20,https://example.com/login,138,0,42
+1788256869135,343,Search Products,200,OK,Thread Group 1-10,text,true,,2165,116,20,20,https://example.com/search-products,240,0,10
+1788256869270,360,View Product,200,OK,Thread Group 1-10,text,true,,2382,213,20,20,https://example.com/view-product,252,0,12
+1788256869405,730,Add to Cart,200,OK,Thread Group 1-10,text,true,,2690,135,20,20,https://example.com/add-to-cart,511,0,42
+1788256869540,960,Checkout,200,OK,Thread Group 1-10,text,true,,2657,127,20,20,https://example.com/checkout,672,0,26
+1788256869675,193,Logout,200,OK,Thread Group 1-10,text,true,,1061,220,20,20,https://example.com/logout,135,0,11
+1788256870000,388,Login,200,OK,Thread Group 1-11,text,true,,2661,179,20,20,https://example.com/login,272,0,28
+1788256870135,475,Search Products,200,OK,Thread Group 1-11,text,true,,826,238,20,20,https://example.com/search-products,332,0,37
+1788256870270,546,View Product,200,OK,Thread Group 1-11,text,true,,2631,106,20,20,https://example.com/view-product,382,0,36
+1788256870405,1063,Add to Cart,200,OK,Thread Group 1-11,text,true,,2074,189,20,20,https://example.com/add-to-cart,744,0,45
+1788256870540,1012,Checkout,200,OK,Thread Group 1-11,text,true,,2989,135,20,20,https://example.com/checkout,708,0,45
+1788256870675,119,Logout,200,OK,Thread Group 1-11,text,true,,2447,179,20,20,https://example.com/logout,83,0,22
+1788256871000,367,Login,200,OK,Thread Group 1-12,text,true,,1228,188,20,20,https://example.com/login,257,0,33
+1788256871135,603,Search Products,200,OK,Thread Group 1-12,text,true,,2426,197,20,20,https://example.com/search-products,422,0,20
+1788256871270,703,View Product,200,OK,Thread Group 1-12,text,true,,981,223,20,20,https://example.com/view-product,492,0,29
+1788256871405,351,Add to Cart,200,OK,Thread Group 1-12,text,true,,876,148,20,20,https://example.com/add-to-cart,246,0,47
+1788256871540,1230,Checkout,200,OK,Thread Group 1-12,text,true,,2215,162,20,20,https://example.com/checkout,861,0,36
+1788256871675,216,Logout,200,OK,Thread Group 1-12,text,true,,2915,185,20,20,https://example.com/logout,151,0,30
+1788256872000,448,Login,200,OK,Thread Group 1-13,text,true,,2000,187,20,20,https://example.com/login,314,0,49
+1788256872135,689,Search Products,200,OK,Thread Group 1-13,text,true,,1680,128,20,20,https://example.com/search-products,482,0,14
+1788256872270,524,View Product,200,OK,Thread Group 1-13,text,true,,2044,122,20,20,https://example.com/view-product,367,0,34
+1788256872405,526,Add to Cart,200,OK,Thread Group 1-13,text,true,,1685,199,20,20,https://example.com/add-to-cart,368,0,12
+1788256872540,554,Checkout,200,OK,Thread Group 1-13,text,true,,1560,176,20,20,https://example.com/checkout,388,0,10
+1788256872675,315,Logout,200,OK,Thread Group 1-13,text,true,,2227,122,20,20,https://example.com/logout,220,0,12
+1788256873000,507,Login,200,OK,Thread Group 1-14,text,true,,2477,186,20,20,https://example.com/login,355,0,21
+1788256873135,496,Search Products,200,OK,Thread Group 1-14,text,true,,2543,156,20,20,https://example.com/search-products,347,0,16
+1788256873270,359,View Product,200,OK,Thread Group 1-14,text,true,,2472,180,20,20,https://example.com/view-product,251,0,45
+1788256873405,433,Add to Cart,200,OK,Thread Group 1-14,text,true,,1067,91,20,20,https://example.com/add-to-cart,303,0,39
+1788256873540,872,Checkout,200,OK,Thread Group 1-14,text,true,,2499,139,20,20,https://example.com/checkout,610,0,41
+1788256873675,180,Logout,200,OK,Thread Group 1-14,text,true,,2360,175,20,20,https://example.com/logout,126,0,35
+1788256874000,444,Login,200,OK,Thread Group 1-15,text,true,,1018,157,20,20,https://example.com/login,311,0,25
+1788256874135,681,Search Products,200,OK,Thread Group 1-15,text,true,,819,111,20,20,https://example.com/search-products,477,0,26
+1788256874270,434,View Product,200,OK,Thread Group 1-15,text,true,,1187,128,20,20,https://example.com/view-product,304,0,36
+1788256874405,777,Add to Cart,200,OK,Thread Group 1-15,text,true,,946,222,20,20,https://example.com/add-to-cart,544,0,44
+1788256874540,1000,Checkout,200,OK,Thread Group 1-15,text,true,,2257,103,20,20,https://example.com/checkout,700,0,26
+1788256874675,221,Logout,200,OK,Thread Group 1-15,text,true,,1163,203,20,20,https://example.com/logout,155,0,33
+1788256875000,379,Login,200,OK,Thread Group 1-16,text,true,,1091,95,20,20,https://example.com/login,265,0,38
+1788256875135,390,Search Products,200,OK,Thread Group 1-16,text,true,,1664,230,20,20,https://example.com/search-products,273,0,50
+1788256875270,574,View Product,200,OK,Thread Group 1-16,text,true,,2179,203,20,20,https://example.com/view-product,402,0,25
+1788256875405,598,Add to Cart,200,OK,Thread Group 1-16,text,true,,1666,203,20,20,https://example.com/add-to-cart,419,0,14
+1788256875540,1626,Checkout,200,OK,Thread Group 1-16,text,true,,1448,204,20,20,https://example.com/checkout,1138,0,27
+1788256875675,185,Logout,200,OK,Thread Group 1-16,text,true,,2917,160,20,20,https://example.com/logout,130,0,12
+1788256876000,394,Login,200,OK,Thread Group 1-17,text,true,,1281,194,20,20,https://example.com/login,276,0,46
+1788256876135,703,Search Products,200,OK,Thread Group 1-17,text,true,,1953,85,20,20,https://example.com/search-products,492,0,35
+1788256876270,913,View Product,200,OK,Thread Group 1-17,text,true,,2667,176,20,20,https://example.com/view-product,639,0,44
+1788256876405,658,Add to Cart,200,OK,Thread Group 1-17,text,true,,2186,128,20,20,https://example.com/add-to-cart,461,0,34
+1788256876540,976,Checkout,200,OK,Thread Group 1-17,text,true,,2489,202,20,20,https://example.com/checkout,683,0,36
+1788256876675,235,Logout,200,OK,Thread Group 1-17,text,true,,1750,128,20,20,https://example.com/logout,164,0,32
+1788256877000,404,Login,200,OK,Thread Group 1-18,text,true,,2520,164,20,20,https://example.com/login,283,0,42
+1788256877135,358,Search Products,200,OK,Thread Group 1-18,text,true,,2844,179,20,20,https://example.com/search-products,251,0,10
+1788256877270,289,View Product,200,OK,Thread Group 1-18,text,true,,1569,166,20,20,https://example.com/view-product,202,0,37
+1788256877405,524,Add to Cart,200,OK,Thread Group 1-18,text,true,,1457,95,20,20,https://example.com/add-to-cart,367,0,48
+1788256877540,1071,Checkout,200,OK,Thread Group 1-18,text,true,,2492,213,20,20,https://example.com/checkout,750,0,37
+1788256877675,255,Logout,200,OK,Thread Group 1-18,text,true,,2549,128,20,20,https://example.com/logout,178,0,43
+1788256878000,295,Login,200,OK,Thread Group 1-19,text,true,,2934,127,20,20,https://example.com/login,206,0,31
+1788256878135,447,Search Products,200,OK,Thread Group 1-19,text,true,,2649,226,20,20,https://example.com/search-products,313,0,41
+1788256878270,556,View Product,200,OK,Thread Group 1-19,text,true,,1181,178,20,20,https://example.com/view-product,389,0,23
+1788256878405,887,Add to Cart,200,OK,Thread Group 1-19,text,true,,2155,95,20,20,https://example.com/add-to-cart,621,0,24
+1788256878540,723,Checkout,200,OK,Thread Group 1-19,text,true,,1107,166,20,20,https://example.com/checkout,506,0,23
+1788256878675,228,Logout,200,OK,Thread Group 1-19,text,true,,1494,126,20,20,https://example.com/logout,160,0,31
+1788256879000,296,Login,200,OK,Thread Group 1-20,text,true,,1447,173,20,20,https://example.com/login,207,0,44
+1788256879135,589,Search Products,200,OK,Thread Group 1-20,text,true,,2082,219,20,20,https://example.com/search-products,412,0,46
+1788256879270,503,View Product,200,OK,Thread Group 1-20,text,true,,1908,220,20,20,https://example.com/view-product,352,0,23
+1788256879405,679,Add to Cart,200,OK,Thread Group 1-20,text,true,,1294,109,20,20,https://example.com/add-to-cart,475,0,40
+1788256879540,755,Checkout,200,OK,Thread Group 1-20,text,true,,2634,124,20,20,https://example.com/checkout,528,0,37
+1788256879675,167,Logout,200,OK,Thread Group 1-20,text,true,,2135,105,20,20,https://example.com/logout,117,0,17
+1788256880000,165,Login,200,OK,Thread Group 1-1,text,true,,2424,85,20,20,https://example.com/login,115,0,10
+1788256880135,453,Search Products,200,OK,Thread Group 1-1,text,true,,860,131,20,20,https://example.com/search-products,317,0,46
+1788256880270,555,View Product,200,OK,Thread Group 1-1,text,true,,1601,124,20,20,https://example.com/view-product,388,0,22
+1788256880405,495,Add to Cart,200,OK,Thread Group 1-1,text,true,,1558,130,20,20,https://example.com/add-to-cart,346,0,47
+1788256880540,470,Checkout,200,OK,Thread Group 1-1,text,true,,2115,192,20,20,https://example.com/checkout,329,0,20
+1788256880675,288,Logout,200,OK,Thread Group 1-1,text,true,,2246,183,20,20,https://example.com/logout,202,0,26
+1788256881000,407,Login,200,OK,Thread Group 1-2,text,true,,2702,194,20,20,https://example.com/login,285,0,31
+1788256881135,462,Search Products,200,OK,Thread Group 1-2,text,true,,2171,157,20,20,https://example.com/search-products,323,0,27
+1788256881270,291,View Product,200,OK,Thread Group 1-2,text,true,,2494,227,20,20,https://example.com/view-product,204,0,22
+1788256881405,816,Add to Cart,200,OK,Thread Group 1-2,text,true,,2940,141,20,20,https://example.com/add-to-cart,571,0,12
+1788256881540,751,Checkout,200,OK,Thread Group 1-2,text,true,,2861,127,20,20,https://example.com/checkout,526,0,33
+1788256881675,188,Logout,200,OK,Thread Group 1-2,text,true,,2440,181,20,20,https://example.com/logout,132,0,32
+1788256882000,330,Login,200,OK,Thread Group 1-3,text,true,,2518,163,20,20,https://example.com/login,231,0,33
+1788256882135,527,Search Products,200,OK,Thread Group 1-3,text,true,,1804,220,20,20,https://example.com/search-products,369,0,27
+1788256882270,442,View Product,200,OK,Thread Group 1-3,text,true,,2833,163,20,20,https://example.com/view-product,309,0,15
+1788256882405,592,Add to Cart,200,OK,Thread Group 1-3,text,true,,2506,228,20,20,https://example.com/add-to-cart,414,0,48
+1788256882540,800,Checkout,200,OK,Thread Group 1-3,text,true,,2127,176,20,20,https://example.com/checkout,560,0,44
+1788256882675,260,Logout,200,OK,Thread Group 1-3,text,true,,1481,196,20,20,https://example.com/logout,182,0,41
+1788256883000,378,Login,200,OK,Thread Group 1-4,text,true,,1333,175,20,20,https://example.com/login,265,0,22
+1788256883135,663,Search Products,200,OK,Thread Group 1-4,text,true,,2901,115,20,20,https://example.com/search-products,464,0,33
+1788256883270,402,View Product,200,OK,Thread Group 1-4,text,true,,2787,122,20,20,https://example.com/view-product,281,0,27
+1788256883405,1025,Add to Cart,200,OK,Thread Group 1-4,text,true,,2595,126,20,20,https://example.com/add-to-cart,718,0,20
+1788256883540,1023,Checkout,200,OK,Thread Group 1-4,text,true,,1140,129,20,20,https://example.com/checkout,716,0,38
+1788256883675,292,Logout,200,OK,Thread Group 1-4,text,true,,2989,137,20,20,https://example.com/logout,204,0,26
+1788256884000,507,Login,200,OK,Thread Group 1-5,text,true,,2661,186,20,20,https://example.com/login,355,0,47
+1788256884135,646,Search Products,200,OK,Thread Group 1-5,text,true,,918,215,20,20,https://example.com/search-products,452,0,40
+1788256884270,801,View Product,200,OK,Thread Group 1-5,text,true,,2669,83,20,20,https://example.com/view-product,561,0,21
+1788256884405,667,Add to Cart,200,OK,Thread Group 1-5,text,true,,2456,226,20,20,https://example.com/add-to-cart,467,0,25
+1788256884540,503,Checkout,200,OK,Thread Group 1-5,text,true,,1485,199,20,20,https://example.com/checkout,352,0,31
+1788256884675,174,Logout,200,OK,Thread Group 1-5,text,true,,798,102,20,20,https://example.com/logout,122,0,15
+1788256885000,315,Login,200,OK,Thread Group 1-6,text,true,,1480,234,20,20,https://example.com/login,220,0,39
+1788256885135,649,Search Products,200,OK,Thread Group 1-6,text,true,,1749,108,20,20,https://example.com/search-products,454,0,29
+1788256885270,481,View Product,200,OK,Thread Group 1-6,text,true,,1414,91,20,20,https://example.com/view-product,337,0,13
+1788256885405,1040,Add to Cart,200,OK,Thread Group 1-6,text,true,,1711,84,20,20,https://example.com/add-to-cart,728,0,31
+1788256885540,808,Checkout,200,OK,Thread Group 1-6,text,true,,1631,143,20,20,https://example.com/checkout,566,0,39
+1788256885675,105,Logout,200,OK,Thread Group 1-6,text,true,,2476,205,20,20,https://example.com/logout,74,0,24
+1788256886000,446,Login,200,OK,Thread Group 1-7,text,true,,952,211,20,20,https://example.com/login,312,0,44
+1788256886135,414,Search Products,200,OK,Thread Group 1-7,text,true,,1568,81,20,20,https://example.com/search-products,290,0,41
+1788256886270,586,View Product,200,OK,Thread Group 1-7,text,true,,943,108,20,20,https://example.com/view-product,410,0,16
+1788256886405,822,Add to Cart,200,OK,Thread Group 1-7,text,true,,2688,227,20,20,https://example.com/add-to-cart,575,0,36
+1788256886540,795,Checkout,200,OK,Thread Group 1-7,text,true,,1723,194,20,20,https://example.com/checkout,556,0,13
+1788256886675,212,Logout,200,OK,Thread Group 1-7,text,true,,1658,90,20,20,https://example.com/logout,148,0,41
+1788256887000,339,Login,200,OK,Thread Group 1-8,text,true,,2173,127,20,20,https://example.com/login,237,0,28
+1788256887135,807,Search Products,200,OK,Thread Group 1-8,text,true,,2601,117,20,20,https://example.com/search-products,565,0,25
+1788256887270,307,View Product,200,OK,Thread Group 1-8,text,true,,1379,233,20,20,https://example.com/view-product,215,0,43
+1788256887405,687,Add to Cart,200,OK,Thread Group 1-8,text,true,,1149,135,20,20,https://example.com/add-to-cart,481,0,36
+1788256887540,1169,Checkout,200,OK,Thread Group 1-8,text,true,,1441,110,20,20,https://example.com/checkout,818,0,37
+1788256887675,217,Logout,200,OK,Thread Group 1-8,text,true,,892,217,20,20,https://example.com/logout,152,0,42
+1788256888000,484,Login,200,OK,Thread Group 1-9,text,true,,1781,116,20,20,https://example.com/login,339,0,20
+1788256888135,977,Search Products,200,OK,Thread Group 1-9,text,true,,1274,94,20,20,https://example.com/search-products,684,0,44
+1788256888270,318,View Product,200,OK,Thread Group 1-9,text,true,,2768,157,20,20,https://example.com/view-product,223,0,35
+1788256888405,642,Add to Cart,200,OK,Thread Group 1-9,text,true,,2228,175,20,20,https://example.com/add-to-cart,449,0,12
+1788256888540,906,Checkout,200,OK,Thread Group 1-9,text,true,,1257,131,20,20,https://example.com/checkout,634,0,24
+1788256888675,236,Logout,200,OK,Thread Group 1-9,text,true,,2821,235,20,20,https://example.com/logout,165,0,24
+1788256889000,440,Login,200,OK,Thread Group 1-10,text,true,,2216,218,20,20,https://example.com/login,308,0,34
+1788256889135,580,Search Products,200,OK,Thread Group 1-10,text,true,,2968,197,20,20,https://example.com/search-products,406,0,36
+1788256889270,423,View Product,200,OK,Thread Group 1-10,text,true,,2098,123,20,20,https://example.com/view-product,296,0,10
+1788256889405,779,Add to Cart,200,OK,Thread Group 1-10,text,true,,2652,140,20,20,https://example.com/add-to-cart,545,0,27
+1788256889540,859,Checkout,200,OK,Thread Group 1-10,text,true,,2352,104,20,20,https://example.com/checkout,601,0,30
+1788256889675,214,Logout,200,OK,Thread Group 1-10,text,true,,868,198,20,20,https://example.com/logout,150,0,25
+1788256890000,306,Login,200,OK,Thread Group 1-11,text,true,,1695,133,20,20,https://example.com/login,214,0,16
+1788256890135,348,Search Products,200,OK,Thread Group 1-11,text,true,,2369,81,20,20,https://example.com/search-products,244,0,28
+1788256890270,366,View Product,200,OK,Thread Group 1-11,text,true,,1758,116,20,20,https://example.com/view-product,256,0,37
+1788256890405,797,Add to Cart,200,OK,Thread Group 1-11,text,true,,1255,238,20,20,https://example.com/add-to-cart,558,0,49
+1788256890540,848,Checkout,200,OK,Thread Group 1-11,text,true,,2716,199,20,20,https://example.com/checkout,594,0,43
+1788256890675,158,Logout,200,OK,Thread Group 1-11,text,true,,961,126,20,20,https://example.com/logout,111,0,45
+1788256891000,244,Login,200,OK,Thread Group 1-12,text,true,,1452,111,20,20,https://example.com/login,171,0,20
+1788256891135,671,Search Products,200,OK,Thread Group 1-12,text,true,,2649,216,20,20,https://example.com/search-products,470,0,45
+1788256891270,295,View Product,200,OK,Thread Group 1-12,text,true,,1779,159,20,20,https://example.com/view-product,206,0,40
+1788256891405,602,Add to Cart,200,OK,Thread Group 1-12,text,true,,1421,218,20,20,https://example.com/add-to-cart,421,0,38
+1788256891540,1123,Checkout,200,OK,Thread Group 1-12,text,true,,2921,89,20,20,https://example.com/checkout,786,0,14
+1788256891675,260,Logout,200,OK,Thread Group 1-12,text,true,,2324,177,20,20,https://example.com/logout,182,0,40
+1788256892000,301,Login,200,OK,Thread Group 1-13,text,true,,1597,141,20,20,https://example.com/login,211,0,18
+1788256892135,278,Search Products,200,OK,Thread Group 1-13,text,true,,725,145,20,20,https://example.com/search-products,195,0,31
+1788256892270,329,View Product,200,OK,Thread Group 1-13,text,true,,2948,191,20,20,https://example.com/view-product,230,0,46
+1788256892405,493,Add to Cart,200,OK,Thread Group 1-13,text,true,,882,181,20,20,https://example.com/add-to-cart,345,0,33
+1788256892540,608,Checkout,200,OK,Thread Group 1-13,text,true,,798,178,20,20,https://example.com/checkout,426,0,38
+1788256892675,176,Logout,200,OK,Thread Group 1-13,text,true,,877,197,20,20,https://example.com/logout,123,0,10
+1788256893000,294,Login,200,OK,Thread Group 1-14,text,true,,1247,239,20,20,https://example.com/login,206,0,17
+1788256893135,491,Search Products,200,OK,Thread Group 1-14,text,true,,2564,88,20,20,https://example.com/search-products,344,0,44
+1788256893270,481,View Product,200,OK,Thread Group 1-14,text,true,,2844,207,20,20,https://example.com/view-product,337,0,22
+1788256893405,820,Add to Cart,200,OK,Thread Group 1-14,text,true,,773,91,20,20,https://example.com/add-to-cart,574,0,49
+1788256893540,1622,Checkout,200,OK,Thread Group 1-14,text,true,,1414,127,20,20,https://example.com/checkout,1135,0,21
+1788256893675,140,Logout,200,OK,Thread Group 1-14,text,true,,1383,138,20,20,https://example.com/logout,98,0,18
+1788256894000,322,Login,200,OK,Thread Group 1-15,text,true,,961,236,20,20,https://example.com/login,225,0,41
+1788256894135,809,Search Products,200,OK,Thread Group 1-15,text,true,,2852,213,20,20,https://example.com/search-products,566,0,20
+1788256894270,383,View Product,200,OK,Thread Group 1-15,text,true,,1270,177,20,20,https://example.com/view-product,268,0,35
+1788256894405,471,Add to Cart,200,OK,Thread Group 1-15,text,true,,1828,236,20,20,https://example.com/add-to-cart,330,0,39
+1788256894540,1049,Checkout,200,OK,Thread Group 1-15,text,true,,2120,237,20,20,https://example.com/checkout,734,0,40
+1788256894675,276,Logout,200,OK,Thread Group 1-15,text,true,,1733,158,20,20,https://example.com/logout,193,0,31
+1788256895000,319,Login,200,OK,Thread Group 1-16,text,true,,2358,206,20,20,https://example.com/login,223,0,12
+1788256895135,576,Search Products,200,OK,Thread Group 1-16,text,true,,2052,177,20,20,https://example.com/search-products,403,0,15
+1788256895270,562,View Product,200,OK,Thread Group 1-16,text,true,,2301,89,20,20,https://example.com/view-product,393,0,20
+1788256895405,576,Add to Cart,200,OK,Thread Group 1-16,text,true,,813,120,20,20,https://example.com/add-to-cart,403,0,40
+1788256895540,1461,Checkout,200,OK,Thread Group 1-16,text,true,,1692,185,20,20,https://example.com/checkout,1023,0,31
+1788256895675,232,Logout,200,OK,Thread Group 1-16,text,true,,1678,99,20,20,https://example.com/logout,162,0,27
+1788256896000,575,Login,200,OK,Thread Group 1-17,text,true,,1374,234,20,20,https://example.com/login,402,0,35
+1788256896135,862,Search Products,200,OK,Thread Group 1-17,text,true,,1381,89,20,20,https://example.com/search-products,603,0,43
+1788256896270,415,View Product,200,OK,Thread Group 1-17,text,true,,1365,85,20,20,https://example.com/view-product,290,0,15
+1788256896405,792,Add to Cart,200,OK,Thread Group 1-17,text,true,,1858,217,20,20,https://example.com/add-to-cart,554,0,10
+1788256896540,578,Checkout,200,OK,Thread Group 1-17,text,true,,1783,192,20,20,https://example.com/checkout,405,0,26
+1788256896675,264,Logout,200,OK,Thread Group 1-17,text,true,,1424,175,20,20,https://example.com/logout,185,0,38
+1788256897000,235,Login,200,OK,Thread Group 1-18,text,true,,2764,177,20,20,https://example.com/login,164,0,17
+1788256897135,319,Search Products,200,OK,Thread Group 1-18,text,true,,1897,204,20,20,https://example.com/search-products,223,0,50
+1788256897270,569,View Product,200,OK,Thread Group 1-18,text,true,,1820,176,20,20,https://example.com/view-product,398,0,40
+1788256897405,721,Add to Cart,200,OK,Thread Group 1-18,text,true,,973,210,20,20,https://example.com/add-to-cart,505,0,49
+1788256897540,632,Checkout,200,OK,Thread Group 1-18,text,true,,1762,156,20,20,https://example.com/checkout,442,0,20
+1788256897675,292,Logout,200,OK,Thread Group 1-18,text,true,,2804,221,20,20,https://example.com/logout,204,0,50
+1788256898000,259,Login,200,OK,Thread Group 1-19,text,true,,2901,121,20,20,https://example.com/login,181,0,16
+1788256898135,459,Search Products,200,OK,Thread Group 1-19,text,true,,2271,135,20,20,https://example.com/search-products,321,0,19
+1788256898270,392,View Product,200,OK,Thread Group 1-19,text,true,,1780,160,20,20,https://example.com/view-product,274,0,43
+1788256898405,745,Add to Cart,200,OK,Thread Group 1-19,text,true,,1214,176,20,20,https://example.com/add-to-cart,522,0,18
+1788256898540,753,Checkout,200,OK,Thread Group 1-19,text,true,,2904,141,20,20,https://example.com/checkout,527,0,13
+1788256898675,161,Logout,200,OK,Thread Group 1-19,text,true,,1766,215,20,20,https://example.com/logout,113,0,18
+1788256899000,286,Login,200,OK,Thread Group 1-20,text,true,,2642,168,20,20,https://example.com/login,200,0,15
+1788256899135,714,Search Products,200,OK,Thread Group 1-20,text,true,,2353,193,20,20,https://example.com/search-products,500,0,48
+1788256899270,218,View Product,200,OK,Thread Group 1-20,text,true,,2127,196,20,20,https://example.com/view-product,153,0,29
+1788256899405,634,Add to Cart,200,OK,Thread Group 1-20,text,true,,1518,100,20,20,https://example.com/add-to-cart,444,0,25
+1788256899540,995,Checkout,200,OK,Thread Group 1-20,text,true,,1613,163,20,20,https://example.com/checkout,696,0,42
+1788256899675,257,Logout,200,OK,Thread Group 1-20,text,true,,1810,123,20,20,https://example.com/logout,180,0,14
+1788256900000,210,Login,200,OK,Thread Group 1-1,text,true,,1876,213,20,20,https://example.com/login,147,0,13
+1788256900135,579,Search Products,200,OK,Thread Group 1-1,text,true,,848,190,20,20,https://example.com/search-products,405,0,45
+1788256900270,710,View Product,200,OK,Thread Group 1-1,text,true,,1898,161,20,20,https://example.com/view-product,497,0,46
+1788256900405,591,Add to Cart,200,OK,Thread Group 1-1,text,true,,2362,208,20,20,https://example.com/add-to-cart,414,0,11
+1788256900540,891,Checkout,200,OK,Thread Group 1-1,text,true,,727,226,20,20,https://example.com/checkout,624,0,37
+1788256900675,221,Logout,200,OK,Thread Group 1-1,text,true,,2319,207,20,20,https://example.com/logout,155,0,40
+1788256901000,252,Login,200,OK,Thread Group 1-2,text,true,,2866,207,20,20,https://example.com/login,176,0,14
+1788256901135,384,Search Products,200,OK,Thread Group 1-2,text,true,,2975,179,20,20,https://example.com/search-products,269,0,47
+1788256901270,416,View Product,200,OK,Thread Group 1-2,text,true,,766,118,20,20,https://example.com/view-product,291,0,10
+1788256901405,574,Add to Cart,200,OK,Thread Group 1-2,text,true,,1103,117,20,20,https://example.com/add-to-cart,402,0,39
+1788256901540,726,Checkout,200,OK,Thread Group 1-2,text,true,,2682,239,20,20,https://example.com/checkout,508,0,30
+1788256901675,286,Logout,200,OK,Thread Group 1-2,text,true,,2599,229,20,20,https://example.com/logout,200,0,21
+1788256902000,538,Login,200,OK,Thread Group 1-3,text,true,,2699,190,20,20,https://example.com/login,377,0,17
+1788256902135,442,Search Products,200,OK,Thread Group 1-3,text,true,,1558,238,20,20,https://example.com/search-products,309,0,16
+1788256902270,309,View Product,200,OK,Thread Group 1-3,text,true,,1982,199,20,20,https://example.com/view-product,216,0,45
+1788256902405,577,Add to Cart,200,OK,Thread Group 1-3,text,true,,1158,221,20,20,https://example.com/add-to-cart,404,0,43
+1788256902540,385,Checkout,200,OK,Thread Group 1-3,text,true,,2239,221,20,20,https://example.com/checkout,270,0,48
+1788256902675,239,Logout,200,OK,Thread Group 1-3,text,true,,1650,233,20,20,https://example.com/logout,167,0,28
+1788256903000,393,Login,200,OK,Thread Group 1-4,text,true,,2389,105,20,20,https://example.com/login,275,0,48
+1788256903135,630,Search Products,200,OK,Thread Group 1-4,text,true,,1653,236,20,20,https://example.com/search-products,441,0,10
+1788256903270,535,View Product,200,OK,Thread Group 1-4,text,true,,1260,201,20,20,https://example.com/view-product,374,0,29
+1788256903405,417,Add to Cart,200,OK,Thread Group 1-4,text,true,,1782,233,20,20,https://example.com/add-to-cart,292,0,10
+1788256903540,1137,Checkout,200,OK,Thread Group 1-4,text,true,,2313,110,20,20,https://example.com/checkout,796,0,44
+1788256903675,247,Logout,200,OK,Thread Group 1-4,text,true,,757,94,20,20,https://example.com/logout,173,0,10
+1788256904000,420,Login,200,OK,Thread Group 1-5,text,true,,2670,179,20,20,https://example.com/login,294,0,26
+1788256904135,533,Search Products,200,OK,Thread Group 1-5,text,true,,2629,221,20,20,https://example.com/search-products,373,0,30
+1788256904270,457,View Product,200,OK,Thread Group 1-5,text,true,,2212,150,20,20,https://example.com/view-product,320,0,33
+1788256904405,660,Add to Cart,200,OK,Thread Group 1-5,text,true,,1656,218,20,20,https://example.com/add-to-cart,462,0,31
+1788256904540,955,Checkout,200,OK,Thread Group 1-5,text,true,,2508,172,20,20,https://example.com/checkout,668,0,25
+1788256904675,230,Logout,200,OK,Thread Group 1-5,text,true,,1625,184,20,20,https://example.com/logout,161,0,33
+1788256905000,585,Login,200,OK,Thread Group 1-6,text,true,,1070,213,20,20,https://example.com/login,410,0,18
+1788256905135,338,Search Products,200,OK,Thread Group 1-6,text,true,,2095,105,20,20,https://example.com/search-products,237,0,23
+1788256905270,376,View Product,200,OK,Thread Group 1-6,text,true,,2647,191,20,20,https://example.com/view-product,263,0,43
+1788256905405,500,Add to Cart,200,OK,Thread Group 1-6,text,true,,2537,133,20,20,https://example.com/add-to-cart,350,0,30
+1788256905540,1119,Checkout,200,OK,Thread Group 1-6,text,true,,1510,218,20,20,https://example.com/checkout,783,0,32
+1788256905675,198,Logout,200,OK,Thread Group 1-6,text,true,,1429,110,20,20,https://example.com/logout,139,0,43
+1788256906000,325,Login,200,OK,Thread Group 1-7,text,true,,2438,193,20,20,https://example.com/login,227,0,40
+1788256906135,592,Search Products,200,OK,Thread Group 1-7,text,true,,2769,150,20,20,https://example.com/search-products,414,0,47
+1788256906270,422,View Product,200,OK,Thread Group 1-7,text,true,,2944,226,20,20,https://example.com/view-product,295,0,22
+1788256906405,406,Add to Cart,200,OK,Thread Group 1-7,text,true,,2987,88,20,20,https://example.com/add-to-cart,284,0,11
+1788256906540,664,Checkout,200,OK,Thread Group 1-7,text,true,,756,88,20,20,https://example.com/checkout,465,0,31
+1788256906675,378,Logout,200,OK,Thread Group 1-7,text,true,,2953,238,20,20,https://example.com/logout,265,0,13
+1788256907000,196,Login,200,OK,Thread Group 1-8,text,true,,2962,240,20,20,https://example.com/login,137,0,23
+1788256907135,874,Search Products,200,OK,Thread Group 1-8,text,true,,1947,230,20,20,https://example.com/search-products,612,0,16
+1788256907270,406,View Product,200,OK,Thread Group 1-8,text,true,,2386,111,20,20,https://example.com/view-product,284,0,16
+1788256907405,1060,Add to Cart,200,OK,Thread Group 1-8,text,true,,2780,139,20,20,https://example.com/add-to-cart,742,0,15
+1788256907540,654,Checkout,200,OK,Thread Group 1-8,text,true,,1502,191,20,20,https://example.com/checkout,458,0,44
+1788256907675,137,Logout,200,OK,Thread Group 1-8,text,true,,2649,158,20,20,https://example.com/logout,96,0,25
+1788256908000,386,Login,200,OK,Thread Group 1-9,text,true,,1223,237,20,20,https://example.com/login,270,0,26
+1788256908135,550,Search Products,200,OK,Thread Group 1-9,text,true,,726,92,20,20,https://example.com/search-products,385,0,13
+1788256908270,398,View Product,200,OK,Thread Group 1-9,text,true,,1716,192,20,20,https://example.com/view-product,279,0,42
+1788256908405,657,Add to Cart,200,OK,Thread Group 1-9,text,true,,2449,205,20,20,https://example.com/add-to-cart,460,0,48
+1788256908540,461,Checkout,200,OK,Thread Group 1-9,text,true,,1288,160,20,20,https://example.com/checkout,323,0,38
+1788256908675,217,Logout,200,OK,Thread Group 1-9,text,true,,2377,94,20,20,https://example.com/logout,152,0,33
+1788256909000,405,Login,200,OK,Thread Group 1-10,text,true,,2819,157,20,20,https://example.com/login,284,0,26
+1788256909135,549,Search Products,200,OK,Thread Group 1-10,text,true,,1021,185,20,20,https://example.com/search-products,384,0,32
+1788256909270,606,View Product,200,OK,Thread Group 1-10,text,true,,1475,120,20,20,https://example.com/view-product,424,0,15
+1788256909405,796,Add to Cart,200,OK,Thread Group 1-10,text,true,,2404,137,20,20,https://example.com/add-to-cart,557,0,28
+1788256909540,1251,Checkout,200,OK,Thread Group 1-10,text,true,,2823,89,20,20,https://example.com/checkout,876,0,16
+1788256909675,161,Logout,200,OK,Thread Group 1-10,text,true,,1461,189,20,20,https://example.com/logout,113,0,21
+1788256910000,217,Login,200,OK,Thread Group 1-11,text,true,,2055,200,20,20,https://example.com/login,152,0,22
+1788256910135,610,Search Products,200,OK,Thread Group 1-11,text,true,,975,208,20,20,https://example.com/search-products,427,0,23
+1788256910270,341,View Product,200,OK,Thread Group 1-11,text,true,,920,90,20,20,https://example.com/view-product,239,0,35
+1788256910405,630,Add to Cart,200,OK,Thread Group 1-11,text,true,,1240,112,20,20,https://example.com/add-to-cart,441,0,32
+1788256910540,810,Checkout,200,OK,Thread Group 1-11,text,true,,2772,120,20,20,https://example.com/checkout,567,0,43
+1788256910675,261,Logout,200,OK,Thread Group 1-11,text,true,,1846,84,20,20,https://example.com/logout,183,0,15
+1788256911000,431,Login,200,OK,Thread Group 1-12,text,true,,1056,205,20,20,https://example.com/login,302,0,38
+1788256911135,987,Search Products,200,OK,Thread Group 1-12,text,true,,2063,210,20,20,https://example.com/search-products,691,0,47
+1788256911270,390,View Product,200,OK,Thread Group 1-12,text,true,,1688,166,20,20,https://example.com/view-product,273,0,17
+1788256911405,708,Add to Cart,200,OK,Thread Group 1-12,text,true,,2826,159,20,20,https://example.com/add-to-cart,496,0,17
+1788256911540,978,Checkout,200,OK,Thread Group 1-12,text,true,,1875,164,20,20,https://example.com/checkout,685,0,25
+1788256911675,147,Logout,200,OK,Thread Group 1-12,text,true,,1129,160,20,20,https://example.com/logout,103,0,39
+1788256912000,267,Login,200,OK,Thread Group 1-13,text,true,,2851,137,20,20,https://example.com/login,187,0,47
+1788256912135,609,Search Products,200,OK,Thread Group 1-13,text,true,,2572,193,20,20,https://example.com/search-products,426,0,25
+1788256912270,993,View Product,200,OK,Thread Group 1-13,text,true,,2962,213,20,20,https://example.com/view-product,695,0,22
+1788256912405,539,Add to Cart,200,OK,Thread Group 1-13,text,true,,2195,179,20,20,https://example.com/add-to-cart,377,0,50
+1788256912540,682,Checkout,200,OK,Thread Group 1-13,text,true,,1431,129,20,20,https://example.com/checkout,477,0,25
+1788256912675,123,Logout,200,OK,Thread Group 1-13,text,true,,2208,105,20,20,https://example.com/logout,86,0,30
+1788256913000,358,Login,200,OK,Thread Group 1-14,text,true,,1734,212,20,20,https://example.com/login,251,0,35
+1788256913135,485,Search Products,200,OK,Thread Group 1-14,text,true,,1280,92,20,20,https://example.com/search-products,340,0,19
+1788256913270,341,View Product,200,OK,Thread Group 1-14,text,true,,899,155,20,20,https://example.com/view-product,239,0,20
+1788256913405,831,Add to Cart,200,OK,Thread Group 1-14,text,true,,751,107,20,20,https://example.com/add-to-cart,582,0,41
+1788256913540,749,Checkout,200,OK,Thread Group 1-14,text,true,,1551,188,20,20,https://example.com/checkout,524,0,34
+1788256913675,311,Logout,200,OK,Thread Group 1-14,text,true,,1941,199,20,20,https://example.com/logout,218,0,43
+1788256914000,297,Login,200,OK,Thread Group 1-15,text,true,,1140,138,20,20,https://example.com/login,208,0,24
+1788256914135,485,Search Products,200,OK,Thread Group 1-15,text,true,,1193,134,20,20,https://example.com/search-products,340,0,24
+1788256914270,190,View Product,200,OK,Thread Group 1-15,text,true,,1273,205,20,20,https://example.com/view-product,133,0,27
+1788256914405,503,Add to Cart,200,OK,Thread Group 1-15,text,true,,2305,194,20,20,https://example.com/add-to-cart,352,0,33
+1788256914540,900,Checkout,200,OK,Thread Group 1-15,text,true,,1232,144,20,20,https://example.com/checkout,630,0,12
+1788256914675,153,Logout,200,OK,Thread Group 1-15,text,true,,2828,136,20,20,https://example.com/logout,107,0,33
+1788256915000,539,Login,200,OK,Thread Group 1-16,text,true,,1546,192,20,20,https://example.com/login,377,0,47
+1788256915135,620,Search Products,200,OK,Thread Group 1-16,text,true,,1786,103,20,20,https://example.com/search-products,434,0,24
+1788256915270,372,View Product,200,OK,Thread Group 1-16,text,true,,2646,90,20,20,https://example.com/view-product,260,0,37
+1788256915405,669,Add to Cart,200,OK,Thread Group 1-16,text,true,,2773,219,20,20,https://example.com/add-to-cart,468,0,43
+1788256915540,1129,Checkout,200,OK,Thread Group 1-16,text,true,,1726,172,20,20,https://example.com/checkout,790,0,32
+1788256915675,154,Logout,200,OK,Thread Group 1-16,text,true,,2591,170,20,20,https://example.com/logout,108,0,37
+1788256916000,311,Login,200,OK,Thread Group 1-17,text,true,,1816,96,20,20,https://example.com/login,218,0,46
+1788256916135,418,Search Products,200,OK,Thread Group 1-17,text,true,,2996,210,20,20,https://example.com/search-products,293,0,23
+1788256916270,725,View Product,200,OK,Thread Group 1-17,text,true,,1246,149,20,20,https://example.com/view-product,507,0,22
+1788256916405,737,Add to Cart,200,OK,Thread Group 1-17,text,true,,1563,174,20,20,https://example.com/add-to-cart,516,0,45
+1788256916540,885,Checkout,200,OK,Thread Group 1-17,text,true,,2774,230,20,20,https://example.com/checkout,620,0,43
+1788256916675,139,Logout,200,OK,Thread Group 1-17,text,true,,2038,228,20,20,https://example.com/logout,97,0,27
+1788256917000,324,Login,200,OK,Thread Group 1-18,text,true,,1498,182,20,20,https://example.com/login,227,0,21
+1788256917135,614,Search Products,200,OK,Thread Group 1-18,text,true,,2836,205,20,20,https://example.com/search-products,430,0,28
+1788256917270,373,View Product,200,OK,Thread Group 1-18,text,true,,2244,204,20,20,https://example.com/view-product,261,0,37
+1788256917405,740,Add to Cart,200,OK,Thread Group 1-18,text,true,,2164,129,20,20,https://example.com/add-to-cart,518,0,12
+1788256917540,575,Checkout,200,OK,Thread Group 1-18,text,true,,1081,158,20,20,https://example.com/checkout,402,0,15
+1788256917675,333,Logout,200,OK,Thread Group 1-18,text,true,,2394,238,20,20,https://example.com/logout,233,0,49
+1788256918000,427,Login,200,OK,Thread Group 1-19,text,true,,1954,224,20,20,https://example.com/login,299,0,30
+1788256918135,545,Search Products,200,OK,Thread Group 1-19,text,true,,2174,171,20,20,https://example.com/search-products,382,0,26
+1788256918270,478,View Product,200,OK,Thread Group 1-19,text,true,,2680,226,20,20,https://example.com/view-product,335,0,28
+1788256918405,677,Add to Cart,200,OK,Thread Group 1-19,text,true,,2962,194,20,20,https://example.com/add-to-cart,474,0,46
+1788256918540,852,Checkout,200,OK,Thread Group 1-19,text,true,,911,125,20,20,https://example.com/checkout,596,0,19
+1788256918675,114,Logout,200,OK,Thread Group 1-19,text,true,,2182,141,20,20,https://example.com/logout,80,0,40
+1788256919000,357,Login,200,OK,Thread Group 1-20,text,true,,836,198,20,20,https://example.com/login,250,0,11
+1788256919135,649,Search Products,200,OK,Thread Group 1-20,text,true,,1357,206,20,20,https://example.com/search-products,454,0,48
+1788256919270,461,View Product,200,OK,Thread Group 1-20,text,true,,2077,222,20,20,https://example.com/view-product,323,0,11
+1788256919405,1130,Add to Cart,200,OK,Thread Group 1-20,text,true,,1445,124,20,20,https://example.com/add-to-cart,791,0,44
+1788256919540,746,Checkout,200,OK,Thread Group 1-20,text,true,,1999,208,20,20,https://example.com/checkout,522,0,27
+1788256919675,205,Logout,200,OK,Thread Group 1-20,text,true,,2281,140,20,20,https://example.com/logout,144,0,19
+1788256920000,256,Login,200,OK,Thread Group 1-1,text,true,,1304,231,20,20,https://example.com/login,179,0,18
+1788256920135,635,Search Products,200,OK,Thread Group 1-1,text,true,,869,189,20,20,https://example.com/search-products,444,0,21
+1788256920270,494,View Product,200,OK,Thread Group 1-1,text,true,,2261,132,20,20,https://example.com/view-product,346,0,11
+1788256920405,705,Add to Cart,200,OK,Thread Group 1-1,text,true,,1611,162,20,20,https://example.com/add-to-cart,493,0,20
+1788256920540,958,Checkout,200,OK,Thread Group 1-1,text,true,,1979,225,20,20,https://example.com/checkout,671,0,48
+1788256920675,196,Logout,200,OK,Thread Group 1-1,text,true,,1146,220,20,20,https://example.com/logout,137,0,35
+1788256921000,212,Login,200,OK,Thread Group 1-2,text,true,,977,127,20,20,https://example.com/login,148,0,14
+1788256921135,920,Search Products,200,OK,Thread Group 1-2,text,true,,1456,95,20,20,https://example.com/search-products,644,0,36
+1788256921270,490,View Product,200,OK,Thread Group 1-2,text,true,,1009,125,20,20,https://example.com/view-product,343,0,11
+1788256921405,585,Add to Cart,200,OK,Thread Group 1-2,text,true,,2971,108,20,20,https://example.com/add-to-cart,410,0,27
+1788256921540,604,Checkout,200,OK,Thread Group 1-2,text,true,,1537,214,20,20,https://example.com/checkout,423,0,32
+1788256921675,177,Logout,200,OK,Thread Group 1-2,text,true,,1339,171,20,20,https://example.com/logout,124,0,33
+1788256922000,462,Login,200,OK,Thread Group 1-3,text,true,,1695,110,20,20,https://example.com/login,323,0,33
+1788256922135,534,Search Products,200,OK,Thread Group 1-3,text,true,,2478,234,20,20,https://example.com/search-products,374,0,16
+1788256922270,399,View Product,200,OK,Thread Group 1-3,text,true,,2754,238,20,20,https://example.com/view-product,279,0,39
+1788256922405,430,Add to Cart,200,OK,Thread Group 1-3,text,true,,1174,117,20,20,https://example.com/add-to-cart,301,0,22
+1788256922540,521,Checkout,200,OK,Thread Group 1-3,text,true,,2387,131,20,20,https://example.com/checkout,365,0,21
+1788256922675,152,Logout,200,OK,Thread Group 1-3,text,true,,2409,177,20,20,https://example.com/logout,106,0,28
+1788256923000,282,Login,200,OK,Thread Group 1-4,text,true,,2090,222,20,20,https://example.com/login,197,0,30
+1788256923135,1141,Search Products,200,OK,Thread Group 1-4,text,true,,2356,162,20,20,https://example.com/search-products,799,0,39
+1788256923270,436,View Product,200,OK,Thread Group 1-4,text,true,,1547,199,20,20,https://example.com/view-product,305,0,10
+1788256923405,1218,Add to Cart,200,OK,Thread Group 1-4,text,true,,2131,137,20,20,https://example.com/add-to-cart,853,0,17
+1788256923540,1162,Checkout,200,OK,Thread Group 1-4,text,true,,735,168,20,20,https://example.com/checkout,813,0,41
+1788256923675,166,Logout,200,OK,Thread Group 1-4,text,true,,1687,164,20,20,https://example.com/logout,116,0,33
+1788256924000,372,Login,200,OK,Thread Group 1-5,text,true,,2057,81,20,20,https://example.com/login,260,0,10
+1788256924135,280,Search Products,200,OK,Thread Group 1-5,text,true,,726,80,20,20,https://example.com/search-products,196,0,39
+1788256924270,432,View Product,200,OK,Thread Group 1-5,text,true,,2100,148,20,20,https://example.com/view-product,302,0,41
+1788256924405,673,Add to Cart,200,OK,Thread Group 1-5,text,true,,2749,138,20,20,https://example.com/add-to-cart,471,0,22
+1788256924540,933,Checkout,200,OK,Thread Group 1-5,text,true,,2469,94,20,20,https://example.com/checkout,653,0,24
+1788256924675,291,Logout,200,OK,Thread Group 1-5,text,true,,2771,120,20,20,https://example.com/logout,204,0,13
+1788256925000,313,Login,200,OK,Thread Group 1-6,text,true,,2150,117,20,20,https://example.com/login,219,0,42
+1788256925135,550,Search Products,200,OK,Thread Group 1-6,text,true,,1736,169,20,20,https://example.com/search-products,385,0,27
+1788256925270,469,View Product,200,OK,Thread Group 1-6,text,true,,1700,230,20,20,https://example.com/view-product,328,0,50
+1788256925405,474,Add to Cart,200,OK,Thread Group 1-6,text,true,,1345,107,20,20,https://example.com/add-to-cart,332,0,21
+1788256925540,1048,Checkout,200,OK,Thread Group 1-6,text,true,,2915,144,20,20,https://example.com/checkout,734,0,37
+1788256925675,206,Logout,200,OK,Thread Group 1-6,text,true,,2224,123,20,20,https://example.com/logout,144,0,16
+1788256926000,274,Login,200,OK,Thread Group 1-7,text,true,,2400,202,20,20,https://example.com/login,192,0,19
+1788256926135,324,Search Products,200,OK,Thread Group 1-7,text,true,,1687,234,20,20,https://example.com/search-products,227,0,35
+1788256926270,342,View Product,200,OK,Thread Group 1-7,text,true,,1082,193,20,20,https://example.com/view-product,239,0,31
+1788256926405,480,Add to Cart,200,OK,Thread Group 1-7,text,true,,1846,203,20,20,https://example.com/add-to-cart,336,0,48
+1788256926540,1649,Checkout,200,OK,Thread Group 1-7,text,true,,1144,98,20,20,https://example.com/checkout,1154,0,38
+1788256926675,240,Logout,200,OK,Thread Group 1-7,text,true,,2150,214,20,20,https://example.com/logout,168,0,30
+1788256927000,407,Login,200,OK,Thread Group 1-8,text,true,,1472,169,20,20,https://example.com/login,285,0,23
+1788256927135,330,Search Products,200,OK,Thread Group 1-8,text,true,,2829,199,20,20,https://example.com/search-products,231,0,11
+1788256927270,293,View Product,200,OK,Thread Group 1-8,text,true,,1703,143,20,20,https://example.com/view-product,205,0,47
+1788256927405,334,Add to Cart,200,OK,Thread Group 1-8,text,true,,2837,101,20,20,https://example.com/add-to-cart,234,0,15
+1788256927540,911,Checkout,200,OK,Thread Group 1-8,text,true,,1421,89,20,20,https://example.com/checkout,638,0,26
+1788256927675,170,Logout,200,OK,Thread Group 1-8,text,true,,1939,204,20,20,https://example.com/logout,119,0,22
+1788256928000,316,Login,200,OK,Thread Group 1-9,text,true,,1291,216,20,20,https://example.com/login,221,0,27
+1788256928135,358,Search Products,200,OK,Thread Group 1-9,text,true,,2067,185,20,20,https://example.com/search-products,251,0,50
+1788256928270,292,View Product,200,OK,Thread Group 1-9,text,true,,2958,130,20,20,https://example.com/view-product,204,0,35
+1788256928405,913,Add to Cart,200,OK,Thread Group 1-9,text,true,,1672,231,20,20,https://example.com/add-to-cart,639,0,30
+1788256928540,1062,Checkout,200,OK,Thread Group 1-9,text,true,,1528,138,20,20,https://example.com/checkout,743,0,27
+1788256928675,373,Logout,200,OK,Thread Group 1-9,text,true,,2849,146,20,20,https://example.com/logout,261,0,24
+1788256929000,360,Login,200,OK,Thread Group 1-10,text,true,,2985,100,20,20,https://example.com/login,252,0,17
+1788256929135,682,Search Products,200,OK,Thread Group 1-10,text,true,,2483,237,20,20,https://example.com/search-products,477,0,33
+1788256929270,399,View Product,200,OK,Thread Group 1-10,text,true,,1487,239,20,20,https://example.com/view-product,279,0,12
+1788256929405,425,Add to Cart,200,OK,Thread Group 1-10,text,true,,730,164,20,20,https://example.com/add-to-cart,298,0,17
+1788256929540,880,Checkout,200,OK,Thread Group 1-10,text,true,,1078,92,20,20,https://example.com/checkout,616,0,23
+1788256929675,212,Logout,200,OK,Thread Group 1-10,text,true,,1742,192,20,20,https://example.com/logout,148,0,46
+1788256930000,453,Login,200,OK,Thread Group 1-11,text,true,,2977,214,20,20,https://example.com/login,317,0,13
+1788256930135,353,Search Products,200,OK,Thread Group 1-11,text,true,,2797,126,20,20,https://example.com/search-products,247,0,11
+1788256930270,422,View Product,200,OK,Thread Group 1-11,text,true,,1515,218,20,20,https://example.com/view-product,295,0,31
+1788256930405,706,Add to Cart,200,OK,Thread Group 1-11,text,true,,2072,190,20,20,https://example.com/add-to-cart,494,0,48
+1788256930540,1591,Checkout,200,OK,Thread Group 1-11,text,true,,1053,154,20,20,https://example.com/checkout,1114,0,25
+1788256930675,180,Logout,200,OK,Thread Group 1-11,text,true,,1353,217,20,20,https://example.com/logout,126,0,14
+1788256931000,311,Login,200,OK,Thread Group 1-12,text,true,,2166,149,20,20,https://example.com/login,218,0,27
+1788256931135,577,Search Products,200,OK,Thread Group 1-12,text,true,,1589,150,20,20,https://example.com/search-products,404,0,21
+1788256931270,263,View Product,200,OK,Thread Group 1-12,text,true,,2457,222,20,20,https://example.com/view-product,184,0,26
+1788256931405,539,Add to Cart,200,OK,Thread Group 1-12,text,true,,2805,104,20,20,https://example.com/add-to-cart,377,0,45
+1788256931540,810,Checkout,200,OK,Thread Group 1-12,text,true,,2432,195,20,20,https://example.com/checkout,567,0,30
+1788256931675,290,Logout,200,OK,Thread Group 1-12,text,true,,1539,230,20,20,https://example.com/logout,203,0,45
+1788256932000,567,Login,200,OK,Thread Group 1-13,text,true,,2002,132,20,20,https://example.com/login,397,0,38
+1788256932135,437,Search Products,200,OK,Thread Group 1-13,text,true,,1607,120,20,20,https://example.com/search-products,306,0,29
+1788256932270,420,View Product,200,OK,Thread Group 1-13,text,true,,2765,108,20,20,https://example.com/view-product,294,0,42
+1788256932405,584,Add to Cart,200,OK,Thread Group 1-13,text,true,,2873,195,20,20,https://example.com/add-to-cart,409,0,20
+1788256932540,810,Checkout,200,OK,Thread Group 1-13,text,true,,1061,232,20,20,https://example.com/checkout,567,0,41
+1788256932675,209,Logout,200,OK,Thread Group 1-13,text,true,,2293,138,20,20,https://example.com/logout,146,0,38
+1788256933000,314,Login,200,OK,Thread Group 1-14,text,true,,2332,232,20,20,https://example.com/login,220,0,41
+1788256933135,1106,Search Products,200,OK,Thread Group 1-14,text,true,,1240,109,20,20,https://example.com/search-products,774,0,44
+1788256933270,330,View Product,200,OK,Thread Group 1-14,text,true,,1721,94,20,20,https://example.com/view-product,231,0,17
+1788256933405,606,Add to Cart,200,OK,Thread Group 1-14,text,true,,2143,81,20,20,https://example.com/add-to-cart,424,0,10
+1788256933540,1067,Checkout,200,OK,Thread Group 1-14,text,true,,1194,179,20,20,https://example.com/checkout,747,0,14
+1788256933675,192,Logout,200,OK,Thread Group 1-14,text,true,,2958,199,20,20,https://example.com/logout,134,0,34
+1788256934000,444,Login,200,OK,Thread Group 1-15,text,true,,1225,199,20,20,https://example.com/login,311,0,33
+1788256934135,1120,Search Products,200,OK,Thread Group 1-15,text,true,,803,200,20,20,https://example.com/search-products,784,0,34
+1788256934270,482,View Product,200,OK,Thread Group 1-15,text,true,,1081,134,20,20,https://example.com/view-product,337,0,26
+1788256934405,578,Add to Cart,200,OK,Thread Group 1-15,text,true,,2117,211,20,20,https://example.com/add-to-cart,405,0,23
+1788256934540,641,Checkout,200,OK,Thread Group 1-15,text,true,,803,184,20,20,https://example.com/checkout,449,0,32
+1788256934675,185,Logout,200,OK,Thread Group 1-15,text,true,,1887,167,20,20,https://example.com/logout,130,0,35
+1788256935000,291,Login,200,OK,Thread Group 1-16,text,true,,1888,216,20,20,https://example.com/login,204,0,38
+1788256935135,768,Search Products,200,OK,Thread Group 1-16,text,true,,2862,98,20,20,https://example.com/search-products,538,0,44
+1788256935270,266,View Product,200,OK,Thread Group 1-16,text,true,,2015,208,20,20,https://example.com/view-product,186,0,47
+1788256935405,418,Add to Cart,200,OK,Thread Group 1-16,text,true,,1474,127,20,20,https://example.com/add-to-cart,293,0,45
+1788256935540,1213,Checkout,200,OK,Thread Group 1-16,text,true,,1546,209,20,20,https://example.com/checkout,849,0,34
+1788256935675,213,Logout,200,OK,Thread Group 1-16,text,true,,1150,197,20,20,https://example.com/logout,149,0,22
+1788256936000,716,Login,200,OK,Thread Group 1-17,text,true,,703,228,20,20,https://example.com/login,501,0,11
+1788256936135,494,Search Products,200,OK,Thread Group 1-17,text,true,,2235,181,20,20,https://example.com/search-products,346,0,42
+1788256936270,302,View Product,200,OK,Thread Group 1-17,text,true,,1493,154,20,20,https://example.com/view-product,211,0,48
+1788256936405,605,Add to Cart,200,OK,Thread Group 1-17,text,true,,2147,110,20,20,https://example.com/add-to-cart,424,0,24
+1788256936540,868,Checkout,200,OK,Thread Group 1-17,text,true,,2123,230,20,20,https://example.com/checkout,608,0,32
+1788256936675,190,Logout,200,OK,Thread Group 1-17,text,true,,1866,165,20,20,https://example.com/logout,133,0,10
+1788256937000,306,Login,200,OK,Thread Group 1-18,text,true,,2242,105,20,20,https://example.com/login,214,0,18
+1788256937135,690,Search Products,200,OK,Thread Group 1-18,text,true,,1391,82,20,20,https://example.com/search-products,483,0,30
+1788256937270,586,View Product,200,OK,Thread Group 1-18,text,true,,1329,155,20,20,https://example.com/view-product,410,0,22
+1788256937405,589,Add to Cart,200,OK,Thread Group 1-18,text,true,,1704,96,20,20,https://example.com/add-to-cart,412,0,48
+1788256937540,1107,Checkout,200,OK,Thread Group 1-18,text,true,,2775,113,20,20,https://example.com/checkout,775,0,32
+1788256937675,456,Logout,200,OK,Thread Group 1-18,text,true,,1911,231,20,20,https://example.com/logout,319,0,16
+1788256938000,192,Login,200,OK,Thread Group 1-19,text,true,,1453,179,20,20,https://example.com/login,134,0,11
+1788256938135,855,Search Products,200,OK,Thread Group 1-19,text,true,,2771,110,20,20,https://example.com/search-products,598,0,16
+1788256938270,410,View Product,200,OK,Thread Group 1-19,text,true,,834,129,20,20,https://example.com/view-product,287,0,32
+1788256938405,426,Add to Cart,200,OK,Thread Group 1-19,text,true,,1459,152,20,20,https://example.com/add-to-cart,298,0,10
+1788256938540,1074,Checkout,200,OK,Thread Group 1-19,text,true,,1864,155,20,20,https://example.com/checkout,752,0,39
+1788256938675,181,Logout,200,OK,Thread Group 1-19,text,true,,1079,91,20,20,https://example.com/logout,127,0,28
+1788256939000,268,Login,200,OK,Thread Group 1-20,text,true,,1810,129,20,20,https://example.com/login,188,0,23
+1788256939135,601,Search Products,200,OK,Thread Group 1-20,text,true,,736,125,20,20,https://example.com/search-products,421,0,33
+1788256939270,480,View Product,200,OK,Thread Group 1-20,text,true,,1975,195,20,20,https://example.com/view-product,336,0,50
+1788256939405,591,Add to Cart,200,OK,Thread Group 1-20,text,true,,2055,101,20,20,https://example.com/add-to-cart,414,0,22
+1788256939540,923,Checkout,200,OK,Thread Group 1-20,text,true,,1960,118,20,20,https://example.com/checkout,646,0,15
+1788256939675,309,Logout,200,OK,Thread Group 1-20,text,true,,1071,225,20,20,https://example.com/logout,216,0,48
+1788256940000,283,Login,200,OK,Thread Group 1-1,text,true,,2863,84,20,20,https://example.com/login,198,0,50
+1788256940135,558,Search Products,200,OK,Thread Group 1-1,text,true,,897,204,20,20,https://example.com/search-products,391,0,11
+1788256940270,404,View Product,200,OK,Thread Group 1-1,text,true,,984,142,20,20,https://example.com/view-product,283,0,27
+1788256940405,659,Add to Cart,200,OK,Thread Group 1-1,text,true,,1124,225,20,20,https://example.com/add-to-cart,461,0,47
+1788256940540,1051,Checkout,200,OK,Thread Group 1-1,text,true,,2335,81,20,20,https://example.com/checkout,736,0,36
+1788256940675,270,Logout,200,OK,Thread Group 1-1,text,true,,1578,135,20,20,https://example.com/logout,189,0,27
+1788256941000,178,Login,200,OK,Thread Group 1-2,text,true,,2595,191,20,20,https://example.com/login,125,0,36
+1788256941135,550,Search Products,200,OK,Thread Group 1-2,text,true,,2350,164,20,20,https://example.com/search-products,385,0,36
+1788256941270,342,View Product,200,OK,Thread Group 1-2,text,true,,2162,126,20,20,https://example.com/view-product,239,0,24
+1788256941405,507,Add to Cart,200,OK,Thread Group 1-2,text,true,,785,179,20,20,https://example.com/add-to-cart,355,0,14
+1788256941540,861,Checkout,200,OK,Thread Group 1-2,text,true,,1751,87,20,20,https://example.com/checkout,603,0,50
+1788256941675,174,Logout,200,OK,Thread Group 1-2,text,true,,1471,151,20,20,https://example.com/logout,122,0,22
+1788256942000,340,Login,200,OK,Thread Group 1-3,text,true,,1019,226,20,20,https://example.com/login,238,0,30
+1788256942135,369,Search Products,200,OK,Thread Group 1-3,text,true,,1567,168,20,20,https://example.com/search-products,258,0,15
+1788256942270,363,View Product,200,OK,Thread Group 1-3,text,true,,2468,139,20,20,https://example.com/view-product,254,0,15
+1788256942405,1157,Add to Cart,200,OK,Thread Group 1-3,text,true,,2834,190,20,20,https://example.com/add-to-cart,810,0,17
+1788256942540,1204,Checkout,200,OK,Thread Group 1-3,text,true,,986,136,20,20,https://example.com/checkout,843,0,31
+1788256942675,180,Logout,200,OK,Thread Group 1-3,text,true,,1259,173,20,20,https://example.com/logout,126,0,11
+1788256943000,333,Login,200,OK,Thread Group 1-4,text,true,,2240,220,20,20,https://example.com/login,233,0,31
+1788256943135,423,Search Products,200,OK,Thread Group 1-4,text,true,,2127,87,20,20,https://example.com/search-products,296,0,43
+1788256943270,549,View Product,200,OK,Thread Group 1-4,text,true,,2717,210,20,20,https://example.com/view-product,384,0,27
+1788256943405,751,Add to Cart,200,OK,Thread Group 1-4,text,true,,2065,165,20,20,https://example.com/add-to-cart,526,0,25
+1788256943540,728,Checkout,200,OK,Thread Group 1-4,text,true,,967,123,20,20,https://example.com/checkout,510,0,33
+1788256943675,172,Logout,200,OK,Thread Group 1-4,text,true,,2498,128,20,20,https://example.com/logout,120,0,32
+1788256944000,257,Login,200,OK,Thread Group 1-5,text,true,,877,198,20,20,https://example.com/login,180,0,30
+1788256944135,610,Search Products,200,OK,Thread Group 1-5,text,true,,1977,107,20,20,https://example.com/search-products,427,0,49
+1788256944270,618,View Product,200,OK,Thread Group 1-5,text,true,,2522,113,20,20,https://example.com/view-product,433,0,39
+1788256944405,559,Add to Cart,200,OK,Thread Group 1-5,text,true,,2107,222,20,20,https://example.com/add-to-cart,391,0,10
+1788256944540,631,Checkout,200,OK,Thread Group 1-5,text,true,,1528,82,20,20,https://example.com/checkout,442,0,17
+1788256944675,165,Logout,200,OK,Thread Group 1-5,text,true,,2545,237,20,20,https://example.com/logout,115,0,11
+1788256945000,272,Login,200,OK,Thread Group 1-6,text,true,,865,174,20,20,https://example.com/login,190,0,12
+1788256945135,729,Search Products,200,OK,Thread Group 1-6,text,true,,1528,212,20,20,https://example.com/search-products,510,0,50
+1788256945270,397,View Product,200,OK,Thread Group 1-6,text,true,,2625,93,20,20,https://example.com/view-product,278,0,23
+1788256945405,561,Add to Cart,200,OK,Thread Group 1-6,text,true,,1336,134,20,20,https://example.com/add-to-cart,393,0,17
+1788256945540,1122,Checkout,200,OK,Thread Group 1-6,text,true,,2797,83,20,20,https://example.com/checkout,785,0,31
+1788256945675,214,Logout,200,OK,Thread Group 1-6,text,true,,1777,125,20,20,https://example.com/logout,150,0,49
+1788256946000,485,Login,200,OK,Thread Group 1-7,text,true,,1387,223,20,20,https://example.com/login,340,0,40
+1788256946135,840,Search Products,200,OK,Thread Group 1-7,text,true,,2416,111,20,20,https://example.com/search-products,588,0,46
+1788256946270,418,View Product,200,OK,Thread Group 1-7,text,true,,2566,240,20,20,https://example.com/view-product,293,0,16
+1788256946405,535,Add to Cart,200,OK,Thread Group 1-7,text,true,,1530,230,20,20,https://example.com/add-to-cart,374,0,15
+1788256946540,800,Checkout,200,OK,Thread Group 1-7,text,true,,791,139,20,20,https://example.com/checkout,560,0,49
+1788256946675,190,Logout,200,OK,Thread Group 1-7,text,true,,1849,94,20,20,https://example.com/logout,133,0,18
+1788256947000,328,Login,200,OK,Thread Group 1-8,text,true,,1907,174,20,20,https://example.com/login,230,0,31
+1788256947135,475,Search Products,200,OK,Thread Group 1-8,text,true,,2127,167,20,20,https://example.com/search-products,332,0,11
+1788256947270,306,View Product,200,OK,Thread Group 1-8,text,true,,1262,179,20,20,https://example.com/view-product,214,0,30
+1788256947405,485,Add to Cart,200,OK,Thread Group 1-8,text,true,,794,151,20,20,https://example.com/add-to-cart,340,0,34
+1788256947540,720,Checkout,200,OK,Thread Group 1-8,text,true,,978,199,20,20,https://example.com/checkout,504,0,47
+1788256947675,258,Logout,200,OK,Thread Group 1-8,text,true,,2430,176,20,20,https://example.com/logout,181,0,32
+1788256948000,484,Login,200,OK,Thread Group 1-9,text,true,,1437,219,20,20,https://example.com/login,339,0,42
+1788256948135,292,Search Products,200,OK,Thread Group 1-9,text,true,,1728,189,20,20,https://example.com/search-products,204,0,18
+1788256948270,470,View Product,200,OK,Thread Group 1-9,text,true,,838,106,20,20,https://example.com/view-product,329,0,44
+1788256948405,794,Add to Cart,200,OK,Thread Group 1-9,text,true,,2818,234,20,20,https://example.com/add-to-cart,556,0,46
+1788256948540,1270,Checkout,200,OK,Thread Group 1-9,text,true,,2307,93,20,20,https://example.com/checkout,889,0,24
+1788256948675,318,Logout,200,OK,Thread Group 1-9,text,true,,1497,119,20,20,https://example.com/logout,223,0,33
+1788256949000,362,Login,200,OK,Thread Group 1-10,text,true,,1375,220,20,20,https://example.com/login,253,0,45
+1788256949135,401,Search Products,200,OK,Thread Group 1-10,text,true,,2756,220,20,20,https://example.com/search-products,281,0,18
+1788256949270,455,View Product,200,OK,Thread Group 1-10,text,true,,2272,226,20,20,https://example.com/view-product,318,0,47
+1788256949405,645,Add to Cart,200,OK,Thread Group 1-10,text,true,,1859,84,20,20,https://example.com/add-to-cart,451,0,25
+1788256949540,874,Checkout,200,OK,Thread Group 1-10,text,true,,2266,220,20,20,https://example.com/checkout,612,0,48
+1788256949675,342,Logout,200,OK,Thread Group 1-10,text,true,,2840,236,20,20,https://example.com/logout,239,0,15
+1788256950000,438,Login,200,OK,Thread Group 1-11,text,true,,2640,116,20,20,https://example.com/login,307,0,38
+1788256950135,410,Search Products,200,OK,Thread Group 1-11,text,true,,1752,115,20,20,https://example.com/search-products,287,0,37
+1788256950270,273,View Product,200,OK,Thread Group 1-11,text,true,,1633,220,20,20,https://example.com/view-product,191,0,40
+1788256950405,490,Add to Cart,200,OK,Thread Group 1-11,text,true,,2601,202,20,20,https://example.com/add-to-cart,343,0,22
+1788256950540,1184,Checkout,200,OK,Thread Group 1-11,text,true,,723,192,20,20,https://example.com/checkout,829,0,22
+1788256950675,182,Logout,200,OK,Thread Group 1-11,text,true,,2925,240,20,20,https://example.com/logout,127,0,50
+1788256951000,320,Login,200,OK,Thread Group 1-12,text,true,,1598,123,20,20,https://example.com/login,224,0,44
+1788256951135,542,Search Products,200,OK,Thread Group 1-12,text,true,,2180,96,20,20,https://example.com/search-products,379,0,11
+1788256951270,497,View Product,200,OK,Thread Group 1-12,text,true,,1892,143,20,20,https://example.com/view-product,348,0,13
+1788256951405,450,Add to Cart,200,OK,Thread Group 1-12,text,true,,1547,124,20,20,https://example.com/add-to-cart,315,0,37
+1788256951540,1207,Checkout,200,OK,Thread Group 1-12,text,true,,1829,94,20,20,https://example.com/checkout,845,0,49
+1788256951675,261,Logout,200,OK,Thread Group 1-12,text,true,,2357,193,20,20,https://example.com/logout,183,0,16
+1788256952000,408,Login,200,OK,Thread Group 1-13,text,true,,719,180,20,20,https://example.com/login,286,0,13
+1788256952135,404,Search Products,200,OK,Thread Group 1-13,text,true,,2000,125,20,20,https://example.com/search-products,283,0,15
+1788256952270,487,View Product,200,OK,Thread Group 1-13,text,true,,847,200,20,20,https://example.com/view-product,341,0,39
+1788256952405,327,Add to Cart,200,OK,Thread Group 1-13,text,true,,2132,114,20,20,https://example.com/add-to-cart,229,0,46
+1788256952540,975,Checkout,200,OK,Thread Group 1-13,text,true,,1374,104,20,20,https://example.com/checkout,682,0,49
+1788256952675,194,Logout,200,OK,Thread Group 1-13,text,true,,2425,192,20,20,https://example.com/logout,136,0,28
+1788256953000,306,Login,200,OK,Thread Group 1-14,text,true,,2642,237,20,20,https://example.com/login,214,0,18
+1788256953135,263,Search Products,200,OK,Thread Group 1-14,text,true,,2311,202,20,20,https://example.com/search-products,184,0,44
+1788256953270,390,View Product,200,OK,Thread Group 1-14,text,true,,2950,133,20,20,https://example.com/view-product,273,0,31
+1788256953405,604,Add to Cart,200,OK,Thread Group 1-14,text,true,,1761,226,20,20,https://example.com/add-to-cart,423,0,15
+1788256953540,1124,Checkout,200,OK,Thread Group 1-14,text,true,,2991,237,20,20,https://example.com/checkout,787,0,28
+1788256953675,181,Logout,200,OK,Thread Group 1-14,text,true,,2610,193,20,20,https://example.com/logout,127,0,44
+1788256954000,402,Login,200,OK,Thread Group 1-15,text,true,,2160,88,20,20,https://example.com/login,281,0,12
+1788256954135,514,Search Products,200,OK,Thread Group 1-15,text,true,,2954,88,20,20,https://example.com/search-products,360,0,12
+1788256954270,364,View Product,200,OK,Thread Group 1-15,text,true,,1800,217,20,20,https://example.com/view-product,255,0,29
+1788256954405,588,Add to Cart,200,OK,Thread Group 1-15,text,true,,1727,112,20,20,https://example.com/add-to-cart,412,0,31
+1788256954540,841,Checkout,200,OK,Thread Group 1-15,text,true,,1807,97,20,20,https://example.com/checkout,589,0,40
+1788256954675,191,Logout,200,OK,Thread Group 1-15,text,true,,1102,224,20,20,https://example.com/logout,134,0,41
+1788256955000,152,Login,200,OK,Thread Group 1-16,text,true,,1303,152,20,20,https://example.com/login,106,0,50
+1788256955135,608,Search Products,200,OK,Thread Group 1-16,text,true,,2280,213,20,20,https://example.com/search-products,426,0,34
+1788256955270,689,View Product,200,OK,Thread Group 1-16,text,true,,2517,141,20,20,https://example.com/view-product,482,0,21
+1788256955405,538,Add to Cart,200,OK,Thread Group 1-16,text,true,,2370,97,20,20,https://example.com/add-to-cart,377,0,35
+1788256955540,1459,Checkout,200,OK,Thread Group 1-16,text,true,,829,154,20,20,https://example.com/checkout,1021,0,27
+1788256955675,260,Logout,200,OK,Thread Group 1-16,text,true,,2212,120,20,20,https://example.com/logout,182,0,23
+1788256956000,295,Login,200,OK,Thread Group 1-17,text,true,,1970,133,20,20,https://example.com/login,206,0,17
+1788256956135,576,Search Products,200,OK,Thread Group 1-17,text,true,,2611,128,20,20,https://example.com/search-products,403,0,25
+1788256956270,481,View Product,200,OK,Thread Group 1-17,text,true,,866,97,20,20,https://example.com/view-product,337,0,47
+1788256956405,856,Add to Cart,200,OK,Thread Group 1-17,text,true,,2166,233,20,20,https://example.com/add-to-cart,599,0,38
+1788256956540,670,Checkout,200,OK,Thread Group 1-17,text,true,,1668,219,20,20,https://example.com/checkout,469,0,40
+1788256956675,267,Logout,200,OK,Thread Group 1-17,text,true,,1949,173,20,20,https://example.com/logout,187,0,35
+1788256957000,492,Login,200,OK,Thread Group 1-18,text,true,,1515,197,20,20,https://example.com/login,344,0,10
+1788256957135,472,Search Products,200,OK,Thread Group 1-18,text,true,,1186,151,20,20,https://example.com/search-products,330,0,42
+1788256957270,575,View Product,200,OK,Thread Group 1-18,text,true,,1360,97,20,20,https://example.com/view-product,402,0,34
+1788256957405,431,Add to Cart,200,OK,Thread Group 1-18,text,true,,1195,195,20,20,https://example.com/add-to-cart,302,0,50
+1788256957540,852,Checkout,200,OK,Thread Group 1-18,text,true,,777,170,20,20,https://example.com/checkout,596,0,32
+1788256957675,150,Logout,200,OK,Thread Group 1-18,text,true,,2490,90,20,20,https://example.com/logout,105,0,26
+1788256958000,273,Login,200,OK,Thread Group 1-19,text,true,,1679,118,20,20,https://example.com/login,191,0,31
+1788256958135,383,Search Products,200,OK,Thread Group 1-19,text,true,,1703,213,20,20,https://example.com/search-products,268,0,43
+1788256958270,252,View Product,200,OK,Thread Group 1-19,text,true,,2818,80,20,20,https://example.com/view-product,176,0,25
+1788256958405,528,Add to Cart,200,OK,Thread Group 1-19,text,true,,2931,169,20,20,https://example.com/add-to-cart,370,0,42
+1788256958540,650,Checkout,200,OK,Thread Group 1-19,text,true,,1896,127,20,20,https://example.com/checkout,455,0,22
+1788256958675,218,Logout,200,OK,Thread Group 1-19,text,true,,1609,86,20,20,https://example.com/logout,153,0,27
+1788256959000,211,Login,200,OK,Thread Group 1-20,text,true,,1658,221,20,20,https://example.com/login,148,0,15
+1788256959135,779,Search Products,200,OK,Thread Group 1-20,text,true,,2756,180,20,20,https://example.com/search-products,545,0,31
+1788256959270,437,View Product,200,OK,Thread Group 1-20,text,true,,2088,217,20,20,https://example.com/view-product,306,0,49
+1788256959405,779,Add to Cart,200,OK,Thread Group 1-20,text,true,,1888,161,20,20,https://example.com/add-to-cart,545,0,22
+1788256959540,616,Checkout,200,OK,Thread Group 1-20,text,true,,972,214,20,20,https://example.com/checkout,431,0,19
+1788256959675,160,Logout,200,OK,Thread Group 1-20,text,true,,1711,127,20,20,https://example.com/logout,112,0,30
+1788256960000,343,Login,200,OK,Thread Group 1-1,text,true,,1330,108,20,20,https://example.com/login,240,0,13
+1788256960135,640,Search Products,200,OK,Thread Group 1-1,text,true,,2796,208,20,20,https://example.com/search-products,448,0,29
+1788256960270,401,View Product,200,OK,Thread Group 1-1,text,true,,2254,160,20,20,https://example.com/view-product,281,0,17
+1788256960405,673,Add to Cart,200,OK,Thread Group 1-1,text,true,,1609,198,20,20,https://example.com/add-to-cart,471,0,33
+1788256960540,575,Checkout,200,OK,Thread Group 1-1,text,true,,2542,110,20,20,https://example.com/checkout,402,0,12
+1788256960675,237,Logout,200,OK,Thread Group 1-1,text,true,,2579,172,20,20,https://example.com/logout,166,0,14
+1788256961000,301,Login,200,OK,Thread Group 1-2,text,true,,1157,155,20,20,https://example.com/login,211,0,20
+1788256961135,658,Search Products,200,OK,Thread Group 1-2,text,true,,2274,222,20,20,https://example.com/search-products,461,0,32
+1788256961270,435,View Product,200,OK,Thread Group 1-2,text,true,,1632,144,20,20,https://example.com/view-product,304,0,39
+1788256961405,710,Add to Cart,200,OK,Thread Group 1-2,text,true,,839,129,20,20,https://example.com/add-to-cart,497,0,37
+1788256961540,796,Checkout,200,OK,Thread Group 1-2,text,true,,1634,216,20,20,https://example.com/checkout,557,0,28
+1788256961675,244,Logout,200,OK,Thread Group 1-2,text,true,,2842,130,20,20,https://example.com/logout,171,0,10
+1788256962000,519,Login,200,OK,Thread Group 1-3,text,true,,2165,139,20,20,https://example.com/login,363,0,19
+1788256962135,266,Search Products,200,OK,Thread Group 1-3,text,true,,1073,188,20,20,https://example.com/search-products,186,0,40
+1788256962270,403,View Product,200,OK,Thread Group 1-3,text,true,,716,141,20,20,https://example.com/view-product,282,0,30
+1788256962405,510,Add to Cart,200,OK,Thread Group 1-3,text,true,,1297,109,20,20,https://example.com/add-to-cart,357,0,28
+1788256962540,1229,Checkout,200,OK,Thread Group 1-3,text,true,,2046,95,20,20,https://example.com/checkout,860,0,29
+1788256962675,180,Logout,200,OK,Thread Group 1-3,text,true,,2656,219,20,20,https://example.com/logout,126,0,36
+1788256963000,389,Login,200,OK,Thread Group 1-4,text,true,,1468,86,20,20,https://example.com/login,272,0,20
+1788256963135,571,Search Products,200,OK,Thread Group 1-4,text,true,,777,162,20,20,https://example.com/search-products,400,0,13
+1788256963270,587,View Product,200,OK,Thread Group 1-4,text,true,,1978,196,20,20,https://example.com/view-product,411,0,44
+1788256963405,948,Add to Cart,200,OK,Thread Group 1-4,text,true,,1063,118,20,20,https://example.com/add-to-cart,664,0,23
+1788256963540,658,Checkout,200,OK,Thread Group 1-4,text,true,,2805,124,20,20,https://example.com/checkout,461,0,23
+1788256963675,302,Logout,200,OK,Thread Group 1-4,text,true,,2519,136,20,20,https://example.com/logout,211,0,42
+1788256964000,232,Login,200,OK,Thread Group 1-5,text,true,,1922,98,20,20,https://example.com/login,162,0,14
+1788256964135,557,Search Products,200,OK,Thread Group 1-5,text,true,,2969,236,20,20,https://example.com/search-products,390,0,36
+1788256964270,553,View Product,200,OK,Thread Group 1-5,text,true,,1940,140,20,20,https://example.com/view-product,387,0,42
+1788256964405,446,Add to Cart,200,OK,Thread Group 1-5,text,true,,2146,126,20,20,https://example.com/add-to-cart,312,0,21
+1788256964540,508,Checkout,200,OK,Thread Group 1-5,text,true,,2972,116,20,20,https://example.com/checkout,356,0,34
+1788256964675,121,Logout,200,OK,Thread Group 1-5,text,true,,748,81,20,20,https://example.com/logout,85,0,41
+1788256965000,370,Login,200,OK,Thread Group 1-6,text,true,,2162,149,20,20,https://example.com/login,259,0,40
+1788256965135,819,Search Products,200,OK,Thread Group 1-6,text,true,,1326,230,20,20,https://example.com/search-products,573,0,14
+1788256965270,341,View Product,200,OK,Thread Group 1-6,text,true,,2840,123,20,20,https://example.com/view-product,239,0,45
+1788256965405,616,Add to Cart,200,OK,Thread Group 1-6,text,true,,1486,188,20,20,https://example.com/add-to-cart,431,0,37
+1788256965540,726,Checkout,200,OK,Thread Group 1-6,text,true,,925,139,20,20,https://example.com/checkout,508,0,21
+1788256965675,219,Logout,200,OK,Thread Group 1-6,text,true,,2641,218,20,20,https://example.com/logout,153,0,25
+1788256966000,374,Login,200,OK,Thread Group 1-7,text,true,,1563,216,20,20,https://example.com/login,262,0,37
+1788256966135,738,Search Products,200,OK,Thread Group 1-7,text,true,,1395,217,20,20,https://example.com/search-products,517,0,17
+1788256966270,966,View Product,200,OK,Thread Group 1-7,text,true,,2450,116,20,20,https://example.com/view-product,676,0,18
+1788256966405,634,Add to Cart,200,OK,Thread Group 1-7,text,true,,970,211,20,20,https://example.com/add-to-cart,444,0,26
+1788256966540,1166,Checkout,200,OK,Thread Group 1-7,text,true,,1924,167,20,20,https://example.com/checkout,816,0,12
+1788256966675,179,Logout,200,OK,Thread Group 1-7,text,true,,2733,195,20,20,https://example.com/logout,125,0,46
+1788256967000,266,Login,200,OK,Thread Group 1-8,text,true,,1147,92,20,20,https://example.com/login,186,0,22
+1788256967135,504,Search Products,200,OK,Thread Group 1-8,text,true,,1022,133,20,20,https://example.com/search-products,353,0,22
+1788256967270,391,View Product,200,OK,Thread Group 1-8,text,true,,864,194,20,20,https://example.com/view-product,274,0,43
+1788256967405,586,Add to Cart,200,OK,Thread Group 1-8,text,true,,1074,167,20,20,https://example.com/add-to-cart,410,0,29
+1788256967540,486,Checkout,200,OK,Thread Group 1-8,text,true,,1692,153,20,20,https://example.com/checkout,340,0,37
+1788256967675,239,Logout,200,OK,Thread Group 1-8,text,true,,988,156,20,20,https://example.com/logout,167,0,13
+1788256968000,356,Login,200,OK,Thread Group 1-9,text,true,,1325,212,20,20,https://example.com/login,249,0,11
+1788256968135,504,Search Products,200,OK,Thread Group 1-9,text,true,,2548,211,20,20,https://example.com/search-products,353,0,44
+1788256968270,368,View Product,200,OK,Thread Group 1-9,text,true,,1648,192,20,20,https://example.com/view-product,258,0,48
+1788256968405,733,Add to Cart,200,OK,Thread Group 1-9,text,true,,1015,160,20,20,https://example.com/add-to-cart,513,0,42
+1788256968540,563,Checkout,200,OK,Thread Group 1-9,text,true,,952,86,20,20,https://example.com/checkout,394,0,27
+1788256968675,166,Logout,200,OK,Thread Group 1-9,text,true,,1989,160,20,20,https://example.com/logout,116,0,10
+1788256969000,489,Login,200,OK,Thread Group 1-10,text,true,,1359,230,20,20,https://example.com/login,342,0,21
+1788256969135,348,Search Products,200,OK,Thread Group 1-10,text,true,,1754,204,20,20,https://example.com/search-products,244,0,14
+1788256969270,494,View Product,200,OK,Thread Group 1-10,text,true,,964,97,20,20,https://example.com/view-product,346,0,36
+1788256969405,601,Add to Cart,200,OK,Thread Group 1-10,text,true,,2813,139,20,20,https://example.com/add-to-cart,421,0,27
+1788256969540,843,Checkout,200,OK,Thread Group 1-10,text,true,,1401,232,20,20,https://example.com/checkout,590,0,32
+1788256969675,196,Logout,200,OK,Thread Group 1-10,text,true,,2491,149,20,20,https://example.com/logout,137,0,35
+1788256970000,281,Login,200,OK,Thread Group 1-11,text,true,,1263,116,20,20,https://example.com/login,197,0,16
+1788256970135,618,Search Products,200,OK,Thread Group 1-11,text,true,,2042,235,20,20,https://example.com/search-products,433,0,25
+1788256970270,401,View Product,200,OK,Thread Group 1-11,text,true,,2781,103,20,20,https://example.com/view-product,281,0,26
+1788256970405,524,Add to Cart,200,OK,Thread Group 1-11,text,true,,990,126,20,20,https://example.com/add-to-cart,367,0,30
+1788256970540,1220,Checkout,200,OK,Thread Group 1-11,text,true,,1820,106,20,20,https://example.com/checkout,854,0,26
+1788256970675,231,Logout,200,OK,Thread Group 1-11,text,true,,854,84,20,20,https://example.com/logout,162,0,21
+1788256971000,565,Login,200,OK,Thread Group 1-12,text,true,,715,210,20,20,https://example.com/login,396,0,38
+1788256971135,289,Search Products,200,OK,Thread Group 1-12,text,true,,867,177,20,20,https://example.com/search-products,202,0,16
+1788256971270,439,View Product,200,OK,Thread Group 1-12,text,true,,2609,192,20,20,https://example.com/view-product,307,0,14
+1788256971405,457,Add to Cart,200,OK,Thread Group 1-12,text,true,,2997,162,20,20,https://example.com/add-to-cart,320,0,10
+1788256971540,332,Checkout,200,OK,Thread Group 1-12,text,true,,2369,220,20,20,https://example.com/checkout,232,0,23
+1788256971675,238,Logout,200,OK,Thread Group 1-12,text,true,,2264,91,20,20,https://example.com/logout,167,0,48
+1788256972000,331,Login,200,OK,Thread Group 1-13,text,true,,1053,236,20,20,https://example.com/login,232,0,34
+1788256972135,772,Search Products,200,OK,Thread Group 1-13,text,true,,2616,202,20,20,https://example.com/search-products,540,0,31
+1788256972270,534,View Product,200,OK,Thread Group 1-13,text,true,,2734,193,20,20,https://example.com/view-product,374,0,18
+1788256972405,570,Add to Cart,200,OK,Thread Group 1-13,text,true,,726,140,20,20,https://example.com/add-to-cart,399,0,47
+1788256972540,819,Checkout,200,OK,Thread Group 1-13,text,true,,1501,163,20,20,https://example.com/checkout,573,0,24
+1788256972675,221,Logout,200,OK,Thread Group 1-13,text,true,,1561,160,20,20,https://example.com/logout,155,0,26
+1788256973000,413,Login,200,OK,Thread Group 1-14,text,true,,1211,163,20,20,https://example.com/login,289,0,25
+1788256973135,454,Search Products,200,OK,Thread Group 1-14,text,true,,1090,191,20,20,https://example.com/search-products,318,0,17
+1788256973270,362,View Product,200,OK,Thread Group 1-14,text,true,,1680,111,20,20,https://example.com/view-product,253,0,31
+1788256973405,606,Add to Cart,200,OK,Thread Group 1-14,text,true,,2801,177,20,20,https://example.com/add-to-cart,424,0,33
+1788256973540,1007,Checkout,200,OK,Thread Group 1-14,text,true,,2297,172,20,20,https://example.com/checkout,705,0,46
+1788256973675,197,Logout,200,OK,Thread Group 1-14,text,true,,2834,168,20,20,https://example.com/logout,138,0,50
+1788256974000,492,Login,200,OK,Thread Group 1-15,text,true,,1573,108,20,20,https://example.com/login,344,0,38
+1788256974135,327,Search Products,200,OK,Thread Group 1-15,text,true,,1146,104,20,20,https://example.com/search-products,229,0,45
+1788256974270,443,View Product,200,OK,Thread Group 1-15,text,true,,2593,82,20,20,https://example.com/view-product,310,0,17
+1788256974405,957,Add to Cart,200,OK,Thread Group 1-15,text,true,,2688,240,20,20,https://example.com/add-to-cart,670,0,30
+1788256974540,946,Checkout,200,OK,Thread Group 1-15,text,true,,1750,192,20,20,https://example.com/checkout,662,0,42
+1788256974675,197,Logout,200,OK,Thread Group 1-15,text,true,,1486,199,20,20,https://example.com/logout,138,0,49
+1788256975000,314,Login,200,OK,Thread Group 1-16,text,true,,1423,92,20,20,https://example.com/login,220,0,29
+1788256975135,361,Search Products,200,OK,Thread Group 1-16,text,true,,2472,139,20,20,https://example.com/search-products,253,0,14
+1788256975270,411,View Product,200,OK,Thread Group 1-16,text,true,,1670,85,20,20,https://example.com/view-product,288,0,10
+1788256975405,761,Add to Cart,200,OK,Thread Group 1-16,text,true,,2312,124,20,20,https://example.com/add-to-cart,533,0,41
+1788256975540,1034,Checkout,200,OK,Thread Group 1-16,text,true,,2041,173,20,20,https://example.com/checkout,724,0,24
+1788256975675,264,Logout,200,OK,Thread Group 1-16,text,true,,2633,238,20,20,https://example.com/logout,185,0,45
+1788256976000,269,Login,200,OK,Thread Group 1-17,text,true,,1601,198,20,20,https://example.com/login,188,0,36
+1788256976135,503,Search Products,200,OK,Thread Group 1-17,text,true,,1886,171,20,20,https://example.com/search-products,352,0,16
+1788256976270,368,View Product,200,OK,Thread Group 1-17,text,true,,993,240,20,20,https://example.com/view-product,258,0,29
+1788256976405,510,Add to Cart,200,OK,Thread Group 1-17,text,true,,1524,114,20,20,https://example.com/add-to-cart,357,0,39
+1788256976540,818,Checkout,200,OK,Thread Group 1-17,text,true,,1131,210,20,20,https://example.com/checkout,573,0,44
+1788256976675,424,Logout,200,OK,Thread Group 1-17,text,true,,2599,132,20,20,https://example.com/logout,297,0,11
+1788256977000,315,Login,200,OK,Thread Group 1-18,text,true,,1924,85,20,20,https://example.com/login,220,0,42
+1788256977135,639,Search Products,200,OK,Thread Group 1-18,text,true,,740,224,20,20,https://example.com/search-products,447,0,22
+1788256977270,401,View Product,200,OK,Thread Group 1-18,text,true,,2806,197,20,20,https://example.com/view-product,281,0,26
+1788256977405,390,Add to Cart,200,OK,Thread Group 1-18,text,true,,1854,145,20,20,https://example.com/add-to-cart,273,0,48
+1788256977540,1198,Checkout,200,OK,Thread Group 1-18,text,true,,2770,153,20,20,https://example.com/checkout,839,0,32
+1788256977675,333,Logout,200,OK,Thread Group 1-18,text,true,,2135,80,20,20,https://example.com/logout,233,0,49
+1788256978000,327,Login,200,OK,Thread Group 1-19,text,true,,2238,224,20,20,https://example.com/login,229,0,46
+1788256978135,422,Search Products,200,OK,Thread Group 1-19,text,true,,2677,166,20,20,https://example.com/search-products,295,0,28
+1788256978270,664,View Product,200,OK,Thread Group 1-19,text,true,,1522,181,20,20,https://example.com/view-product,465,0,38
+1788256978405,550,Add to Cart,200,OK,Thread Group 1-19,text,true,,2495,240,20,20,https://example.com/add-to-cart,385,0,18
+1788256978540,410,Checkout,200,OK,Thread Group 1-19,text,true,,1575,161,20,20,https://example.com/checkout,287,0,39
+1788256978675,178,Logout,200,OK,Thread Group 1-19,text,true,,1480,193,20,20,https://example.com/logout,125,0,33
+1788256979000,266,Login,200,OK,Thread Group 1-20,text,true,,860,137,20,20,https://example.com/login,186,0,33
+1788256979135,628,Search Products,200,OK,Thread Group 1-20,text,true,,2232,111,20,20,https://example.com/search-products,440,0,16
+1788256979270,484,View Product,200,OK,Thread Group 1-20,text,true,,2584,231,20,20,https://example.com/view-product,339,0,16
+1788256979405,679,Add to Cart,200,OK,Thread Group 1-20,text,true,,1932,118,20,20,https://example.com/add-to-cart,475,0,38
+1788256979540,784,Checkout,200,OK,Thread Group 1-20,text,true,,825,157,20,20,https://example.com/checkout,549,0,30
+1788256979675,192,Logout,200,OK,Thread Group 1-20,text,true,,2556,176,20,20,https://example.com/logout,134,0,48
+1788256980000,405,Login,200,OK,Thread Group 1-1,text,true,,2307,81,20,20,https://example.com/login,284,0,35
+1788256980135,408,Search Products,200,OK,Thread Group 1-1,text,true,,1271,116,20,20,https://example.com/search-products,286,0,18
+1788256980270,490,View Product,200,OK,Thread Group 1-1,text,true,,2079,217,20,20,https://example.com/view-product,343,0,25
+1788256980405,587,Add to Cart,200,OK,Thread Group 1-1,text,true,,978,159,20,20,https://example.com/add-to-cart,411,0,11
+1788256980540,674,Checkout,200,OK,Thread Group 1-1,text,true,,2725,121,20,20,https://example.com/checkout,472,0,28
+1788256980675,152,Logout,200,OK,Thread Group 1-1,text,true,,2447,87,20,20,https://example.com/logout,106,0,46
+1788256981000,387,Login,200,OK,Thread Group 1-2,text,true,,2397,205,20,20,https://example.com/login,271,0,46
+1788256981135,495,Search Products,200,OK,Thread Group 1-2,text,true,,2234,204,20,20,https://example.com/search-products,346,0,19
+1788256981270,368,View Product,200,OK,Thread Group 1-2,text,true,,1586,80,20,20,https://example.com/view-product,258,0,43
+1788256981405,551,Add to Cart,200,OK,Thread Group 1-2,text,true,,2241,220,20,20,https://example.com/add-to-cart,386,0,27
+1788256981540,993,Checkout,200,OK,Thread Group 1-2,text,true,,2813,226,20,20,https://example.com/checkout,695,0,29
+1788256981675,201,Logout,200,OK,Thread Group 1-2,text,true,,1058,233,20,20,https://example.com/logout,141,0,15
+1788256982000,362,Login,200,OK,Thread Group 1-3,text,true,,2799,112,20,20,https://example.com/login,253,0,22
+1788256982135,540,Search Products,200,OK,Thread Group 1-3,text,true,,2916,116,20,20,https://example.com/search-products,378,0,26
+1788256982270,518,View Product,200,OK,Thread Group 1-3,text,true,,1162,193,20,20,https://example.com/view-product,363,0,10
+1788256982405,608,Add to Cart,200,OK,Thread Group 1-3,text,true,,2193,203,20,20,https://example.com/add-to-cart,426,0,19
+1788256982540,806,Checkout,200,OK,Thread Group 1-3,text,true,,1803,229,20,20,https://example.com/checkout,564,0,27
+1788256982675,168,Logout,200,OK,Thread Group 1-3,text,true,,1441,216,20,20,https://example.com/logout,118,0,30
+1788256983000,366,Login,200,OK,Thread Group 1-4,text,true,,2520,87,20,20,https://example.com/login,256,0,36
+1788256983135,511,Search Products,200,OK,Thread Group 1-4,text,true,,1806,156,20,20,https://example.com/search-products,358,0,21
+1788256983270,909,View Product,200,OK,Thread Group 1-4,text,true,,1722,152,20,20,https://example.com/view-product,636,0,26
+1788256983405,778,Add to Cart,200,OK,Thread Group 1-4,text,true,,2849,222,20,20,https://example.com/add-to-cart,545,0,24
+1788256983540,646,Checkout,200,OK,Thread Group 1-4,text,true,,1288,219,20,20,https://example.com/checkout,452,0,34
+1788256983675,161,Logout,200,OK,Thread Group 1-4,text,true,,1562,153,20,20,https://example.com/logout,113,0,46
+1788256984000,208,Login,200,OK,Thread Group 1-5,text,true,,1796,169,20,20,https://example.com/login,146,0,29
+1788256984135,967,Search Products,200,OK,Thread Group 1-5,text,true,,2276,162,20,20,https://example.com/search-products,677,0,25
+1788256984270,422,View Product,200,OK,Thread Group 1-5,text,true,,1986,192,20,20,https://example.com/view-product,295,0,21
+1788256984405,826,Add to Cart,200,OK,Thread Group 1-5,text,true,,1799,188,20,20,https://example.com/add-to-cart,578,0,34
+1788256984540,636,Checkout,200,OK,Thread Group 1-5,text,true,,720,172,20,20,https://example.com/checkout,445,0,38
+1788256984675,224,Logout,200,OK,Thread Group 1-5,text,true,,1722,175,20,20,https://example.com/logout,157,0,50
+1788256985000,331,Login,200,OK,Thread Group 1-6,text,true,,2199,161,20,20,https://example.com/login,232,0,11
+1788256985135,447,Search Products,200,OK,Thread Group 1-6,text,true,,888,164,20,20,https://example.com/search-products,313,0,15
+1788256985270,381,View Product,200,OK,Thread Group 1-6,text,true,,1645,229,20,20,https://example.com/view-product,267,0,32
+1788256985405,587,Add to Cart,200,OK,Thread Group 1-6,text,true,,2497,202,20,20,https://example.com/add-to-cart,411,0,34
+1788256985540,827,Checkout,200,OK,Thread Group 1-6,text,true,,1410,140,20,20,https://example.com/checkout,579,0,48
+1788256985675,167,Logout,200,OK,Thread Group 1-6,text,true,,1822,137,20,20,https://example.com/logout,117,0,36
+1788256986000,290,Login,200,OK,Thread Group 1-7,text,true,,963,238,20,20,https://example.com/login,203,0,22
+1788256986135,382,Search Products,200,OK,Thread Group 1-7,text,true,,1850,203,20,20,https://example.com/search-products,267,0,30
+1788256986270,353,View Product,200,OK,Thread Group 1-7,text,true,,2408,196,20,20,https://example.com/view-product,247,0,15
+1788256986405,531,Add to Cart,200,OK,Thread Group 1-7,text,true,,1726,236,20,20,https://example.com/add-to-cart,372,0,27
+1788256986540,876,Checkout,200,OK,Thread Group 1-7,text,true,,2456,192,20,20,https://example.com/checkout,613,0,44
+1788256986675,173,Logout,200,OK,Thread Group 1-7,text,true,,2547,164,20,20,https://example.com/logout,121,0,36
+1788256987000,426,Login,200,OK,Thread Group 1-8,text,true,,2480,81,20,20,https://example.com/login,298,0,16
+1788256987135,747,Search Products,200,OK,Thread Group 1-8,text,true,,2897,185,20,20,https://example.com/search-products,523,0,21
+1788256987270,327,View Product,200,OK,Thread Group 1-8,text,true,,864,193,20,20,https://example.com/view-product,229,0,38
+1788256987405,525,Add to Cart,200,OK,Thread Group 1-8,text,true,,2920,206,20,20,https://example.com/add-to-cart,368,0,27
+1788256987540,768,Checkout,200,OK,Thread Group 1-8,text,true,,1479,172,20,20,https://example.com/checkout,538,0,49
+1788256987675,210,Logout,200,OK,Thread Group 1-8,text,true,,2640,161,20,20,https://example.com/logout,147,0,27
+1788256988000,222,Login,200,OK,Thread Group 1-9,text,true,,2653,120,20,20,https://example.com/login,155,0,11
+1788256988135,426,Search Products,200,OK,Thread Group 1-9,text,true,,1178,113,20,20,https://example.com/search-products,298,0,45
+1788256988270,493,View Product,200,OK,Thread Group 1-9,text,true,,753,154,20,20,https://example.com/view-product,345,0,49
+1788256988405,500,Add to Cart,200,OK,Thread Group 1-9,text,true,,1243,151,20,20,https://example.com/add-to-cart,350,0,13
+1788256988540,1541,Checkout,200,OK,Thread Group 1-9,text,true,,1409,223,20,20,https://example.com/checkout,1079,0,21
+1788256988675,225,Logout,200,OK,Thread Group 1-9,text,true,,1771,216,20,20,https://example.com/logout,158,0,37
+1788256989000,274,Login,200,OK,Thread Group 1-10,text,true,,996,169,20,20,https://example.com/login,192,0,48
+1788256989135,435,Search Products,200,OK,Thread Group 1-10,text,true,,2884,234,20,20,https://example.com/search-products,304,0,34
+1788256989270,568,View Product,200,OK,Thread Group 1-10,text,true,,908,191,20,20,https://example.com/view-product,398,0,22
+1788256989405,504,Add to Cart,200,OK,Thread Group 1-10,text,true,,1448,165,20,20,https://example.com/add-to-cart,353,0,10
+1788256989540,610,Checkout,200,OK,Thread Group 1-10,text,true,,2701,150,20,20,https://example.com/checkout,427,0,28
+1788256989675,206,Logout,200,OK,Thread Group 1-10,text,true,,1477,220,20,20,https://example.com/logout,144,0,12
+1788256990000,388,Login,200,OK,Thread Group 1-11,text,true,,845,172,20,20,https://example.com/login,272,0,42
+1788256990135,418,Search Products,200,OK,Thread Group 1-11,text,true,,1294,96,20,20,https://example.com/search-products,293,0,27
+1788256990270,273,View Product,200,OK,Thread Group 1-11,text,true,,2368,98,20,20,https://example.com/view-product,191,0,36
+1788256990405,343,Add to Cart,200,OK,Thread Group 1-11,text,true,,2996,159,20,20,https://example.com/add-to-cart,240,0,45
+1788256990540,515,Checkout,200,OK,Thread Group 1-11,text,true,,2644,129,20,20,https://example.com/checkout,360,0,17
+1788256990675,166,Logout,200,OK,Thread Group 1-11,text,true,,1995,197,20,20,https://example.com/logout,116,0,40
+1788256991000,318,Login,200,OK,Thread Group 1-12,text,true,,1633,108,20,20,https://example.com/login,223,0,26
+1788256991135,748,Search Products,200,OK,Thread Group 1-12,text,true,,2565,113,20,20,https://example.com/search-products,524,0,27
+1788256991270,516,View Product,200,OK,Thread Group 1-12,text,true,,1784,147,20,20,https://example.com/view-product,361,0,39
+1788256991405,365,Add to Cart,200,OK,Thread Group 1-12,text,true,,2123,116,20,20,https://example.com/add-to-cart,255,0,14
+1788256991540,617,Checkout,200,OK,Thread Group 1-12,text,true,,2211,235,20,20,https://example.com/checkout,432,0,42
+1788256991675,132,Logout,200,OK,Thread Group 1-12,text,true,,914,96,20,20,https://example.com/logout,92,0,20
+1788256992000,573,Login,200,OK,Thread Group 1-13,text,true,,1559,172,20,20,https://example.com/login,401,0,27
+1788256992135,546,Search Products,200,OK,Thread Group 1-13,text,true,,1933,205,20,20,https://example.com/search-products,382,0,42
+1788256992270,330,View Product,200,OK,Thread Group 1-13,text,true,,2345,136,20,20,https://example.com/view-product,231,0,32
+1788256992405,584,Add to Cart,200,OK,Thread Group 1-13,text,true,,1196,80,20,20,https://example.com/add-to-cart,409,0,16
+1788256992540,1058,Checkout,200,OK,Thread Group 1-13,text,true,,874,236,20,20,https://example.com/checkout,741,0,19
+1788256992675,229,Logout,200,OK,Thread Group 1-13,text,true,,2616,90,20,20,https://example.com/logout,160,0,10
+1788256993000,331,Login,200,OK,Thread Group 1-14,text,true,,1923,114,20,20,https://example.com/login,232,0,47
+1788256993135,529,Search Products,200,OK,Thread Group 1-14,text,true,,1455,187,20,20,https://example.com/search-products,370,0,34
+1788256993270,287,View Product,200,OK,Thread Group 1-14,text,true,,2639,98,20,20,https://example.com/view-product,201,0,24
+1788256993405,773,Add to Cart,200,OK,Thread Group 1-14,text,true,,2427,161,20,20,https://example.com/add-to-cart,541,0,17
+1788256993540,1426,Checkout,200,OK,Thread Group 1-14,text,true,,2300,114,20,20,https://example.com/checkout,998,0,34
+1788256993675,151,Logout,200,OK,Thread Group 1-14,text,true,,765,156,20,20,https://example.com/logout,106,0,46
+1788256994000,263,Login,200,OK,Thread Group 1-15,text,true,,1472,227,20,20,https://example.com/login,184,0,21
+1788256994135,880,Search Products,200,OK,Thread Group 1-15,text,true,,1188,176,20,20,https://example.com/search-products,616,0,23
+1788256994270,577,View Product,200,OK,Thread Group 1-15,text,true,,1840,97,20,20,https://example.com/view-product,404,0,15
+1788256994405,625,Add to Cart,200,OK,Thread Group 1-15,text,true,,1989,120,20,20,https://example.com/add-to-cart,438,0,47
+1788256994540,881,Checkout,200,OK,Thread Group 1-15,text,true,,1796,89,20,20,https://example.com/checkout,617,0,41
+1788256994675,139,Logout,200,OK,Thread Group 1-15,text,true,,1057,81,20,20,https://example.com/logout,97,0,20
+1788256995000,220,Login,200,OK,Thread Group 1-16,text,true,,2365,153,20,20,https://example.com/login,154,0,11
+1788256995135,628,Search Products,200,OK,Thread Group 1-16,text,true,,2497,238,20,20,https://example.com/search-products,440,0,40
+1788256995270,473,View Product,200,OK,Thread Group 1-16,text,true,,963,135,20,20,https://example.com/view-product,331,0,17
+1788256995405,933,Add to Cart,200,OK,Thread Group 1-16,text,true,,2819,198,20,20,https://example.com/add-to-cart,653,0,27
+1788256995540,757,Checkout,200,OK,Thread Group 1-16,text,true,,954,218,20,20,https://example.com/checkout,530,0,21
+1788256995675,263,Logout,200,OK,Thread Group 1-16,text,true,,749,200,20,20,https://example.com/logout,184,0,32
+1788256996000,202,Login,200,OK,Thread Group 1-17,text,true,,2435,168,20,20,https://example.com/login,141,0,48
+1788256996135,512,Search Products,200,OK,Thread Group 1-17,text,true,,1003,106,20,20,https://example.com/search-products,358,0,38
+1788256996270,210,View Product,200,OK,Thread Group 1-17,text,true,,1234,207,20,20,https://example.com/view-product,147,0,44
+1788256996405,689,Add to Cart,200,OK,Thread Group 1-17,text,true,,2366,124,20,20,https://example.com/add-to-cart,482,0,17
+1788256996540,675,Checkout,200,OK,Thread Group 1-17,text,true,,1330,86,20,20,https://example.com/checkout,472,0,44
+1788256996675,186,Logout,200,OK,Thread Group 1-17,text,true,,2429,152,20,20,https://example.com/logout,130,0,37
+1788256997000,274,Login,200,OK,Thread Group 1-18,text,true,,1977,236,20,20,https://example.com/login,192,0,22
+1788256997135,756,Search Products,200,OK,Thread Group 1-18,text,true,,1366,96,20,20,https://example.com/search-products,529,0,10
+1788256997270,437,View Product,200,OK,Thread Group 1-18,text,true,,1849,103,20,20,https://example.com/view-product,306,0,21
+1788256997405,615,Add to Cart,200,OK,Thread Group 1-18,text,true,,948,148,20,20,https://example.com/add-to-cart,430,0,24
+1788256997540,866,Checkout,200,OK,Thread Group 1-18,text,true,,2825,153,20,20,https://example.com/checkout,606,0,42
+1788256997675,275,Logout,200,OK,Thread Group 1-18,text,true,,859,229,20,20,https://example.com/logout,192,0,21
+1788256998000,390,Login,200,OK,Thread Group 1-19,text,true,,1447,177,20,20,https://example.com/login,273,0,26
+1788256998135,443,Search Products,200,OK,Thread Group 1-19,text,true,,1666,158,20,20,https://example.com/search-products,310,0,49
+1788256998270,314,View Product,200,OK,Thread Group 1-19,text,true,,992,156,20,20,https://example.com/view-product,220,0,19
+1788256998405,558,Add to Cart,200,OK,Thread Group 1-19,text,true,,789,231,20,20,https://example.com/add-to-cart,391,0,27
+1788256998540,1327,Checkout,200,OK,Thread Group 1-19,text,true,,2371,233,20,20,https://example.com/checkout,929,0,24
+1788256998675,191,Logout,200,OK,Thread Group 1-19,text,true,,1722,99,20,20,https://example.com/logout,134,0,38
+1788256999000,310,Login,200,OK,Thread Group 1-20,text,true,,2832,115,20,20,https://example.com/login,217,0,27
+1788256999135,621,Search Products,200,OK,Thread Group 1-20,text,true,,1180,239,20,20,https://example.com/search-products,435,0,16
+1788256999270,342,View Product,200,OK,Thread Group 1-20,text,true,,2494,197,20,20,https://example.com/view-product,239,0,24
+1788256999405,733,Add to Cart,200,OK,Thread Group 1-20,text,true,,2896,93,20,20,https://example.com/add-to-cart,513,0,39
+1788256999540,1198,Checkout,200,OK,Thread Group 1-20,text,true,,1552,110,20,20,https://example.com/checkout,839,0,44
+1788256999675,215,Logout,200,OK,Thread Group 1-20,text,true,,1759,153,20,20,https://example.com/logout,150,0,22
+1788257000000,235,Login,200,OK,Thread Group 1-1,text,true,,1306,147,20,20,https://example.com/login,164,0,14
+1788257000135,391,Search Products,200,OK,Thread Group 1-1,text,true,,2838,159,20,20,https://example.com/search-products,274,0,13
+1788257000270,477,View Product,200,OK,Thread Group 1-1,text,true,,1676,212,20,20,https://example.com/view-product,334,0,16
+1788257000405,665,Add to Cart,200,OK,Thread Group 1-1,text,true,,2145,105,20,20,https://example.com/add-to-cart,465,0,23
+1788257000540,515,Checkout,200,OK,Thread Group 1-1,text,true,,1299,99,20,20,https://example.com/checkout,360,0,44
+1788257000675,208,Logout,200,OK,Thread Group 1-1,text,true,,2225,149,20,20,https://example.com/logout,146,0,13
+1788257001000,476,Login,200,OK,Thread Group 1-2,text,true,,2468,131,20,20,https://example.com/login,333,0,34
+1788257001135,527,Search Products,200,OK,Thread Group 1-2,text,true,,2826,222,20,20,https://example.com/search-products,369,0,41
+1788257001270,356,View Product,200,OK,Thread Group 1-2,text,true,,1124,211,20,20,https://example.com/view-product,249,0,33
+1788257001405,641,Add to Cart,200,OK,Thread Group 1-2,text,true,,2161,169,20,20,https://example.com/add-to-cart,449,0,49
+1788257001540,549,Checkout,200,OK,Thread Group 1-2,text,true,,1398,240,20,20,https://example.com/checkout,384,0,14
+1788257001675,208,Logout,200,OK,Thread Group 1-2,text,true,,1151,197,20,20,https://example.com/logout,146,0,40
+1788257002000,348,Login,200,OK,Thread Group 1-3,text,true,,2449,207,20,20,https://example.com/login,244,0,11
+1788257002135,438,Search Products,200,OK,Thread Group 1-3,text,true,,1869,185,20,20,https://example.com/search-products,307,0,30
+1788257002270,373,View Product,200,OK,Thread Group 1-3,text,true,,2217,173,20,20,https://example.com/view-product,261,0,19
+1788257002405,503,Add to Cart,200,OK,Thread Group 1-3,text,true,,1749,212,20,20,https://example.com/add-to-cart,352,0,16
+1788257002540,874,Checkout,200,OK,Thread Group 1-3,text,true,,1722,164,20,20,https://example.com/checkout,612,0,21
+1788257002675,270,Logout,200,OK,Thread Group 1-3,text,true,,2348,194,20,20,https://example.com/logout,189,0,38
+1788257003000,334,Login,200,OK,Thread Group 1-4,text,true,,1839,236,20,20,https://example.com/login,234,0,16
+1788257003135,654,Search Products,200,OK,Thread Group 1-4,text,true,,1786,84,20,20,https://example.com/search-products,458,0,17
+1788257003270,826,View Product,200,OK,Thread Group 1-4,text,true,,1931,138,20,20,https://example.com/view-product,578,0,12
+1788257003405,528,Add to Cart,200,OK,Thread Group 1-4,text,true,,2547,221,20,20,https://example.com/add-to-cart,370,0,35
+1788257003540,547,Checkout,200,OK,Thread Group 1-4,text,true,,1416,210,20,20,https://example.com/checkout,383,0,18
+1788257003675,187,Logout,200,OK,Thread Group 1-4,text,true,,1791,176,20,20,https://example.com/logout,131,0,25
+1788257004000,248,Login,200,OK,Thread Group 1-5,text,true,,2038,240,20,20,https://example.com/login,174,0,50
+1788257004135,821,Search Products,200,OK,Thread Group 1-5,text,true,,1086,214,20,20,https://example.com/search-products,575,0,18
+1788257004270,422,View Product,200,OK,Thread Group 1-5,text,true,,2929,87,20,20,https://example.com/view-product,295,0,43
+1788257004405,419,Add to Cart,200,OK,Thread Group 1-5,text,true,,2720,239,20,20,https://example.com/add-to-cart,293,0,47
+1788257004540,953,Checkout,200,OK,Thread Group 1-5,text,true,,793,237,20,20,https://example.com/checkout,667,0,10
+1788257004675,286,Logout,200,OK,Thread Group 1-5,text,true,,2654,227,20,20,https://example.com/logout,200,0,42
+1788257005000,282,Login,200,OK,Thread Group 1-6,text,true,,2002,153,20,20,https://example.com/login,197,0,48
+1788257005135,750,Search Products,200,OK,Thread Group 1-6,text,true,,1814,216,20,20,https://example.com/search-products,525,0,39
+1788257005270,725,View Product,200,OK,Thread Group 1-6,text,true,,1925,180,20,20,https://example.com/view-product,507,0,15
+1788257005405,561,Add to Cart,200,OK,Thread Group 1-6,text,true,,1958,204,20,20,https://example.com/add-to-cart,393,0,50
+1788257005540,1334,Checkout,200,OK,Thread Group 1-6,text,true,,1474,118,20,20,https://example.com/checkout,934,0,36
+1788257005675,120,Logout,200,OK,Thread Group 1-6,text,true,,2883,195,20,20,https://example.com/logout,84,0,26
+1788257006000,525,Login,200,OK,Thread Group 1-7,text,true,,1999,127,20,20,https://example.com/login,368,0,29
+1788257006135,445,Search Products,200,OK,Thread Group 1-7,text,true,,2818,134,20,20,https://example.com/search-products,312,0,46
+1788257006270,344,View Product,200,OK,Thread Group 1-7,text,true,,989,159,20,20,https://example.com/view-product,241,0,14
+1788257006405,664,Add to Cart,200,OK,Thread Group 1-7,text,true,,2618,120,20,20,https://example.com/add-to-cart,465,0,19
+1788257006540,1164,Checkout,200,OK,Thread Group 1-7,text,true,,2297,117,20,20,https://example.com/checkout,815,0,10
+1788257006675,195,Logout,200,OK,Thread Group 1-7,text,true,,2389,228,20,20,https://example.com/logout,136,0,29
+1788257007000,453,Login,200,OK,Thread Group 1-8,text,true,,1528,143,20,20,https://example.com/login,317,0,16
+1788257007135,431,Search Products,200,OK,Thread Group 1-8,text,true,,1386,89,20,20,https://example.com/search-products,302,0,26
+1788257007270,364,View Product,200,OK,Thread Group 1-8,text,true,,990,161,20,20,https://example.com/view-product,255,0,23
+1788257007405,686,Add to Cart,200,OK,Thread Group 1-8,text,true,,2423,191,20,20,https://example.com/add-to-cart,480,0,36
+1788257007540,813,Checkout,200,OK,Thread Group 1-8,text,true,,1863,196,20,20,https://example.com/checkout,569,0,35
+1788257007675,266,Logout,200,OK,Thread Group 1-8,text,true,,2012,195,20,20,https://example.com/logout,186,0,45
+1788257008000,450,Login,200,OK,Thread Group 1-9,text,true,,1503,213,20,20,https://example.com/login,315,0,33
+1788257008135,538,Search Products,200,OK,Thread Group 1-9,text,true,,1404,160,20,20,https://example.com/search-products,377,0,24
+1788257008270,445,View Product,200,OK,Thread Group 1-9,text,true,,1983,196,20,20,https://example.com/view-product,312,0,42
+1788257008405,1025,Add to Cart,200,OK,Thread Group 1-9,text,true,,1742,116,20,20,https://example.com/add-to-cart,718,0,23
+1788257008540,685,Checkout,200,OK,Thread Group 1-9,text,true,,1016,204,20,20,https://example.com/checkout,479,0,35
+1788257008675,278,Logout,200,OK,Thread Group 1-9,text,true,,2761,239,20,20,https://example.com/logout,195,0,35
+1788257009000,357,Login,200,OK,Thread Group 1-10,text,true,,2735,188,20,20,https://example.com/login,250,0,14
+1788257009135,596,Search Products,200,OK,Thread Group 1-10,text,true,,1442,136,20,20,https://example.com/search-products,417,0,24
+1788257009270,510,View Product,200,OK,Thread Group 1-10,text,true,,1821,222,20,20,https://example.com/view-product,357,0,24
+1788257009405,594,Add to Cart,200,OK,Thread Group 1-10,text,true,,2158,179,20,20,https://example.com/add-to-cart,416,0,22
+1788257009540,860,Checkout,200,OK,Thread Group 1-10,text,true,,1300,109,20,20,https://example.com/checkout,602,0,40
+1788257009675,181,Logout,200,OK,Thread Group 1-10,text,true,,2223,136,20,20,https://example.com/logout,127,0,10
+1788257010000,382,Login,200,OK,Thread Group 1-11,text,true,,1503,233,20,20,https://example.com/login,267,0,11
+1788257010135,389,Search Products,200,OK,Thread Group 1-11,text,true,,2649,146,20,20,https://example.com/search-products,272,0,22
+1788257010270,308,View Product,200,OK,Thread Group 1-11,text,true,,2834,144,20,20,https://example.com/view-product,216,0,40
+1788257010405,341,Add to Cart,200,OK,Thread Group 1-11,text,true,,2179,176,20,20,https://example.com/add-to-cart,239,0,45
+1788257010540,576,Checkout,200,OK,Thread Group 1-11,text,true,,707,199,20,20,https://example.com/checkout,403,0,37
+1788257010675,260,Logout,200,OK,Thread Group 1-11,text,true,,1440,161,20,20,https://example.com/logout,182,0,23
+1788257011000,299,Login,200,OK,Thread Group 1-12,text,true,,1466,173,20,20,https://example.com/login,209,0,37
+1788257011135,509,Search Products,200,OK,Thread Group 1-12,text,true,,829,88,20,20,https://example.com/search-products,356,0,34
+1788257011270,302,View Product,200,OK,Thread Group 1-12,text,true,,1719,230,20,20,https://example.com/view-product,211,0,16
+1788257011405,398,Add to Cart,200,OK,Thread Group 1-12,text,true,,2645,148,20,20,https://example.com/add-to-cart,279,0,22
+1788257011540,617,Checkout,200,OK,Thread Group 1-12,text,true,,2723,127,20,20,https://example.com/checkout,432,0,20
+1788257011675,208,Logout,200,OK,Thread Group 1-12,text,true,,2597,130,20,20,https://example.com/logout,146,0,24
+1788257012000,278,Login,200,OK,Thread Group 1-13,text,true,,1399,185,20,20,https://example.com/login,195,0,35
+1788257012135,414,Search Products,200,OK,Thread Group 1-13,text,true,,1254,133,20,20,https://example.com/search-products,290,0,40
+1788257012270,471,View Product,200,OK,Thread Group 1-13,text,true,,704,185,20,20,https://example.com/view-product,330,0,17
+1788257012405,788,Add to Cart,200,OK,Thread Group 1-13,text,true,,878,168,20,20,https://example.com/add-to-cart,552,0,43
+1788257012540,972,Checkout,200,OK,Thread Group 1-13,text,true,,1058,87,20,20,https://example.com/checkout,680,0,10
+1788257012675,184,Logout,200,OK,Thread Group 1-13,text,true,,1228,85,20,20,https://example.com/logout,129,0,50
+1788257013000,418,Login,200,OK,Thread Group 1-14,text,true,,2169,107,20,20,https://example.com/login,293,0,22
+1788257013135,512,Search Products,200,OK,Thread Group 1-14,text,true,,1159,91,20,20,https://example.com/search-products,358,0,19
+1788257013270,652,View Product,200,OK,Thread Group 1-14,text,true,,1010,91,20,20,https://example.com/view-product,456,0,13
+1788257013405,1020,Add to Cart,200,OK,Thread Group 1-14,text,true,,2463,84,20,20,https://example.com/add-to-cart,714,0,34
+1788257013540,540,Checkout,200,OK,Thread Group 1-14,text,true,,2517,92,20,20,https://example.com/checkout,378,0,50
+1788257013675,183,Logout,200,OK,Thread Group 1-14,text,true,,1849,129,20,20,https://example.com/logout,128,0,48
+1788257014000,269,Login,200,OK,Thread Group 1-15,text,true,,2571,178,20,20,https://example.com/login,188,0,35
+1788257014135,859,Search Products,200,OK,Thread Group 1-15,text,true,,2553,100,20,20,https://example.com/search-products,601,0,30
+1788257014270,361,View Product,200,OK,Thread Group 1-15,text,true,,2372,95,20,20,https://example.com/view-product,253,0,41
+1788257014405,1075,Add to Cart,200,OK,Thread Group 1-15,text,true,,1868,96,20,20,https://example.com/add-to-cart,752,0,36
+1788257014540,821,Checkout,200,OK,Thread Group 1-15,text,true,,920,162,20,20,https://example.com/checkout,575,0,10
+1788257014675,255,Logout,200,OK,Thread Group 1-15,text,true,,1748,192,20,20,https://example.com/logout,178,0,27
+1788257015000,453,Login,200,OK,Thread Group 1-16,text,true,,1213,149,20,20,https://example.com/login,317,0,26
+1788257015135,869,Search Products,200,OK,Thread Group 1-16,text,true,,2467,128,20,20,https://example.com/search-products,608,0,26
+1788257015270,424,View Product,200,OK,Thread Group 1-16,text,true,,739,215,20,20,https://example.com/view-product,297,0,29
+1788257015405,796,Add to Cart,200,OK,Thread Group 1-16,text,true,,2924,222,20,20,https://example.com/add-to-cart,557,0,45
+1788257015540,727,Checkout,200,OK,Thread Group 1-16,text,true,,1493,232,20,20,https://example.com/checkout,509,0,48
+1788257015675,198,Logout,200,OK,Thread Group 1-16,text,true,,1029,81,20,20,https://example.com/logout,139,0,47
+1788257016000,448,Login,200,OK,Thread Group 1-17,text,true,,816,182,20,20,https://example.com/login,314,0,31
+1788257016135,519,Search Products,200,OK,Thread Group 1-17,text,true,,2057,208,20,20,https://example.com/search-products,363,0,35
+1788257016270,371,View Product,200,OK,Thread Group 1-17,text,true,,1279,207,20,20,https://example.com/view-product,260,0,12
+1788257016405,485,Add to Cart,200,OK,Thread Group 1-17,text,true,,1960,183,20,20,https://example.com/add-to-cart,340,0,31
+1788257016540,1108,Checkout,200,OK,Thread Group 1-17,text,true,,1808,164,20,20,https://example.com/checkout,776,0,15
+1788257016675,263,Logout,200,OK,Thread Group 1-17,text,true,,995,222,20,20,https://example.com/logout,184,0,44
+1788257017000,505,Login,200,OK,Thread Group 1-18,text,true,,924,227,20,20,https://example.com/login,354,0,22
+1788257017135,661,Search Products,200,OK,Thread Group 1-18,text,true,,2063,222,20,20,https://example.com/search-products,463,0,35
+1788257017270,627,View Product,200,OK,Thread Group 1-18,text,true,,2382,133,20,20,https://example.com/view-product,439,0,18
+1788257017405,512,Add to Cart,200,OK,Thread Group 1-18,text,true,,1263,118,20,20,https://example.com/add-to-cart,358,0,23
+1788257017540,710,Checkout,200,OK,Thread Group 1-18,text,true,,2934,181,20,20,https://example.com/checkout,497,0,27
+1788257017675,172,Logout,200,OK,Thread Group 1-18,text,true,,1577,159,20,20,https://example.com/logout,120,0,21
+1788257018000,496,Login,200,OK,Thread Group 1-19,text,true,,2459,181,20,20,https://example.com/login,347,0,43
+1788257018135,405,Search Products,200,OK,Thread Group 1-19,text,true,,827,80,20,20,https://example.com/search-products,284,0,47
+1788257018270,501,View Product,200,OK,Thread Group 1-19,text,true,,739,156,20,20,https://example.com/view-product,351,0,50
+1788257018405,745,Add to Cart,200,OK,Thread Group 1-19,text,true,,2878,140,20,20,https://example.com/add-to-cart,522,0,27
+1788257018540,785,Checkout,200,OK,Thread Group 1-19,text,true,,939,144,20,20,https://example.com/checkout,550,0,15
+1788257018675,199,Logout,200,OK,Thread Group 1-19,text,true,,2592,231,20,20,https://example.com/logout,139,0,46
+1788257019000,376,Login,200,OK,Thread Group 1-20,text,true,,1324,129,20,20,https://example.com/login,263,0,10
+1788257019135,794,Search Products,200,OK,Thread Group 1-20,text,true,,1105,136,20,20,https://example.com/search-products,556,0,11
+1788257019270,571,View Product,200,OK,Thread Group 1-20,text,true,,1332,239,20,20,https://example.com/view-product,400,0,20
+1788257019405,549,Add to Cart,200,OK,Thread Group 1-20,text,true,,1933,179,20,20,https://example.com/add-to-cart,384,0,14
+1788257019540,799,Checkout,200,OK,Thread Group 1-20,text,true,,2706,117,20,20,https://example.com/checkout,559,0,20
+1788257019675,224,Logout,200,OK,Thread Group 1-20,text,true,,1349,235,20,20,https://example.com/logout,157,0,33
+1788257020000,488,Login,200,OK,Thread Group 1-1,text,true,,2229,233,20,20,https://example.com/login,342,0,11
+1788257020135,817,Search Products,200,OK,Thread Group 1-1,text,true,,864,144,20,20,https://example.com/search-products,572,0,22
+1788257020270,741,View Product,200,OK,Thread Group 1-1,text,true,,2215,125,20,20,https://example.com/view-product,519,0,17
+1788257020405,616,Add to Cart,200,OK,Thread Group 1-1,text,true,,1634,196,20,20,https://example.com/add-to-cart,431,0,33
+1788257020540,683,Checkout,200,OK,Thread Group 1-1,text,true,,2278,110,20,20,https://example.com/checkout,478,0,31
+1788257020675,126,Logout,200,OK,Thread Group 1-1,text,true,,857,212,20,20,https://example.com/logout,88,0,33
+1788257021000,366,Login,200,OK,Thread Group 1-2,text,true,,868,206,20,20,https://example.com/login,256,0,42
+1788257021135,397,Search Products,200,OK,Thread Group 1-2,text,true,,1743,129,20,20,https://example.com/search-products,278,0,38
+1788257021270,637,View Product,200,OK,Thread Group 1-2,text,true,,2434,232,20,20,https://example.com/view-product,446,0,30
+1788257021405,786,Add to Cart,200,OK,Thread Group 1-2,text,true,,761,117,20,20,https://example.com/add-to-cart,550,0,26
+1788257021540,1024,Checkout,200,OK,Thread Group 1-2,text,true,,2266,162,20,20,https://example.com/checkout,717,0,14
+1788257021675,144,Logout,200,OK,Thread Group 1-2,text,true,,2989,220,20,20,https://example.com/logout,101,0,21
+1788257022000,501,Login,200,OK,Thread Group 1-3,text,true,,1199,97,20,20,https://example.com/login,351,0,39
+1788257022135,415,Search Products,200,OK,Thread Group 1-3,text,true,,828,233,20,20,https://example.com/search-products,290,0,21
+1788257022270,406,View Product,200,OK,Thread Group 1-3,text,true,,2488,238,20,20,https://example.com/view-product,284,0,33
+1788257022405,832,Add to Cart,200,OK,Thread Group 1-3,text,true,,1827,219,20,20,https://example.com/add-to-cart,582,0,11
+1788257022540,822,Checkout,200,OK,Thread Group 1-3,text,true,,1425,81,20,20,https://example.com/checkout,575,0,11
+1788257022675,191,Logout,200,OK,Thread Group 1-3,text,true,,955,200,20,20,https://example.com/logout,134,0,45
+1788257023000,248,Login,200,OK,Thread Group 1-4,text,true,,2694,218,20,20,https://example.com/login,174,0,10
+1788257023135,454,Search Products,200,OK,Thread Group 1-4,text,true,,2098,159,20,20,https://example.com/search-products,318,0,42
+1788257023270,284,View Product,200,OK,Thread Group 1-4,text,true,,2830,175,20,20,https://example.com/view-product,199,0,30
+1788257023405,464,Add to Cart,200,OK,Thread Group 1-4,text,true,,1158,149,20,20,https://example.com/add-to-cart,325,0,41
+1788257023540,690,Checkout,200,OK,Thread Group 1-4,text,true,,2726,146,20,20,https://example.com/checkout,483,0,16
+1788257023675,337,Logout,200,OK,Thread Group 1-4,text,true,,1862,144,20,20,https://example.com/logout,236,0,33
+1788257024000,399,Login,200,OK,Thread Group 1-5,text,true,,2960,124,20,20,https://example.com/login,279,0,32
+1788257024135,469,Search Products,200,OK,Thread Group 1-5,text,true,,880,184,20,20,https://example.com/search-products,328,0,20
+1788257024270,919,View Product,200,OK,Thread Group 1-5,text,true,,802,92,20,20,https://example.com/view-product,643,0,23
+1788257024405,594,Add to Cart,200,OK,Thread Group 1-5,text,true,,2804,193,20,20,https://example.com/add-to-cart,416,0,18
+1788257024540,676,Checkout,200,OK,Thread Group 1-5,text,true,,1446,127,20,20,https://example.com/checkout,473,0,45
+1788257024675,222,Logout,200,OK,Thread Group 1-5,text,true,,2294,221,20,20,https://example.com/logout,155,0,37
+1788257025000,396,Login,200,OK,Thread Group 1-6,text,true,,2561,130,20,20,https://example.com/login,277,0,17
+1788257025135,855,Search Products,200,OK,Thread Group 1-6,text,true,,887,195,20,20,https://example.com/search-products,598,0,44
+1788257025270,360,View Product,200,OK,Thread Group 1-6,text,true,,2791,179,20,20,https://example.com/view-product,252,0,35
+1788257025405,868,Add to Cart,200,OK,Thread Group 1-6,text,true,,2438,95,20,20,https://example.com/add-to-cart,608,0,39
+1788257025540,1080,Checkout,200,OK,Thread Group 1-6,text,true,,2405,146,20,20,https://example.com/checkout,756,0,30
+1788257025675,271,Logout,200,OK,Thread Group 1-6,text,true,,1811,126,20,20,https://example.com/logout,190,0,36
+1788257026000,351,Login,200,OK,Thread Group 1-7,text,true,,2382,165,20,20,https://example.com/login,246,0,33
+1788257026135,548,Search Products,200,OK,Thread Group 1-7,text,true,,2284,200,20,20,https://example.com/search-products,384,0,22
+1788257026270,445,View Product,200,OK,Thread Group 1-7,text,true,,1877,193,20,20,https://example.com/view-product,312,0,40
+1788257026405,521,Add to Cart,200,OK,Thread Group 1-7,text,true,,1437,203,20,20,https://example.com/add-to-cart,365,0,49
+1788257026540,933,Checkout,200,OK,Thread Group 1-7,text,true,,1764,159,20,20,https://example.com/checkout,653,0,24
+1788257026675,218,Logout,200,OK,Thread Group 1-7,text,true,,2490,155,20,20,https://example.com/logout,153,0,16
+1788257027000,266,Login,200,OK,Thread Group 1-8,text,true,,2540,154,20,20,https://example.com/login,186,0,18
+1788257027135,425,Search Products,200,OK,Thread Group 1-8,text,true,,2491,100,20,20,https://example.com/search-products,298,0,32
+1788257027270,499,View Product,200,OK,Thread Group 1-8,text,true,,1327,151,20,20,https://example.com/view-product,349,0,21
+1788257027405,696,Add to Cart,200,OK,Thread Group 1-8,text,true,,2664,232,20,20,https://example.com/add-to-cart,487,0,37
+1788257027540,717,Checkout,200,OK,Thread Group 1-8,text,true,,2301,108,20,20,https://example.com/checkout,502,0,46
+1788257027675,240,Logout,200,OK,Thread Group 1-8,text,true,,1070,204,20,20,https://example.com/logout,168,0,38
+1788257028000,267,Login,200,OK,Thread Group 1-9,text,true,,2332,123,20,20,https://example.com/login,187,0,18
+1788257028135,441,Search Products,200,OK,Thread Group 1-9,text,true,,2419,219,20,20,https://example.com/search-products,309,0,49
+1788257028270,488,View Product,200,OK,Thread Group 1-9,text,true,,1212,89,20,20,https://example.com/view-product,342,0,36
+1788257028405,580,Add to Cart,200,OK,Thread Group 1-9,text,true,,1868,151,20,20,https://example.com/add-to-cart,406,0,44
+1788257028540,948,Checkout,200,OK,Thread Group 1-9,text,true,,2981,214,20,20,https://example.com/checkout,664,0,36
+1788257028675,349,Logout,200,OK,Thread Group 1-9,text,true,,1431,171,20,20,https://example.com/logout,244,0,12
+1788257029000,332,Login,200,OK,Thread Group 1-10,text,true,,2233,185,20,20,https://example.com/login,232,0,41
+1788257029135,704,Search Products,200,OK,Thread Group 1-10,text,true,,2850,114,20,20,https://example.com/search-products,493,0,14
+1788257029270,413,View Product,200,OK,Thread Group 1-10,text,true,,1802,124,20,20,https://example.com/view-product,289,0,14
+1788257029405,417,Add to Cart,200,OK,Thread Group 1-10,text,true,,1113,212,20,20,https://example.com/add-to-cart,292,0,15
+1788257029540,891,Checkout,200,OK,Thread Group 1-10,text,true,,1747,85,20,20,https://example.com/checkout,624,0,44
+1788257029675,244,Logout,200,OK,Thread Group 1-10,text,true,,1640,140,20,20,https://example.com/logout,171,0,26
+1788257030000,300,Login,200,OK,Thread Group 1-11,text,true,,1210,118,20,20,https://example.com/login,210,0,34
+1788257030135,750,Search Products,200,OK,Thread Group 1-11,text,true,,2682,133,20,20,https://example.com/search-products,525,0,43
+1788257030270,385,View Product,200,OK,Thread Group 1-11,text,true,,2375,213,20,20,https://example.com/view-product,270,0,33
+1788257030405,776,Add to Cart,200,OK,Thread Group 1-11,text,true,,2361,147,20,20,https://example.com/add-to-cart,543,0,12
+1788257030540,673,Checkout,200,OK,Thread Group 1-11,text,true,,2021,114,20,20,https://example.com/checkout,471,0,21
+1788257030675,211,Logout,200,OK,Thread Group 1-11,text,true,,1220,234,20,20,https://example.com/logout,148,0,39
+1788257031000,417,Login,200,OK,Thread Group 1-12,text,true,,2692,97,20,20,https://example.com/login,292,0,39
+1788257031135,777,Search Products,200,OK,Thread Group 1-12,text,true,,1085,149,20,20,https://example.com/search-products,544,0,48
+1788257031270,365,View Product,200,OK,Thread Group 1-12,text,true,,1345,204,20,20,https://example.com/view-product,255,0,36
+1788257031405,577,Add to Cart,200,OK,Thread Group 1-12,text,true,,2479,121,20,20,https://example.com/add-to-cart,404,0,14
+1788257031540,679,Checkout,200,OK,Thread Group 1-12,text,true,,999,81,20,20,https://example.com/checkout,475,0,32
+1788257031675,251,Logout,200,OK,Thread Group 1-12,text,true,,2698,201,20,20,https://example.com/logout,176,0,30
+1788257032000,339,Login,200,OK,Thread Group 1-13,text,true,,2537,191,20,20,https://example.com/login,237,0,24
+1788257032135,407,Search Products,200,OK,Thread Group 1-13,text,true,,2876,216,20,20,https://example.com/search-products,285,0,38
+1788257032270,569,View Product,200,OK,Thread Group 1-13,text,true,,1493,82,20,20,https://example.com/view-product,398,0,50
+1788257032405,360,Add to Cart,200,OK,Thread Group 1-13,text,true,,1303,141,20,20,https://example.com/add-to-cart,252,0,11
+1788257032540,692,Checkout,200,OK,Thread Group 1-13,text,true,,2321,107,20,20,https://example.com/checkout,484,0,28
+1788257032675,145,Logout,200,OK,Thread Group 1-13,text,true,,2750,194,20,20,https://example.com/logout,102,0,42
+1788257033000,340,Login,200,OK,Thread Group 1-14,text,true,,2521,187,20,20,https://example.com/login,238,0,37
+1788257033135,524,Search Products,200,OK,Thread Group 1-14,text,true,,1450,114,20,20,https://example.com/search-products,367,0,28
+1788257033270,507,View Product,200,OK,Thread Group 1-14,text,true,,1927,176,20,20,https://example.com/view-product,355,0,16
+1788257033405,716,Add to Cart,200,OK,Thread Group 1-14,text,true,,1857,96,20,20,https://example.com/add-to-cart,501,0,45
+1788257033540,701,Checkout,200,OK,Thread Group 1-14,text,true,,1963,82,20,20,https://example.com/checkout,491,0,39
+1788257033675,289,Logout,200,OK,Thread Group 1-14,text,true,,2239,208,20,20,https://example.com/logout,202,0,16
+1788257034000,241,Login,200,OK,Thread Group 1-15,text,true,,2439,204,20,20,https://example.com/login,169,0,25
+1788257034135,547,Search Products,200,OK,Thread Group 1-15,text,true,,1119,223,20,20,https://example.com/search-products,383,0,44
+1788257034270,580,View Product,200,OK,Thread Group 1-15,text,true,,724,237,20,20,https://example.com/view-product,406,0,15
+1788257034405,674,Add to Cart,200,OK,Thread Group 1-15,text,true,,2291,220,20,20,https://example.com/add-to-cart,472,0,16
+1788257034540,460,Checkout,200,OK,Thread Group 1-15,text,true,,1573,177,20,20,https://example.com/checkout,322,0,30
+1788257034675,217,Logout,200,OK,Thread Group 1-15,text,true,,1504,187,20,20,https://example.com/logout,152,0,22
+1788257035000,265,Login,200,OK,Thread Group 1-16,text,true,,1840,160,20,20,https://example.com/login,186,0,33
+1788257035135,833,Search Products,200,OK,Thread Group 1-16,text,true,,2850,124,20,20,https://example.com/search-products,583,0,41
+1788257035270,388,View Product,200,OK,Thread Group 1-16,text,true,,1464,224,20,20,https://example.com/view-product,272,0,47
+1788257035405,472,Add to Cart,200,OK,Thread Group 1-16,text,true,,1506,92,20,20,https://example.com/add-to-cart,330,0,32
+1788257035540,1589,Checkout,200,OK,Thread Group 1-16,text,true,,2188,190,20,20,https://example.com/checkout,1112,0,28
+1788257035675,219,Logout,200,OK,Thread Group 1-16,text,true,,2488,175,20,20,https://example.com/logout,153,0,43
+1788257036000,426,Login,200,OK,Thread Group 1-17,text,true,,1849,168,20,20,https://example.com/login,298,0,33
+1788257036135,698,Search Products,200,OK,Thread Group 1-17,text,true,,2925,191,20,20,https://example.com/search-products,489,0,13
+1788257036270,385,View Product,200,OK,Thread Group 1-17,text,true,,2760,122,20,20,https://example.com/view-product,270,0,20
+1788257036405,866,Add to Cart,200,OK,Thread Group 1-17,text,true,,2980,112,20,20,https://example.com/add-to-cart,606,0,23
+1788257036540,801,Checkout,200,OK,Thread Group 1-17,text,true,,1696,213,20,20,https://example.com/checkout,561,0,16
+1788257036675,175,Logout,200,OK,Thread Group 1-17,text,true,,1886,161,20,20,https://example.com/logout,122,0,41
+1788257037000,297,Login,200,OK,Thread Group 1-18,text,true,,1817,200,20,20,https://example.com/login,208,0,13
+1788257037135,645,Search Products,200,OK,Thread Group 1-18,text,true,,1296,170,20,20,https://example.com/search-products,451,0,30
+1788257037270,472,View Product,200,OK,Thread Group 1-18,text,true,,2759,137,20,20,https://example.com/view-product,330,0,22
+1788257037405,728,Add to Cart,200,OK,Thread Group 1-18,text,true,,891,190,20,20,https://example.com/add-to-cart,510,0,13
+1788257037540,697,Checkout,200,OK,Thread Group 1-18,text,true,,2336,145,20,20,https://example.com/checkout,488,0,35
+1788257037675,387,Logout,200,OK,Thread Group 1-18,text,true,,2944,153,20,20,https://example.com/logout,271,0,13
+1788257038000,369,Login,200,OK,Thread Group 1-19,text,true,,722,198,20,20,https://example.com/login,258,0,41
+1788257038135,412,Search Products,200,OK,Thread Group 1-19,text,true,,824,232,20,20,https://example.com/search-products,288,0,11
+1788257038270,280,View Product,200,OK,Thread Group 1-19,text,true,,1045,193,20,20,https://example.com/view-product,196,0,19
+1788257038405,723,Add to Cart,200,OK,Thread Group 1-19,text,true,,2335,174,20,20,https://example.com/add-to-cart,506,0,26
+1788257038540,1151,Checkout,200,OK,Thread Group 1-19,text,true,,1399,215,20,20,https://example.com/checkout,806,0,20
+1788257038675,311,Logout,200,OK,Thread Group 1-19,text,true,,1078,229,20,20,https://example.com/logout,218,0,11
+1788257039000,371,Login,200,OK,Thread Group 1-20,text,true,,2058,95,20,20,https://example.com/login,260,0,38
+1788257039135,571,Search Products,200,OK,Thread Group 1-20,text,true,,2501,226,20,20,https://example.com/search-products,400,0,31
+1788257039270,665,View Product,200,OK,Thread Group 1-20,text,true,,2389,205,20,20,https://example.com/view-product,465,0,29
+1788257039405,836,Add to Cart,200,OK,Thread Group 1-20,text,true,,2632,88,20,20,https://example.com/add-to-cart,585,0,31
+1788257039540,1169,Checkout,200,OK,Thread Group 1-20,text,true,,2803,92,20,20,https://example.com/checkout,818,0,45
+1788257039675,231,Logout,200,OK,Thread Group 1-20,text,true,,838,106,20,20,https://example.com/logout,162,0,27

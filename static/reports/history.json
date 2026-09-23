@@ -1,5 +1,270 @@
 [
   {
+    "report_name": "Test4_Sep23",
+    "file_name": "velocitypulse_05_high_errors.csv",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 240,
+        "Avg (s)": 1.29,
+        "90th % (s)": 1.81,
+        "95th % (s)": 1.99,
+        "Error %": 12.5,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 240,
+        "Avg (s)": 1.78,
+        "90th % (s)": 2.44,
+        "95th % (s)": 2.89,
+        "Error %": 46.25,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 240,
+        "Avg (s)": 0.7,
+        "90th % (s)": 1.0,
+        "95th % (s)": 1.12,
+        "Error %": 15.0,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 240,
+        "Avg (s)": 0.41,
+        "90th % (s)": 0.57,
+        "95th % (s)": 0.67,
+        "Error %": 11.25,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 240,
+        "Avg (s)": 1.07,
+        "90th % (s)": 1.45,
+        "95th % (s)": 1.6,
+        "Error %": 23.33,
+        "RAG": "RED"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 240,
+        "Avg (s)": 0.89,
+        "90th % (s)": 1.24,
+        "95th % (s)": 1.38,
+        "Error %": 9.17,
+        "RAG": "RED"
+      }
+    ],
+    "rag_result": "RED",
+    "observations": [
+      {
+        "type": "danger",
+        "title": "Overall result: RED",
+        "text": "The test analysed 6 transaction(s) and 1440 sample(s)."
+      },
+      {
+        "type": "danger",
+        "title": "SLA attention required",
+        "text": "6 transaction(s) require attention: Add to Cart, Checkout, Login, Logout and more."
+      },
+      {
+        "type": "info",
+        "title": "Slowest average response: Checkout",
+        "text": "Average response time was 1.78s."
+      },
+      {
+        "type": "warning",
+        "title": "Latency spikes: Checkout",
+        "text": "P95 reached 2.89s versus an average of 1.78s."
+      },
+      {
+        "type": "danger",
+        "title": "Highest error rate: Checkout",
+        "text": "The transaction recorded 46.25% errors."
+      }
+    ],
+    "test_date": "05-09-2026",
+    "test_period": "05-09-2026 11:00:00 to 05-09-2026 11:03:59",
+    "total_duration": "0:03:59.675000",
+    "concurrent_users": 20,
+    "steady_state": "Yes",
+    "rag_counts": {
+      "GREEN": 0,
+      "AMBER": 0,
+      "RED": 6
+    },
+    "chart_time_labels": [
+      "10:00",
+      "10:01",
+      "10:02",
+      "10:03"
+    ],
+    "series_avg_by_txn": {
+      "Add to Cart": [
+        1.252,
+        1.266,
+        1.347,
+        1.285
+      ],
+      "Checkout": [
+        1.788,
+        1.771,
+        1.7,
+        1.848
+      ],
+      "Login": [
+        0.74,
+        0.689,
+        0.696,
+        0.695
+      ],
+      "Logout": [
+        0.443,
+        0.379,
+        0.439,
+        0.399
+      ],
+      "Search Products": [
+        1.081,
+        1.101,
+        1.078,
+        1.014
+      ],
+      "View Product": [
+        0.93,
+        0.91,
+        0.852,
+        0.877
+      ]
+    },
+    "series_p90_by_txn": {
+      "Add to Cart": [
+        1.764,
+        1.783,
+        1.822,
+        1.708
+      ],
+      "Checkout": [
+        2.339,
+        2.368,
+        2.347,
+        2.687
+      ],
+      "Login": [
+        0.959,
+        1.01,
+        1.024,
+        0.95
+      ],
+      "Logout": [
+        0.656,
+        0.486,
+        0.556,
+        0.549
+      ],
+      "Search Products": [
+        1.433,
+        1.437,
+        1.463,
+        1.436
+      ],
+      "View Product": [
+        1.329,
+        1.209,
+        1.164,
+        1.254
+      ]
+    },
+    "series_error_rate_by_txn": {
+      "Add to Cart": [
+        18.333,
+        8.333,
+        10.0,
+        13.333
+      ],
+      "Checkout": [
+        51.667,
+        46.667,
+        51.667,
+        35.0
+      ],
+      "Login": [
+        13.333,
+        13.333,
+        15.0,
+        18.333
+      ],
+      "Logout": [
+        15.0,
+        6.667,
+        11.667,
+        11.667
+      ],
+      "Search Products": [
+        25.0,
+        25.0,
+        23.333,
+        20.0
+      ],
+      "View Product": [
+        8.333,
+        8.333,
+        10.0,
+        10.0
+      ]
+    },
+    "series_throughput_over_time": [
+      360,
+      360,
+      360,
+      360
+    ],
+    "labels": [
+      "Add to Cart",
+      "Checkout",
+      "Login",
+      "Logout",
+      "Search Products",
+      "View Product"
+    ],
+    "avg_values": [
+      1.29,
+      1.78,
+      0.7,
+      0.41,
+      1.07,
+      0.89
+    ],
+    "p90_values": [
+      1.81,
+      2.44,
+      1.0,
+      0.57,
+      1.45,
+      1.24
+    ],
+    "p95_values": [
+      1.99,
+      2.89,
+      1.12,
+      0.67,
+      1.6,
+      1.38
+    ],
+    "error_values": [
+      12.5,
+      46.25,
+      15.0,
+      11.25,
+      23.33,
+      9.17
+    ],
+    "timestamp": "2026-09-23T13:48:18.957837"
+  },
+  {
     "report_name": "Live Test run_e9ce81a7",
     "file_name": "results.jtl",
     "summary": [

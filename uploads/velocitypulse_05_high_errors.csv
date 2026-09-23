@@ -1,0 +1,1441 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1788602400000,353,Login,200,OK,Thread Group 1-1,text,true,,2523,164,1,1,https://example.com/login,247,0,10
+1788602400135,1388,Search Products,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,826,181,1,1,https://example.com/search-products,972,0,21
+1788602400270,1151,View Product,200,OK,Thread Group 1-1,text,true,,1110,123,1,1,https://example.com/view-product,806,0,44
+1788602400405,1439,Add to Cart,200,OK,Thread Group 1-1,text,true,,2982,200,1,1,https://example.com/add-to-cart,1007,0,37
+1788602400540,1969,Checkout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2787,88,1,1,https://example.com/checkout,1378,0,15
+1788602400675,544,Logout,200,OK,Thread Group 1-1,text,true,,2893,134,1,1,https://example.com/logout,381,0,31
+1788602401000,651,Login,200,OK,Thread Group 1-2,text,true,,1216,82,2,2,https://example.com/login,456,0,35
+1788602401135,937,Search Products,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2275,163,2,2,https://example.com/search-products,656,0,38
+1788602401270,879,View Product,200,OK,Thread Group 1-2,text,true,,1296,200,2,2,https://example.com/view-product,615,0,45
+1788602401405,1690,Add to Cart,200,OK,Thread Group 1-2,text,true,,2198,164,2,2,https://example.com/add-to-cart,1183,0,42
+1788602401540,1543,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1014,236,2,2,https://example.com/checkout,1080,0,46
+1788602401675,294,Logout,200,OK,Thread Group 1-2,text,true,,801,189,2,2,https://example.com/logout,206,0,13
+1788602402000,599,Login,200,OK,Thread Group 1-3,text,true,,1164,89,3,3,https://example.com/login,419,0,34
+1788602402135,1355,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1824,117,3,3,https://example.com/search-products,948,0,42
+1788602402270,803,View Product,200,OK,Thread Group 1-3,text,true,,906,222,3,3,https://example.com/view-product,562,0,31
+1788602402405,1188,Add to Cart,200,OK,Thread Group 1-3,text,true,,2254,144,3,3,https://example.com/add-to-cart,832,0,30
+1788602402540,1688,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1344,159,3,3,https://example.com/checkout,1182,0,11
+1788602402675,245,Logout,200,OK,Thread Group 1-3,text,true,,1380,95,3,3,https://example.com/logout,172,0,19
+1788602403000,569,Login,200,OK,Thread Group 1-4,text,true,,2429,136,4,4,https://example.com/login,398,0,50
+1788602403135,805,Search Products,200,OK,Thread Group 1-4,text,true,,2459,143,4,4,https://example.com/search-products,564,0,21
+1788602403270,1175,View Product,200,OK,Thread Group 1-4,text,true,,2023,230,4,4,https://example.com/view-product,822,0,45
+1788602403405,1123,Add to Cart,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1348,237,4,4,https://example.com/add-to-cart,786,0,46
+1788602403540,3005,Checkout,200,OK,Thread Group 1-4,text,true,,2007,216,4,4,https://example.com/checkout,2104,0,48
+1788602403675,521,Logout,200,OK,Thread Group 1-4,text,true,,2918,134,4,4,https://example.com/logout,365,0,49
+1788602404000,560,Login,200,OK,Thread Group 1-5,text,true,,772,129,5,5,https://example.com/login,392,0,39
+1788602404135,1154,Search Products,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1761,110,5,5,https://example.com/search-products,808,0,24
+1788602404270,681,View Product,200,OK,Thread Group 1-5,text,true,,1751,179,5,5,https://example.com/view-product,477,0,37
+1788602404405,961,Add to Cart,200,OK,Thread Group 1-5,text,true,,2821,138,5,5,https://example.com/add-to-cart,673,0,30
+1788602404540,1343,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,2062,82,5,5,https://example.com/checkout,940,0,28
+1788602404675,647,Logout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1855,122,5,5,https://example.com/logout,453,0,22
+1788602405000,546,Login,200,OK,Thread Group 1-6,text,true,,2334,98,6,6,https://example.com/login,382,0,36
+1788602405135,1090,Search Products,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1528,113,6,6,https://example.com/search-products,763,0,16
+1788602405270,769,View Product,200,OK,Thread Group 1-6,text,true,,1078,193,6,6,https://example.com/view-product,538,0,26
+1788602405405,1330,Add to Cart,200,OK,Thread Group 1-6,text,true,,2435,126,6,6,https://example.com/add-to-cart,931,0,42
+1788602405540,1959,Checkout,200,OK,Thread Group 1-6,text,true,,1905,214,6,6,https://example.com/checkout,1371,0,21
+1788602405675,569,Logout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1855,170,6,6,https://example.com/logout,398,0,45
+1788602406000,950,Login,200,OK,Thread Group 1-7,text,true,,1306,197,7,7,https://example.com/login,665,0,28
+1788602406135,1447,Search Products,200,OK,Thread Group 1-7,text,true,,1645,200,7,7,https://example.com/search-products,1013,0,49
+1788602406270,761,View Product,200,OK,Thread Group 1-7,text,true,,1350,111,7,7,https://example.com/view-product,533,0,42
+1788602406405,1880,Add to Cart,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1090,226,7,7,https://example.com/add-to-cart,1316,0,44
+1788602406540,1495,Checkout,200,OK,Thread Group 1-7,text,true,,2212,198,7,7,https://example.com/checkout,1046,0,46
+1788602406675,458,Logout,200,OK,Thread Group 1-7,text,true,,2413,147,7,7,https://example.com/logout,321,0,11
+1788602407000,677,Login,200,OK,Thread Group 1-8,text,true,,1298,203,8,8,https://example.com/login,474,0,11
+1788602407135,1597,Search Products,200,OK,Thread Group 1-8,text,true,,1927,120,8,8,https://example.com/search-products,1118,0,26
+1788602407270,1068,View Product,200,OK,Thread Group 1-8,text,true,,2846,104,8,8,https://example.com/view-product,748,0,49
+1788602407405,1140,Add to Cart,200,OK,Thread Group 1-8,text,true,,1607,228,8,8,https://example.com/add-to-cart,798,0,15
+1788602407540,1242,Checkout,200,OK,Thread Group 1-8,text,true,,2551,201,8,8,https://example.com/checkout,869,0,32
+1788602407675,710,Logout,200,OK,Thread Group 1-8,text,true,,1999,181,8,8,https://example.com/logout,497,0,14
+1788602408000,901,Login,200,OK,Thread Group 1-9,text,true,,1109,162,9,9,https://example.com/login,631,0,37
+1788602408135,1087,Search Products,200,OK,Thread Group 1-9,text,true,,2563,168,9,9,https://example.com/search-products,761,0,34
+1788602408270,807,View Product,200,OK,Thread Group 1-9,text,true,,1710,120,9,9,https://example.com/view-product,565,0,43
+1788602408405,1175,Add to Cart,200,OK,Thread Group 1-9,text,true,,1365,228,9,9,https://example.com/add-to-cart,822,0,44
+1788602408540,1314,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1690,129,9,9,https://example.com/checkout,920,0,26
+1788602408675,679,Logout,200,OK,Thread Group 1-9,text,true,,2911,165,9,9,https://example.com/logout,475,0,23
+1788602409000,645,Login,200,OK,Thread Group 1-10,text,true,,2021,139,10,10,https://example.com/login,451,0,37
+1788602409135,765,Search Products,200,OK,Thread Group 1-10,text,true,,2958,163,10,10,https://example.com/search-products,536,0,20
+1788602409270,736,View Product,200,OK,Thread Group 1-10,text,true,,2700,173,10,10,https://example.com/view-product,515,0,41
+1788602409405,1140,Add to Cart,200,OK,Thread Group 1-10,text,true,,1857,182,10,10,https://example.com/add-to-cart,798,0,25
+1788602409540,3308,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1240,202,10,10,https://example.com/checkout,2316,0,37
+1788602409675,416,Logout,200,OK,Thread Group 1-10,text,true,,2035,181,10,10,https://example.com/logout,291,0,20
+1788602410000,485,Login,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2257,114,11,11,https://example.com/login,340,0,38
+1788602410135,993,Search Products,200,OK,Thread Group 1-11,text,true,,1041,233,11,11,https://example.com/search-products,695,0,12
+1788602410270,921,View Product,200,OK,Thread Group 1-11,text,true,,1401,87,11,11,https://example.com/view-product,645,0,41
+1788602410405,1532,Add to Cart,200,OK,Thread Group 1-11,text,true,,1821,126,11,11,https://example.com/add-to-cart,1072,0,43
+1788602410540,1363,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2016,199,11,11,https://example.com/checkout,954,0,29
+1788602410675,211,Logout,200,OK,Thread Group 1-11,text,true,,1316,181,11,11,https://example.com/logout,148,0,29
+1788602411000,1216,Login,200,OK,Thread Group 1-12,text,true,,2857,233,12,12,https://example.com/login,851,0,33
+1788602411135,1196,Search Products,200,OK,Thread Group 1-12,text,true,,826,104,12,12,https://example.com/search-products,837,0,20
+1788602411270,806,View Product,200,OK,Thread Group 1-12,text,true,,1427,86,12,12,https://example.com/view-product,564,0,44
+1788602411405,1221,Add to Cart,200,OK,Thread Group 1-12,text,true,,900,148,12,12,https://example.com/add-to-cart,855,0,36
+1788602411540,1856,Checkout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,2639,174,12,12,https://example.com/checkout,1299,0,16
+1788602411675,395,Logout,200,OK,Thread Group 1-12,text,true,,2325,171,12,12,https://example.com/logout,276,0,50
+1788602412000,679,Login,200,OK,Thread Group 1-13,text,true,,1528,130,13,13,https://example.com/login,475,0,49
+1788602412135,981,Search Products,200,OK,Thread Group 1-13,text,true,,1169,90,13,13,https://example.com/search-products,687,0,39
+1788602412270,877,View Product,200,OK,Thread Group 1-13,text,true,,1668,138,13,13,https://example.com/view-product,614,0,25
+1788602412405,895,Add to Cart,200,OK,Thread Group 1-13,text,true,,912,226,13,13,https://example.com/add-to-cart,626,0,39
+1788602412540,1730,Checkout,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1671,208,13,13,https://example.com/checkout,1211,0,49
+1788602412675,380,Logout,200,OK,Thread Group 1-13,text,true,,1531,196,13,13,https://example.com/logout,266,0,41
+1788602413000,1101,Login,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,1729,235,14,14,https://example.com/login,771,0,43
+1788602413135,832,Search Products,200,OK,Thread Group 1-14,text,true,,1045,156,14,14,https://example.com/search-products,582,0,20
+1788602413270,933,View Product,200,OK,Thread Group 1-14,text,true,,2564,151,14,14,https://example.com/view-product,653,0,29
+1788602413405,772,Add to Cart,200,OK,Thread Group 1-14,text,true,,2406,159,14,14,https://example.com/add-to-cart,540,0,42
+1788602413540,1663,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2931,166,14,14,https://example.com/checkout,1164,0,36
+1788602413675,653,Logout,200,OK,Thread Group 1-14,text,true,,2396,117,14,14,https://example.com/logout,457,0,28
+1788602414000,703,Login,200,OK,Thread Group 1-15,text,true,,2710,208,15,15,https://example.com/login,492,0,19
+1788602414135,809,Search Products,200,OK,Thread Group 1-15,text,true,,875,87,15,15,https://example.com/search-products,566,0,18
+1788602414270,571,View Product,200,OK,Thread Group 1-15,text,true,,869,226,15,15,https://example.com/view-product,400,0,48
+1788602414405,1285,Add to Cart,200,OK,Thread Group 1-15,text,true,,792,222,15,15,https://example.com/add-to-cart,899,0,43
+1788602414540,1240,Checkout,200,OK,Thread Group 1-15,text,true,,2437,205,15,15,https://example.com/checkout,868,0,25
+1788602414675,189,Logout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1972,107,15,15,https://example.com/logout,132,0,21
+1788602415000,563,Login,200,OK,Thread Group 1-16,text,true,,706,200,16,16,https://example.com/login,394,0,50
+1788602415135,1297,Search Products,200,OK,Thread Group 1-16,text,true,,2512,83,16,16,https://example.com/search-products,908,0,25
+1788602415270,1217,View Product,200,OK,Thread Group 1-16,text,true,,2057,116,16,16,https://example.com/view-product,852,0,48
+1788602415405,1116,Add to Cart,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2369,137,16,16,https://example.com/add-to-cart,781,0,14
+1788602415540,3943,Checkout,200,OK,Thread Group 1-16,text,true,,1913,222,16,16,https://example.com/checkout,2760,0,20
+1788602415675,252,Logout,200,OK,Thread Group 1-16,text,true,,2399,211,16,16,https://example.com/logout,176,0,21
+1788602416000,695,Login,200,OK,Thread Group 1-17,text,true,,1397,147,17,17,https://example.com/login,486,0,31
+1788602416135,1034,Search Products,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2281,180,17,17,https://example.com/search-products,724,0,12
+1788602416270,379,View Product,200,OK,Thread Group 1-17,text,true,,2507,146,17,17,https://example.com/view-product,265,0,36
+1788602416405,1135,Add to Cart,200,OK,Thread Group 1-17,text,true,,992,138,17,17,https://example.com/add-to-cart,794,0,29
+1788602416540,1776,Checkout,200,OK,Thread Group 1-17,text,true,,2026,180,17,17,https://example.com/checkout,1243,0,50
+1788602416675,302,Logout,200,OK,Thread Group 1-17,text,true,,1895,213,17,17,https://example.com/logout,211,0,34
+1788602417000,952,Login,200,OK,Thread Group 1-18,text,true,,1004,239,18,18,https://example.com/login,666,0,48
+1788602417135,1608,Search Products,200,OK,Thread Group 1-18,text,true,,1056,105,18,18,https://example.com/search-products,1126,0,50
+1788602417270,997,View Product,200,OK,Thread Group 1-18,text,true,,1510,215,18,18,https://example.com/view-product,698,0,48
+1788602417405,768,Add to Cart,200,OK,Thread Group 1-18,text,true,,1970,144,18,18,https://example.com/add-to-cart,538,0,22
+1788602417540,1263,Checkout,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,2607,163,18,18,https://example.com/checkout,884,0,25
+1788602417675,708,Logout,200,OK,Thread Group 1-18,text,true,,1730,219,18,18,https://example.com/logout,496,0,14
+1788602418000,609,Login,200,OK,Thread Group 1-19,text,true,,1165,228,19,19,https://example.com/login,426,0,34
+1788602418135,948,Search Products,200,OK,Thread Group 1-19,text,true,,2283,156,19,19,https://example.com/search-products,664,0,44
+1788602418270,1051,View Product,200,OK,Thread Group 1-19,text,true,,2145,198,19,19,https://example.com/view-product,736,0,48
+1788602418405,804,Add to Cart,200,OK,Thread Group 1-19,text,true,,947,123,19,19,https://example.com/add-to-cart,563,0,21
+1788602418540,1582,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1992,163,19,19,https://example.com/checkout,1107,0,20
+1788602418675,299,Logout,200,OK,Thread Group 1-19,text,true,,872,176,19,19,https://example.com/logout,209,0,37
+1788602419000,959,Login,200,OK,Thread Group 1-20,text,true,,2970,223,20,20,https://example.com/login,671,0,32
+1788602419135,747,Search Products,200,OK,Thread Group 1-20,text,true,,1579,179,20,20,https://example.com/search-products,523,0,32
+1788602419270,763,View Product,200,OK,Thread Group 1-20,text,true,,2713,105,20,20,https://example.com/view-product,534,0,33
+1788602419405,1362,Add to Cart,200,OK,Thread Group 1-20,text,true,,1881,83,20,20,https://example.com/add-to-cart,953,0,49
+1788602419540,1688,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1959,172,20,20,https://example.com/checkout,1182,0,29
+1788602419675,289,Logout,200,OK,Thread Group 1-20,text,true,,2044,128,20,20,https://example.com/logout,202,0,49
+1788602420000,409,Login,200,OK,Thread Group 1-1,text,true,,704,120,20,20,https://example.com/login,286,0,21
+1788602420135,722,Search Products,200,OK,Thread Group 1-1,text,true,,1499,216,20,20,https://example.com/search-products,505,0,36
+1788602420270,761,View Product,200,OK,Thread Group 1-1,text,true,,2963,201,20,20,https://example.com/view-product,533,0,32
+1788602420405,1230,Add to Cart,200,OK,Thread Group 1-1,text,true,,731,233,20,20,https://example.com/add-to-cart,861,0,24
+1788602420540,1299,Checkout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,1658,198,20,20,https://example.com/checkout,909,0,35
+1788602420675,1041,Logout,200,OK,Thread Group 1-1,text,true,,1591,120,20,20,https://example.com/logout,729,0,42
+1788602421000,733,Login,200,OK,Thread Group 1-2,text,true,,760,121,20,20,https://example.com/login,513,0,22
+1788602421135,759,Search Products,200,OK,Thread Group 1-2,text,true,,1138,170,20,20,https://example.com/search-products,531,0,18
+1788602421270,606,View Product,200,OK,Thread Group 1-2,text,true,,1442,199,20,20,https://example.com/view-product,424,0,36
+1788602421405,1354,Add to Cart,200,OK,Thread Group 1-2,text,true,,1613,194,20,20,https://example.com/add-to-cart,948,0,27
+1788602421540,2186,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1280,182,20,20,https://example.com/checkout,1530,0,45
+1788602421675,399,Logout,200,OK,Thread Group 1-2,text,true,,719,114,20,20,https://example.com/logout,279,0,10
+1788602422000,685,Login,200,OK,Thread Group 1-3,text,true,,1083,158,20,20,https://example.com/login,479,0,28
+1788602422135,1103,Search Products,200,OK,Thread Group 1-3,text,true,,1041,219,20,20,https://example.com/search-products,772,0,47
+1788602422270,769,View Product,200,OK,Thread Group 1-3,text,true,,2098,200,20,20,https://example.com/view-product,538,0,14
+1788602422405,1356,Add to Cart,200,OK,Thread Group 1-3,text,true,,2897,206,20,20,https://example.com/add-to-cart,949,0,16
+1788602422540,2182,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1294,203,20,20,https://example.com/checkout,1527,0,34
+1788602422675,279,Logout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,998,89,20,20,https://example.com/logout,195,0,46
+1788602423000,511,Login,200,OK,Thread Group 1-4,text,true,,1583,206,20,20,https://example.com/login,358,0,14
+1788602423135,604,Search Products,200,OK,Thread Group 1-4,text,true,,902,221,20,20,https://example.com/search-products,423,0,35
+1788602423270,1024,View Product,200,OK,Thread Group 1-4,text,true,,1104,158,20,20,https://example.com/view-product,717,0,22
+1788602423405,1087,Add to Cart,200,OK,Thread Group 1-4,text,true,,1124,132,20,20,https://example.com/add-to-cart,761,0,24
+1788602423540,1616,Checkout,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1059,239,20,20,https://example.com/checkout,1131,0,13
+1788602423675,498,Logout,200,OK,Thread Group 1-4,text,true,,1783,217,20,20,https://example.com/logout,349,0,12
+1788602424000,602,Login,200,OK,Thread Group 1-5,text,true,,2487,120,20,20,https://example.com/login,421,0,41
+1788602424135,2182,Search Products,200,OK,Thread Group 1-5,text,true,,1708,147,20,20,https://example.com/search-products,1527,0,42
+1788602424270,614,View Product,200,OK,Thread Group 1-5,text,true,,2843,96,20,20,https://example.com/view-product,430,0,15
+1788602424405,1198,Add to Cart,200,OK,Thread Group 1-5,text,true,,939,225,20,20,https://example.com/add-to-cart,839,0,45
+1788602424540,2493,Checkout,200,OK,Thread Group 1-5,text,true,,1834,108,20,20,https://example.com/checkout,1745,0,29
+1788602424675,353,Logout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1509,207,20,20,https://example.com/logout,247,0,14
+1788602425000,933,Login,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,2418,186,20,20,https://example.com/login,653,0,25
+1788602425135,1078,Search Products,200,OK,Thread Group 1-6,text,true,,1909,117,20,20,https://example.com/search-products,755,0,12
+1788602425270,915,View Product,200,OK,Thread Group 1-6,text,true,,2817,215,20,20,https://example.com/view-product,640,0,34
+1788602425405,987,Add to Cart,200,OK,Thread Group 1-6,text,true,,1360,191,20,20,https://example.com/add-to-cart,691,0,31
+1788602425540,1829,Checkout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1421,223,20,20,https://example.com/checkout,1280,0,27
+1788602425675,441,Logout,200,OK,Thread Group 1-6,text,true,,1220,97,20,20,https://example.com/logout,309,0,25
+1788602426000,445,Login,200,OK,Thread Group 1-7,text,true,,1860,231,20,20,https://example.com/login,312,0,15
+1788602426135,1012,Search Products,200,OK,Thread Group 1-7,text,true,,2763,185,20,20,https://example.com/search-products,708,0,34
+1788602426270,1349,View Product,200,OK,Thread Group 1-7,text,true,,946,146,20,20,https://example.com/view-product,944,0,45
+1788602426405,923,Add to Cart,200,OK,Thread Group 1-7,text,true,,2460,100,20,20,https://example.com/add-to-cart,646,0,39
+1788602426540,1922,Checkout,200,OK,Thread Group 1-7,text,true,,2583,131,20,20,https://example.com/checkout,1345,0,38
+1788602426675,383,Logout,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,2055,218,20,20,https://example.com/logout,268,0,40
+1788602427000,994,Login,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1598,157,20,20,https://example.com/login,696,0,11
+1788602427135,1431,Search Products,200,OK,Thread Group 1-8,text,true,,1142,105,20,20,https://example.com/search-products,1002,0,47
+1788602427270,830,View Product,200,OK,Thread Group 1-8,text,true,,1335,125,20,20,https://example.com/view-product,581,0,16
+1788602427405,1310,Add to Cart,200,OK,Thread Group 1-8,text,true,,2936,83,20,20,https://example.com/add-to-cart,917,0,47
+1788602427540,1463,Checkout,200,OK,Thread Group 1-8,text,true,,1214,121,20,20,https://example.com/checkout,1024,0,11
+1788602427675,586,Logout,200,OK,Thread Group 1-8,text,true,,2907,142,20,20,https://example.com/logout,410,0,48
+1788602428000,535,Login,200,OK,Thread Group 1-9,text,true,,1033,218,20,20,https://example.com/login,374,0,23
+1788602428135,1086,Search Products,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2155,190,20,20,https://example.com/search-products,760,0,40
+1788602428270,788,View Product,200,OK,Thread Group 1-9,text,true,,960,216,20,20,https://example.com/view-product,552,0,14
+1788602428405,2267,Add to Cart,200,OK,Thread Group 1-9,text,true,,982,217,20,20,https://example.com/add-to-cart,1587,0,27
+1788602428540,1925,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2379,202,20,20,https://example.com/checkout,1348,0,26
+1788602428675,224,Logout,200,OK,Thread Group 1-9,text,true,,2335,143,20,20,https://example.com/logout,157,0,48
+1788602429000,804,Login,200,OK,Thread Group 1-10,text,true,,1413,100,20,20,https://example.com/login,563,0,44
+1788602429135,1164,Search Products,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,779,200,20,20,https://example.com/search-products,815,0,50
+1788602429270,1014,View Product,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1170,159,20,20,https://example.com/view-product,710,0,47
+1788602429405,607,Add to Cart,200,OK,Thread Group 1-10,text,true,,1192,114,20,20,https://example.com/add-to-cart,425,0,40
+1788602429540,1803,Checkout,200,OK,Thread Group 1-10,text,true,,1364,231,20,20,https://example.com/checkout,1262,0,36
+1788602429675,573,Logout,200,OK,Thread Group 1-10,text,true,,2741,198,20,20,https://example.com/logout,401,0,26
+1788602430000,724,Login,200,OK,Thread Group 1-11,text,true,,1402,210,20,20,https://example.com/login,507,0,13
+1788602430135,1351,Search Products,200,OK,Thread Group 1-11,text,true,,2566,99,20,20,https://example.com/search-products,946,0,46
+1788602430270,1092,View Product,200,OK,Thread Group 1-11,text,true,,1256,231,20,20,https://example.com/view-product,764,0,12
+1788602430405,1007,Add to Cart,200,OK,Thread Group 1-11,text,true,,2101,153,20,20,https://example.com/add-to-cart,705,0,13
+1788602430540,2322,Checkout,200,OK,Thread Group 1-11,text,true,,743,138,20,20,https://example.com/checkout,1625,0,34
+1788602430675,394,Logout,200,OK,Thread Group 1-11,text,true,,1335,125,20,20,https://example.com/logout,276,0,13
+1788602431000,664,Login,200,OK,Thread Group 1-12,text,true,,2590,104,20,20,https://example.com/login,465,0,43
+1788602431135,1299,Search Products,200,OK,Thread Group 1-12,text,true,,1436,92,20,20,https://example.com/search-products,909,0,30
+1788602431270,1497,View Product,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,2083,210,20,20,https://example.com/view-product,1048,0,44
+1788602431405,1318,Add to Cart,200,OK,Thread Group 1-12,text,true,,2422,191,20,20,https://example.com/add-to-cart,923,0,11
+1788602431540,1229,Checkout,200,OK,Thread Group 1-12,text,true,,1039,133,20,20,https://example.com/checkout,860,0,49
+1788602431675,557,Logout,200,OK,Thread Group 1-12,text,true,,1991,150,20,20,https://example.com/logout,390,0,32
+1788602432000,884,Login,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,2015,216,20,20,https://example.com/login,619,0,26
+1788602432135,772,Search Products,200,OK,Thread Group 1-13,text,true,,1519,83,20,20,https://example.com/search-products,540,0,22
+1788602432270,860,View Product,200,OK,Thread Group 1-13,text,true,,1204,192,20,20,https://example.com/view-product,602,0,37
+1788602432405,901,Add to Cart,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1334,190,20,20,https://example.com/add-to-cart,631,0,49
+1788602432540,1880,Checkout,200,OK,Thread Group 1-13,text,true,,1906,132,20,20,https://example.com/checkout,1316,0,11
+1788602432675,390,Logout,200,OK,Thread Group 1-13,text,true,,2721,208,20,20,https://example.com/logout,273,0,20
+1788602433000,875,Login,200,OK,Thread Group 1-14,text,true,,757,109,20,20,https://example.com/login,612,0,47
+1788602433135,1133,Search Products,200,OK,Thread Group 1-14,text,true,,1984,217,20,20,https://example.com/search-products,793,0,40
+1788602433270,520,View Product,200,OK,Thread Group 1-14,text,true,,1924,95,20,20,https://example.com/view-product,364,0,18
+1788602433405,1028,Add to Cart,200,OK,Thread Group 1-14,text,true,,1667,104,20,20,https://example.com/add-to-cart,720,0,13
+1788602433540,1467,Checkout,200,OK,Thread Group 1-14,text,true,,1527,226,20,20,https://example.com/checkout,1027,0,26
+1788602433675,291,Logout,200,OK,Thread Group 1-14,text,true,,1476,107,20,20,https://example.com/logout,204,0,35
+1788602434000,602,Login,200,OK,Thread Group 1-15,text,true,,1368,151,20,20,https://example.com/login,421,0,32
+1788602434135,977,Search Products,200,OK,Thread Group 1-15,text,true,,2629,206,20,20,https://example.com/search-products,684,0,31
+1788602434270,315,View Product,200,OK,Thread Group 1-15,text,true,,1069,238,20,20,https://example.com/view-product,220,0,22
+1788602434405,1280,Add to Cart,200,OK,Thread Group 1-15,text,true,,2588,126,20,20,https://example.com/add-to-cart,896,0,26
+1788602434540,1301,Checkout,200,OK,Thread Group 1-15,text,true,,1820,208,20,20,https://example.com/checkout,911,0,41
+1788602434675,535,Logout,200,OK,Thread Group 1-15,text,true,,2375,113,20,20,https://example.com/logout,374,0,15
+1788602435000,612,Login,200,OK,Thread Group 1-16,text,true,,1766,139,20,20,https://example.com/login,428,0,49
+1788602435135,768,Search Products,200,OK,Thread Group 1-16,text,true,,2478,110,20,20,https://example.com/search-products,538,0,19
+1788602435270,1298,View Product,200,OK,Thread Group 1-16,text,true,,2328,95,20,20,https://example.com/view-product,909,0,14
+1788602435405,1414,Add to Cart,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2975,145,20,20,https://example.com/add-to-cart,990,0,14
+1788602435540,2723,Checkout,200,OK,Thread Group 1-16,text,true,,1921,116,20,20,https://example.com/checkout,1906,0,38
+1788602435675,248,Logout,200,OK,Thread Group 1-16,text,true,,2193,186,20,20,https://example.com/logout,174,0,40
+1788602436000,736,Login,200,OK,Thread Group 1-17,text,true,,744,236,20,20,https://example.com/login,515,0,29
+1788602436135,1217,Search Products,200,OK,Thread Group 1-17,text,true,,2567,127,20,20,https://example.com/search-products,852,0,32
+1788602436270,1351,View Product,200,OK,Thread Group 1-17,text,true,,2936,131,20,20,https://example.com/view-product,946,0,27
+1788602436405,861,Add to Cart,200,OK,Thread Group 1-17,text,true,,2503,107,20,20,https://example.com/add-to-cart,603,0,24
+1788602436540,941,Checkout,200,OK,Thread Group 1-17,text,true,,1833,136,20,20,https://example.com/checkout,659,0,16
+1788602436675,424,Logout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,1141,109,20,20,https://example.com/logout,297,0,28
+1788602437000,754,Login,200,OK,Thread Group 1-18,text,true,,1738,215,20,20,https://example.com/login,528,0,17
+1788602437135,1054,Search Products,200,OK,Thread Group 1-18,text,true,,2939,163,20,20,https://example.com/search-products,738,0,22
+1788602437270,779,View Product,200,OK,Thread Group 1-18,text,true,,2649,119,20,20,https://example.com/view-product,545,0,20
+1788602437405,787,Add to Cart,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,1740,88,20,20,https://example.com/add-to-cart,551,0,16
+1788602437540,1505,Checkout,200,OK,Thread Group 1-18,text,true,,1479,217,20,20,https://example.com/checkout,1054,0,21
+1788602437675,319,Logout,200,OK,Thread Group 1-18,text,true,,1107,135,20,20,https://example.com/logout,223,0,48
+1788602438000,583,Login,200,OK,Thread Group 1-19,text,true,,2209,140,20,20,https://example.com/login,408,0,43
+1788602438135,908,Search Products,200,OK,Thread Group 1-19,text,true,,2189,106,20,20,https://example.com/search-products,636,0,22
+1788602438270,771,View Product,200,OK,Thread Group 1-19,text,true,,1866,105,20,20,https://example.com/view-product,540,0,35
+1788602438405,817,Add to Cart,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1348,99,20,20,https://example.com/add-to-cart,572,0,46
+1788602438540,1566,Checkout,200,OK,Thread Group 1-19,text,true,,2768,172,20,20,https://example.com/checkout,1096,0,47
+1788602438675,305,Logout,200,OK,Thread Group 1-19,text,true,,1609,164,20,20,https://example.com/logout,214,0,37
+1788602439000,735,Login,200,OK,Thread Group 1-20,text,true,,2692,94,20,20,https://example.com/login,514,0,50
+1788602439135,808,Search Products,200,OK,Thread Group 1-20,text,true,,1569,221,20,20,https://example.com/search-products,566,0,31
+1788602439270,1262,View Product,200,OK,Thread Group 1-20,text,true,,1258,119,20,20,https://example.com/view-product,883,0,49
+1788602439405,1272,Add to Cart,200,OK,Thread Group 1-20,text,true,,2341,167,20,20,https://example.com/add-to-cart,890,0,37
+1788602439540,1306,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1450,208,20,20,https://example.com/checkout,914,0,46
+1788602439675,526,Logout,200,OK,Thread Group 1-20,text,true,,1911,195,20,20,https://example.com/logout,368,0,13
+1788602440000,550,Login,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,872,193,20,20,https://example.com/login,385,0,23
+1788602440135,1184,Search Products,200,OK,Thread Group 1-1,text,true,,2123,106,20,20,https://example.com/search-products,829,0,19
+1788602440270,771,View Product,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,1530,155,20,20,https://example.com/view-product,540,0,24
+1788602440405,1173,Add to Cart,200,OK,Thread Group 1-1,text,true,,1529,155,20,20,https://example.com/add-to-cart,821,0,25
+1788602440540,1375,Checkout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2084,141,20,20,https://example.com/checkout,962,0,44
+1788602440675,542,Logout,200,OK,Thread Group 1-1,text,true,,1126,141,20,20,https://example.com/logout,379,0,32
+1788602441000,865,Login,200,OK,Thread Group 1-2,text,true,,2505,155,20,20,https://example.com/login,606,0,49
+1788602441135,1359,Search Products,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2161,213,20,20,https://example.com/search-products,951,0,29
+1788602441270,759,View Product,200,OK,Thread Group 1-2,text,true,,733,199,20,20,https://example.com/view-product,531,0,19
+1788602441405,2418,Add to Cart,200,OK,Thread Group 1-2,text,true,,2720,98,20,20,https://example.com/add-to-cart,1693,0,23
+1788602441540,1486,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1326,100,20,20,https://example.com/checkout,1040,0,43
+1788602441675,605,Logout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2272,88,20,20,https://example.com/logout,424,0,34
+1788602442000,537,Login,200,OK,Thread Group 1-3,text,true,,1766,89,20,20,https://example.com/login,376,0,37
+1788602442135,1099,Search Products,200,OK,Thread Group 1-3,text,true,,1482,184,20,20,https://example.com/search-products,769,0,41
+1788602442270,926,View Product,200,OK,Thread Group 1-3,text,true,,1405,217,20,20,https://example.com/view-product,648,0,11
+1788602442405,751,Add to Cart,200,OK,Thread Group 1-3,text,true,,1134,106,20,20,https://example.com/add-to-cart,526,0,14
+1788602442540,1547,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2874,172,20,20,https://example.com/checkout,1083,0,41
+1788602442675,558,Logout,200,OK,Thread Group 1-3,text,true,,2324,175,20,20,https://example.com/logout,391,0,27
+1788602443000,889,Login,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1444,123,20,20,https://example.com/login,622,0,43
+1788602443135,791,Search Products,200,OK,Thread Group 1-4,text,true,,2629,186,20,20,https://example.com/search-products,554,0,21
+1788602443270,1376,View Product,200,OK,Thread Group 1-4,text,true,,2352,153,20,20,https://example.com/view-product,963,0,23
+1788602443405,1287,Add to Cart,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,968,139,20,20,https://example.com/add-to-cart,901,0,29
+1788602443540,1991,Checkout,200,OK,Thread Group 1-4,text,true,,2353,106,20,20,https://example.com/checkout,1394,0,18
+1788602443675,428,Logout,200,OK,Thread Group 1-4,text,true,,1258,169,20,20,https://example.com/logout,300,0,31
+1788602444000,769,Login,200,OK,Thread Group 1-5,text,true,,1714,161,20,20,https://example.com/login,538,0,17
+1788602444135,1045,Search Products,200,OK,Thread Group 1-5,text,true,,1469,159,20,20,https://example.com/search-products,732,0,25
+1788602444270,862,View Product,200,OK,Thread Group 1-5,text,true,,794,207,20,20,https://example.com/view-product,603,0,16
+1788602444405,930,Add to Cart,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1251,233,20,20,https://example.com/add-to-cart,651,0,43
+1788602444540,1766,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1335,107,20,20,https://example.com/checkout,1236,0,32
+1788602444675,540,Logout,200,OK,Thread Group 1-5,text,true,,2744,114,20,20,https://example.com/logout,378,0,21
+1788602445000,726,Login,200,OK,Thread Group 1-6,text,true,,2055,205,20,20,https://example.com/login,508,0,42
+1788602445135,706,Search Products,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,2961,91,20,20,https://example.com/search-products,494,0,39
+1788602445270,918,View Product,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1795,143,20,20,https://example.com/view-product,643,0,15
+1788602445405,2153,Add to Cart,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,923,195,20,20,https://example.com/add-to-cart,1507,0,43
+1788602445540,3080,Checkout,200,OK,Thread Group 1-6,text,true,,2549,234,20,20,https://example.com/checkout,2156,0,11
+1788602445675,357,Logout,200,OK,Thread Group 1-6,text,true,,2738,102,20,20,https://example.com/logout,250,0,48
+1788602446000,963,Login,200,OK,Thread Group 1-7,text,true,,2928,130,20,20,https://example.com/login,674,0,23
+1788602446135,1218,Search Products,200,OK,Thread Group 1-7,text,true,,896,170,20,20,https://example.com/search-products,853,0,46
+1788602446270,894,View Product,200,OK,Thread Group 1-7,text,true,,2187,108,20,20,https://example.com/view-product,626,0,10
+1788602446405,1552,Add to Cart,200,OK,Thread Group 1-7,text,true,,1270,145,20,20,https://example.com/add-to-cart,1086,0,32
+1788602446540,1511,Checkout,200,OK,Thread Group 1-7,text,true,,960,177,20,20,https://example.com/checkout,1058,0,31
+1788602446675,359,Logout,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1567,192,20,20,https://example.com/logout,251,0,22
+1788602447000,593,Login,200,OK,Thread Group 1-8,text,true,,1613,141,20,20,https://example.com/login,415,0,46
+1788602447135,1137,Search Products,200,OK,Thread Group 1-8,text,true,,2440,213,20,20,https://example.com/search-products,796,0,41
+1788602447270,701,View Product,200,OK,Thread Group 1-8,text,true,,2213,173,20,20,https://example.com/view-product,491,0,37
+1788602447405,1131,Add to Cart,200,OK,Thread Group 1-8,text,true,,1934,163,20,20,https://example.com/add-to-cart,792,0,40
+1788602447540,2169,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1617,123,20,20,https://example.com/checkout,1518,0,21
+1788602447675,810,Logout,200,OK,Thread Group 1-8,text,true,,1621,87,20,20,https://example.com/logout,567,0,11
+1788602448000,934,Login,200,OK,Thread Group 1-9,text,true,,2996,201,20,20,https://example.com/login,654,0,46
+1788602448135,1317,Search Products,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2192,94,20,20,https://example.com/search-products,922,0,28
+1788602448270,787,View Product,200,OK,Thread Group 1-9,text,true,,1234,85,20,20,https://example.com/view-product,551,0,16
+1788602448405,1822,Add to Cart,200,OK,Thread Group 1-9,text,true,,1042,89,20,20,https://example.com/add-to-cart,1275,0,12
+1788602448540,1226,Checkout,200,OK,Thread Group 1-9,text,true,,1249,87,20,20,https://example.com/checkout,858,0,12
+1788602448675,734,Logout,200,OK,Thread Group 1-9,text,true,,1493,92,20,20,https://example.com/logout,514,0,27
+1788602449000,1422,Login,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,2527,206,20,20,https://example.com/login,995,0,25
+1788602449135,1136,Search Products,200,OK,Thread Group 1-10,text,true,,2530,164,20,20,https://example.com/search-products,795,0,37
+1788602449270,886,View Product,200,OK,Thread Group 1-10,text,true,,2395,238,20,20,https://example.com/view-product,620,0,45
+1788602449405,1887,Add to Cart,200,OK,Thread Group 1-10,text,true,,1666,164,20,20,https://example.com/add-to-cart,1321,0,30
+1788602449540,1712,Checkout,200,OK,Thread Group 1-10,text,true,,2857,207,20,20,https://example.com/checkout,1198,0,40
+1788602449675,502,Logout,200,OK,Thread Group 1-10,text,true,,2961,154,20,20,https://example.com/logout,351,0,34
+1788602450000,907,Login,200,OK,Thread Group 1-11,text,true,,2320,136,20,20,https://example.com/login,635,0,16
+1788602450135,667,Search Products,200,OK,Thread Group 1-11,text,true,,2429,175,20,20,https://example.com/search-products,467,0,34
+1788602450270,507,View Product,200,OK,Thread Group 1-11,text,true,,2612,173,20,20,https://example.com/view-product,355,0,33
+1788602450405,1758,Add to Cart,200,OK,Thread Group 1-11,text,true,,2004,230,20,20,https://example.com/add-to-cart,1231,0,31
+1788602450540,1930,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2028,134,20,20,https://example.com/checkout,1351,0,26
+1788602450675,506,Logout,200,OK,Thread Group 1-11,text,true,,1398,152,20,20,https://example.com/logout,354,0,17
+1788602451000,862,Login,200,OK,Thread Group 1-12,text,true,,766,86,20,20,https://example.com/login,603,0,50
+1788602451135,1797,Search Products,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,1386,97,20,20,https://example.com/search-products,1258,0,30
+1788602451270,1588,View Product,200,OK,Thread Group 1-12,text,true,,1019,89,20,20,https://example.com/view-product,1112,0,37
+1788602451405,1453,Add to Cart,200,OK,Thread Group 1-12,text,true,,2321,95,20,20,https://example.com/add-to-cart,1017,0,45
+1788602451540,1981,Checkout,200,OK,Thread Group 1-12,text,true,,1980,215,20,20,https://example.com/checkout,1387,0,10
+1788602451675,367,Logout,200,OK,Thread Group 1-12,text,true,,1364,138,20,20,https://example.com/logout,257,0,22
+1788602452000,907,Login,200,OK,Thread Group 1-13,text,true,,2380,93,20,20,https://example.com/login,635,0,40
+1788602452135,978,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,793,155,20,20,https://example.com/search-products,685,0,16
+1788602452270,1284,View Product,200,OK,Thread Group 1-13,text,true,,1840,229,20,20,https://example.com/view-product,899,0,47
+1788602452405,1625,Add to Cart,200,OK,Thread Group 1-13,text,true,,2712,159,20,20,https://example.com/add-to-cart,1138,0,16
+1788602452540,2032,Checkout,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,2191,166,20,20,https://example.com/checkout,1422,0,44
+1788602452675,281,Logout,200,OK,Thread Group 1-13,text,true,,2912,141,20,20,https://example.com/logout,197,0,45
+1788602453000,1118,Login,200,OK,Thread Group 1-14,text,true,,1150,191,20,20,https://example.com/login,783,0,45
+1788602453135,840,Search Products,200,OK,Thread Group 1-14,text,true,,2529,173,20,20,https://example.com/search-products,588,0,15
+1788602453270,691,View Product,200,OK,Thread Group 1-14,text,true,,1177,225,20,20,https://example.com/view-product,484,0,50
+1788602453405,1508,Add to Cart,200,OK,Thread Group 1-14,text,true,,1450,203,20,20,https://example.com/add-to-cart,1056,0,30
+1788602453540,1253,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2971,209,20,20,https://example.com/checkout,877,0,27
+1788602453675,286,Logout,200,OK,Thread Group 1-14,text,true,,1501,140,20,20,https://example.com/logout,200,0,23
+1788602454000,838,Login,200,OK,Thread Group 1-15,text,true,,1829,193,20,20,https://example.com/login,587,0,31
+1788602454135,1468,Search Products,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1580,81,20,20,https://example.com/search-products,1028,0,40
+1788602454270,2237,View Product,200,OK,Thread Group 1-15,text,true,,809,144,20,20,https://example.com/view-product,1566,0,24
+1788602454405,1185,Add to Cart,200,OK,Thread Group 1-15,text,true,,1132,158,20,20,https://example.com/add-to-cart,830,0,22
+1788602454540,1111,Checkout,200,OK,Thread Group 1-15,text,true,,2568,185,20,20,https://example.com/checkout,778,0,29
+1788602454675,365,Logout,200,OK,Thread Group 1-15,text,true,,2860,160,20,20,https://example.com/logout,255,0,24
+1788602455000,795,Login,200,OK,Thread Group 1-16,text,true,,1280,140,20,20,https://example.com/login,556,0,28
+1788602455135,859,Search Products,200,OK,Thread Group 1-16,text,true,,1353,159,20,20,https://example.com/search-products,601,0,28
+1788602455270,1327,View Product,200,OK,Thread Group 1-16,text,true,,790,98,20,20,https://example.com/view-product,929,0,28
+1788602455405,1132,Add to Cart,200,OK,Thread Group 1-16,text,true,,2016,87,20,20,https://example.com/add-to-cart,792,0,13
+1788602455540,1624,Checkout,200,OK,Thread Group 1-16,text,true,,1252,175,20,20,https://example.com/checkout,1137,0,47
+1788602455675,532,Logout,200,OK,Thread Group 1-16,text,true,,2271,204,20,20,https://example.com/logout,372,0,11
+1788602456000,604,Login,200,OK,Thread Group 1-17,text,true,,2242,221,20,20,https://example.com/login,423,0,46
+1788602456135,1036,Search Products,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2325,172,20,20,https://example.com/search-products,725,0,11
+1788602456270,885,View Product,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2906,192,20,20,https://example.com/view-product,620,0,47
+1788602456405,1388,Add to Cart,200,OK,Thread Group 1-17,text,true,,840,177,20,20,https://example.com/add-to-cart,972,0,34
+1788602456540,2134,Checkout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2602,120,20,20,https://example.com/checkout,1494,0,35
+1788602456675,285,Logout,200,OK,Thread Group 1-17,text,true,,1073,147,20,20,https://example.com/logout,200,0,42
+1788602457000,628,Login,200,OK,Thread Group 1-18,text,true,,2536,227,20,20,https://example.com/login,440,0,34
+1788602457135,870,Search Products,200,OK,Thread Group 1-18,text,true,,768,111,20,20,https://example.com/search-products,609,0,46
+1788602457270,1094,View Product,200,OK,Thread Group 1-18,text,true,,2220,97,20,20,https://example.com/view-product,766,0,42
+1788602457405,999,Add to Cart,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,2297,160,20,20,https://example.com/add-to-cart,699,0,42
+1788602457540,1939,Checkout,200,OK,Thread Group 1-18,text,true,,798,126,20,20,https://example.com/checkout,1357,0,32
+1788602457675,330,Logout,200,OK,Thread Group 1-18,text,true,,2470,185,20,20,https://example.com/logout,231,0,40
+1788602458000,609,Login,200,OK,Thread Group 1-19,text,true,,1291,186,20,20,https://example.com/login,426,0,31
+1788602458135,924,Search Products,200,OK,Thread Group 1-19,text,true,,1289,141,20,20,https://example.com/search-products,647,0,35
+1788602458270,892,View Product,200,OK,Thread Group 1-19,text,true,,777,182,20,20,https://example.com/view-product,624,0,21
+1788602458405,960,Add to Cart,200,OK,Thread Group 1-19,text,true,,1059,213,20,20,https://example.com/add-to-cart,672,0,28
+1788602458540,1723,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1272,93,20,20,https://example.com/checkout,1206,0,30
+1788602458675,264,Logout,200,OK,Thread Group 1-19,text,true,,1051,195,20,20,https://example.com/logout,185,0,12
+1788602459000,624,Login,200,OK,Thread Group 1-20,text,true,,2842,98,20,20,https://example.com/login,437,0,48
+1788602459135,909,Search Products,200,OK,Thread Group 1-20,text,true,,2010,226,20,20,https://example.com/search-products,636,0,48
+1788602459270,673,View Product,200,OK,Thread Group 1-20,text,true,,2170,130,20,20,https://example.com/view-product,471,0,23
+1788602459405,1064,Add to Cart,200,OK,Thread Group 1-20,text,true,,2149,218,20,20,https://example.com/add-to-cart,745,0,44
+1788602459540,1748,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,2274,157,20,20,https://example.com/checkout,1224,0,14
+1788602459675,384,Logout,200,OK,Thread Group 1-20,text,true,,812,221,20,20,https://example.com/logout,269,0,17
+1788602460000,826,Login,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,789,106,20,20,https://example.com/login,578,0,12
+1788602460135,1118,Search Products,200,OK,Thread Group 1-1,text,true,,1284,110,20,20,https://example.com/search-products,783,0,19
+1788602460270,828,View Product,200,OK,Thread Group 1-1,text,true,,1569,157,20,20,https://example.com/view-product,580,0,22
+1788602460405,1121,Add to Cart,200,OK,Thread Group 1-1,text,true,,1147,118,20,20,https://example.com/add-to-cart,785,0,41
+1788602460540,1428,Checkout,200,OK,Thread Group 1-1,text,true,,1828,126,20,20,https://example.com/checkout,1000,0,30
+1788602460675,300,Logout,200,OK,Thread Group 1-1,text,true,,1695,156,20,20,https://example.com/logout,210,0,25
+1788602461000,820,Login,200,OK,Thread Group 1-2,text,true,,1374,149,20,20,https://example.com/login,574,0,18
+1788602461135,801,Search Products,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2264,200,20,20,https://example.com/search-products,561,0,38
+1788602461270,787,View Product,200,OK,Thread Group 1-2,text,true,,1590,120,20,20,https://example.com/view-product,551,0,30
+1788602461405,657,Add to Cart,200,OK,Thread Group 1-2,text,true,,1891,179,20,20,https://example.com/add-to-cart,460,0,21
+1788602461540,1068,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,700,147,20,20,https://example.com/checkout,748,0,15
+1788602461675,262,Logout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1245,171,20,20,https://example.com/logout,183,0,46
+1788602462000,603,Login,200,OK,Thread Group 1-3,text,true,,1790,108,20,20,https://example.com/login,422,0,47
+1788602462135,1252,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2579,173,20,20,https://example.com/search-products,876,0,21
+1788602462270,850,View Product,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1504,150,20,20,https://example.com/view-product,595,0,18
+1788602462405,1299,Add to Cart,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2675,213,20,20,https://example.com/add-to-cart,909,0,20
+1788602462540,1379,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2307,221,20,20,https://example.com/checkout,965,0,41
+1788602462675,322,Logout,200,OK,Thread Group 1-3,text,true,,1078,181,20,20,https://example.com/logout,225,0,38
+1788602463000,619,Login,200,OK,Thread Group 1-4,text,true,,1867,217,20,20,https://example.com/login,433,0,17
+1788602463135,614,Search Products,200,OK,Thread Group 1-4,text,true,,2184,156,20,20,https://example.com/search-products,430,0,28
+1788602463270,741,View Product,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1773,147,20,20,https://example.com/view-product,519,0,36
+1788602463405,1776,Add to Cart,200,OK,Thread Group 1-4,text,true,,1767,224,20,20,https://example.com/add-to-cart,1243,0,14
+1788602463540,2298,Checkout,200,OK,Thread Group 1-4,text,true,,2390,218,20,20,https://example.com/checkout,1609,0,10
+1788602463675,386,Logout,200,OK,Thread Group 1-4,text,true,,2432,133,20,20,https://example.com/logout,270,0,36
+1788602464000,526,Login,200,OK,Thread Group 1-5,text,true,,2424,154,20,20,https://example.com/login,368,0,32
+1788602464135,737,Search Products,200,OK,Thread Group 1-5,text,true,,2942,154,20,20,https://example.com/search-products,516,0,16
+1788602464270,728,View Product,200,OK,Thread Group 1-5,text,true,,1143,210,20,20,https://example.com/view-product,510,0,49
+1788602464405,1722,Add to Cart,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1797,118,20,20,https://example.com/add-to-cart,1205,0,17
+1788602464540,1364,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1245,156,20,20,https://example.com/checkout,955,0,46
+1788602464675,399,Logout,200,OK,Thread Group 1-5,text,true,,1376,183,20,20,https://example.com/logout,279,0,42
+1788602465000,669,Login,200,OK,Thread Group 1-6,text,true,,2340,208,20,20,https://example.com/login,468,0,20
+1788602465135,2163,Search Products,200,OK,Thread Group 1-6,text,true,,1680,228,20,20,https://example.com/search-products,1514,0,33
+1788602465270,1060,View Product,200,OK,Thread Group 1-6,text,true,,2507,145,20,20,https://example.com/view-product,742,0,18
+1788602465405,747,Add to Cart,200,OK,Thread Group 1-6,text,true,,1782,230,20,20,https://example.com/add-to-cart,523,0,35
+1788602465540,2162,Checkout,200,OK,Thread Group 1-6,text,true,,987,145,20,20,https://example.com/checkout,1513,0,44
+1788602465675,415,Logout,200,OK,Thread Group 1-6,text,true,,2332,202,20,20,https://example.com/logout,290,0,16
+1788602466000,681,Login,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,2683,81,20,20,https://example.com/login,477,0,49
+1788602466135,1603,Search Products,200,OK,Thread Group 1-7,text,true,,2671,146,20,20,https://example.com/search-products,1122,0,49
+1788602466270,707,View Product,200,OK,Thread Group 1-7,text,true,,1593,169,20,20,https://example.com/view-product,495,0,34
+1788602466405,866,Add to Cart,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,911,89,20,20,https://example.com/add-to-cart,606,0,26
+1788602466540,2163,Checkout,200,OK,Thread Group 1-7,text,true,,977,195,20,20,https://example.com/checkout,1514,0,42
+1788602466675,486,Logout,200,OK,Thread Group 1-7,text,true,,2122,167,20,20,https://example.com/logout,340,0,40
+1788602467000,782,Login,200,OK,Thread Group 1-8,text,true,,2700,240,20,20,https://example.com/login,547,0,22
+1788602467135,1396,Search Products,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2348,81,20,20,https://example.com/search-products,977,0,25
+1788602467270,696,View Product,200,OK,Thread Group 1-8,text,true,,1546,230,20,20,https://example.com/view-product,487,0,18
+1788602467405,1176,Add to Cart,200,OK,Thread Group 1-8,text,true,,2680,221,20,20,https://example.com/add-to-cart,823,0,34
+1788602467540,1052,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1682,169,20,20,https://example.com/checkout,736,0,33
+1788602467675,478,Logout,200,OK,Thread Group 1-8,text,true,,2302,145,20,20,https://example.com/logout,335,0,36
+1788602468000,897,Login,200,OK,Thread Group 1-9,text,true,,2775,96,20,20,https://example.com/login,628,0,48
+1788602468135,450,Search Products,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1081,205,20,20,https://example.com/search-products,315,0,10
+1788602468270,1098,View Product,200,OK,Thread Group 1-9,text,true,,2213,156,20,20,https://example.com/view-product,769,0,45
+1788602468405,912,Add to Cart,200,OK,Thread Group 1-9,text,true,,1577,175,20,20,https://example.com/add-to-cart,638,0,22
+1788602468540,1238,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1538,96,20,20,https://example.com/checkout,867,0,42
+1788602468675,378,Logout,200,OK,Thread Group 1-9,text,true,,2664,106,20,20,https://example.com/logout,265,0,34
+1788602469000,940,Login,200,OK,Thread Group 1-10,text,true,,1746,172,20,20,https://example.com/login,658,0,25
+1788602469135,479,Search Products,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1032,152,20,20,https://example.com/search-products,335,0,15
+1788602469270,704,View Product,200,OK,Thread Group 1-10,text,true,,2346,156,20,20,https://example.com/view-product,493,0,38
+1788602469405,1482,Add to Cart,200,OK,Thread Group 1-10,text,true,,2902,188,20,20,https://example.com/add-to-cart,1037,0,25
+1788602469540,1277,Checkout,200,OK,Thread Group 1-10,text,true,,2104,117,20,20,https://example.com/checkout,894,0,47
+1788602469675,337,Logout,200,OK,Thread Group 1-10,text,true,,1884,158,20,20,https://example.com/logout,236,0,31
+1788602470000,622,Login,200,OK,Thread Group 1-11,text,true,,1900,94,20,20,https://example.com/login,435,0,33
+1788602470135,694,Search Products,200,OK,Thread Group 1-11,text,true,,1730,176,20,20,https://example.com/search-products,486,0,24
+1788602470270,1205,View Product,200,OK,Thread Group 1-11,text,true,,2377,230,20,20,https://example.com/view-product,844,0,21
+1788602470405,774,Add to Cart,200,OK,Thread Group 1-11,text,true,,1073,114,20,20,https://example.com/add-to-cart,542,0,28
+1788602470540,2119,Checkout,200,OK,Thread Group 1-11,text,true,,1956,144,20,20,https://example.com/checkout,1483,0,36
+1788602470675,389,Logout,200,OK,Thread Group 1-11,text,true,,2476,83,20,20,https://example.com/logout,272,0,42
+1788602471000,1189,Login,200,OK,Thread Group 1-12,text,true,,2569,202,20,20,https://example.com/login,832,0,14
+1788602471135,1187,Search Products,200,OK,Thread Group 1-12,text,true,,2254,227,20,20,https://example.com/search-products,831,0,29
+1788602471270,1285,View Product,200,OK,Thread Group 1-12,text,true,,2212,94,20,20,https://example.com/view-product,899,0,49
+1788602471405,889,Add to Cart,200,OK,Thread Group 1-12,text,true,,2482,225,20,20,https://example.com/add-to-cart,622,0,11
+1788602471540,1512,Checkout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,2027,223,20,20,https://example.com/checkout,1058,0,10
+1788602471675,389,Logout,200,OK,Thread Group 1-12,text,true,,1502,232,20,20,https://example.com/logout,272,0,36
+1788602472000,553,Login,200,OK,Thread Group 1-13,text,true,,1479,96,20,20,https://example.com/login,387,0,21
+1788602472135,1624,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1795,105,20,20,https://example.com/search-products,1137,0,21
+1788602472270,634,View Product,200,OK,Thread Group 1-13,text,true,,1337,125,20,20,https://example.com/view-product,444,0,37
+1788602472405,1468,Add to Cart,200,OK,Thread Group 1-13,text,true,,2262,95,20,20,https://example.com/add-to-cart,1028,0,19
+1788602472540,2250,Checkout,200,OK,Thread Group 1-13,text,true,,2545,153,20,20,https://example.com/checkout,1575,0,46
+1788602472675,331,Logout,200,OK,Thread Group 1-13,text,true,,2869,159,20,20,https://example.com/logout,232,0,16
+1788602473000,605,Login,200,OK,Thread Group 1-14,text,true,,1170,173,20,20,https://example.com/login,424,0,16
+1788602473135,1113,Search Products,200,OK,Thread Group 1-14,text,true,,1903,198,20,20,https://example.com/search-products,779,0,43
+1788602473270,1502,View Product,200,OK,Thread Group 1-14,text,true,,2438,134,20,20,https://example.com/view-product,1051,0,14
+1788602473405,1148,Add to Cart,200,OK,Thread Group 1-14,text,true,,2469,101,20,20,https://example.com/add-to-cart,804,0,14
+1788602473540,2034,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2520,224,20,20,https://example.com/checkout,1424,0,10
+1788602473675,290,Logout,200,OK,Thread Group 1-14,text,true,,1535,191,20,20,https://example.com/logout,203,0,12
+1788602474000,545,Login,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,2814,166,20,20,https://example.com/login,382,0,35
+1788602474135,798,Search Products,200,OK,Thread Group 1-15,text,true,,1751,220,20,20,https://example.com/search-products,559,0,21
+1788602474270,551,View Product,200,OK,Thread Group 1-15,text,true,,820,219,20,20,https://example.com/view-product,386,0,28
+1788602474405,1375,Add to Cart,200,OK,Thread Group 1-15,text,true,,2801,117,20,20,https://example.com/add-to-cart,962,0,34
+1788602474540,1796,Checkout,200,OK,Thread Group 1-15,text,true,,2290,156,20,20,https://example.com/checkout,1257,0,30
+1788602474675,435,Logout,200,OK,Thread Group 1-15,text,true,,1318,236,20,20,https://example.com/logout,304,0,48
+1788602475000,384,Login,200,OK,Thread Group 1-16,text,true,,1327,161,20,20,https://example.com/login,269,0,39
+1788602475135,1217,Search Products,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2779,110,20,20,https://example.com/search-products,852,0,29
+1788602475270,1046,View Product,200,OK,Thread Group 1-16,text,true,,1250,188,20,20,https://example.com/view-product,732,0,50
+1788602475405,1449,Add to Cart,200,OK,Thread Group 1-16,text,true,,2342,200,20,20,https://example.com/add-to-cart,1014,0,36
+1788602475540,1177,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2128,204,20,20,https://example.com/checkout,824,0,23
+1788602475675,260,Logout,200,OK,Thread Group 1-16,text,true,,2485,154,20,20,https://example.com/logout,182,0,26
+1788602476000,477,Login,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2744,95,20,20,https://example.com/login,334,0,48
+1788602476135,1119,Search Products,200,OK,Thread Group 1-17,text,true,,1803,192,20,20,https://example.com/search-products,783,0,13
+1788602476270,1259,View Product,200,OK,Thread Group 1-17,text,true,,722,168,20,20,https://example.com/view-product,881,0,49
+1788602476405,1866,Add to Cart,200,OK,Thread Group 1-17,text,true,,2683,97,20,20,https://example.com/add-to-cart,1306,0,10
+1788602476540,2544,Checkout,200,OK,Thread Group 1-17,text,true,,1001,172,20,20,https://example.com/checkout,1781,0,47
+1788602476675,236,Logout,200,OK,Thread Group 1-17,text,true,,1144,141,20,20,https://example.com/logout,165,0,44
+1788602477000,386,Login,200,OK,Thread Group 1-18,text,true,,1112,168,20,20,https://example.com/login,270,0,30
+1788602477135,1184,Search Products,200,OK,Thread Group 1-18,text,true,,1137,99,20,20,https://example.com/search-products,829,0,33
+1788602477270,859,View Product,200,OK,Thread Group 1-18,text,true,,1347,80,20,20,https://example.com/view-product,601,0,49
+1788602477405,1062,Add to Cart,200,OK,Thread Group 1-18,text,true,,2199,191,20,20,https://example.com/add-to-cart,743,0,42
+1788602477540,1471,Checkout,200,OK,Thread Group 1-18,text,true,,1166,172,20,20,https://example.com/checkout,1030,0,45
+1788602477675,554,Logout,200,OK,Thread Group 1-18,text,true,,1126,232,20,20,https://example.com/logout,388,0,19
+1788602478000,953,Login,200,OK,Thread Group 1-19,text,true,,1450,171,20,20,https://example.com/login,667,0,18
+1788602478135,731,Search Products,200,OK,Thread Group 1-19,text,true,,720,157,20,20,https://example.com/search-products,512,0,20
+1788602478270,1008,View Product,200,OK,Thread Group 1-19,text,true,,701,114,20,20,https://example.com/view-product,706,0,19
+1788602478405,1335,Add to Cart,200,OK,Thread Group 1-19,text,true,,2113,238,20,20,https://example.com/add-to-cart,934,0,15
+1788602478540,1897,Checkout,200,OK,Thread Group 1-19,text,true,,1920,224,20,20,https://example.com/checkout,1328,0,34
+1788602478675,475,Logout,200,OK,Thread Group 1-19,text,true,,2472,174,20,20,https://example.com/logout,332,0,23
+1788602479000,484,Login,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1121,218,20,20,https://example.com/login,339,0,49
+1788602479135,880,Search Products,200,OK,Thread Group 1-20,text,true,,2318,173,20,20,https://example.com/search-products,616,0,13
+1788602479270,586,View Product,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,2706,94,20,20,https://example.com/view-product,410,0,25
+1788602479405,1210,Add to Cart,200,OK,Thread Group 1-20,text,true,,1410,122,20,20,https://example.com/add-to-cart,847,0,23
+1788602479540,1581,Checkout,200,OK,Thread Group 1-20,text,true,,2264,134,20,20,https://example.com/checkout,1107,0,20
+1788602479675,241,Logout,200,OK,Thread Group 1-20,text,true,,1950,175,20,20,https://example.com/logout,169,0,14
+1788602480000,1014,Login,200,OK,Thread Group 1-1,text,true,,1704,198,20,20,https://example.com/login,710,0,32
+1788602480135,1062,Search Products,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,863,189,20,20,https://example.com/search-products,743,0,22
+1788602480270,786,View Product,200,OK,Thread Group 1-1,text,true,,1489,90,20,20,https://example.com/view-product,550,0,42
+1788602480405,877,Add to Cart,200,OK,Thread Group 1-1,text,true,,2811,165,20,20,https://example.com/add-to-cart,614,0,39
+1788602480540,768,Checkout,200,OK,Thread Group 1-1,text,true,,2375,130,20,20,https://example.com/checkout,538,0,30
+1788602480675,432,Logout,200,OK,Thread Group 1-1,text,true,,1389,96,20,20,https://example.com/logout,302,0,49
+1788602481000,1261,Login,200,OK,Thread Group 1-2,text,true,,1629,115,20,20,https://example.com/login,883,0,17
+1788602481135,1865,Search Products,200,OK,Thread Group 1-2,text,true,,2134,206,20,20,https://example.com/search-products,1306,0,26
+1788602481270,1128,View Product,200,OK,Thread Group 1-2,text,true,,2041,179,20,20,https://example.com/view-product,790,0,40
+1788602481405,1278,Add to Cart,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2216,182,20,20,https://example.com/add-to-cart,895,0,47
+1788602481540,1612,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,714,173,20,20,https://example.com/checkout,1128,0,22
+1788602481675,295,Logout,200,OK,Thread Group 1-2,text,true,,829,82,20,20,https://example.com/logout,206,0,14
+1788602482000,491,Login,200,OK,Thread Group 1-3,text,true,,2563,162,20,20,https://example.com/login,344,0,43
+1788602482135,1175,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1363,127,20,20,https://example.com/search-products,822,0,48
+1788602482270,684,View Product,200,OK,Thread Group 1-3,text,true,,2079,115,20,20,https://example.com/view-product,479,0,32
+1788602482405,1164,Add to Cart,200,OK,Thread Group 1-3,text,true,,2465,219,20,20,https://example.com/add-to-cart,815,0,10
+1788602482540,2327,Checkout,200,OK,Thread Group 1-3,text,true,,2378,108,20,20,https://example.com/checkout,1629,0,48
+1788602482675,382,Logout,200,OK,Thread Group 1-3,text,true,,2777,120,20,20,https://example.com/logout,267,0,33
+1788602483000,687,Login,200,OK,Thread Group 1-4,text,true,,2445,136,20,20,https://example.com/login,481,0,24
+1788602483135,952,Search Products,200,OK,Thread Group 1-4,text,true,,1324,118,20,20,https://example.com/search-products,666,0,32
+1788602483270,588,View Product,200,OK,Thread Group 1-4,text,true,,2978,168,20,20,https://example.com/view-product,412,0,33
+1788602483405,2015,Add to Cart,200,OK,Thread Group 1-4,text,true,,2107,86,20,20,https://example.com/add-to-cart,1410,0,31
+1788602483540,1840,Checkout,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1657,173,20,20,https://example.com/checkout,1288,0,14
+1788602483675,333,Logout,200,OK,Thread Group 1-4,text,true,,1562,213,20,20,https://example.com/logout,233,0,24
+1788602484000,592,Login,200,OK,Thread Group 1-5,text,true,,896,85,20,20,https://example.com/login,414,0,21
+1788602484135,1556,Search Products,200,OK,Thread Group 1-5,text,true,,2701,176,20,20,https://example.com/search-products,1089,0,24
+1788602484270,590,View Product,200,OK,Thread Group 1-5,text,true,,2179,219,20,20,https://example.com/view-product,413,0,37
+1788602484405,707,Add to Cart,200,OK,Thread Group 1-5,text,true,,1834,131,20,20,https://example.com/add-to-cart,495,0,35
+1788602484540,1671,Checkout,200,OK,Thread Group 1-5,text,true,,1652,109,20,20,https://example.com/checkout,1170,0,32
+1788602484675,312,Logout,200,OK,Thread Group 1-5,text,true,,1294,186,20,20,https://example.com/logout,218,0,48
+1788602485000,1030,Login,200,OK,Thread Group 1-6,text,true,,2866,202,20,20,https://example.com/login,721,0,13
+1788602485135,1421,Search Products,200,OK,Thread Group 1-6,text,true,,2592,187,20,20,https://example.com/search-products,995,0,32
+1788602485270,548,View Product,200,OK,Thread Group 1-6,text,true,,1233,158,20,20,https://example.com/view-product,384,0,46
+1788602485405,1651,Add to Cart,200,OK,Thread Group 1-6,text,true,,1865,201,20,20,https://example.com/add-to-cart,1156,0,50
+1788602485540,1569,Checkout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,715,181,20,20,https://example.com/checkout,1098,0,31
+1788602485675,425,Logout,200,OK,Thread Group 1-6,text,true,,1272,232,20,20,https://example.com/logout,298,0,19
+1788602486000,413,Login,200,OK,Thread Group 1-7,text,true,,2348,92,20,20,https://example.com/login,289,0,13
+1788602486135,827,Search Products,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1538,155,20,20,https://example.com/search-products,579,0,47
+1788602486270,950,View Product,200,OK,Thread Group 1-7,text,true,,2952,152,20,20,https://example.com/view-product,665,0,31
+1788602486405,920,Add to Cart,200,OK,Thread Group 1-7,text,true,,2446,228,20,20,https://example.com/add-to-cart,644,0,48
+1788602486540,1499,Checkout,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1835,158,20,20,https://example.com/checkout,1049,0,16
+1788602486675,263,Logout,200,OK,Thread Group 1-7,text,true,,2569,82,20,20,https://example.com/logout,184,0,43
+1788602487000,1139,Login,200,OK,Thread Group 1-8,text,true,,2338,223,20,20,https://example.com/login,797,0,12
+1788602487135,1309,Search Products,200,OK,Thread Group 1-8,text,true,,1085,177,20,20,https://example.com/search-products,916,0,45
+1788602487270,694,View Product,200,OK,Thread Group 1-8,text,true,,2889,119,20,20,https://example.com/view-product,486,0,28
+1788602487405,1524,Add to Cart,200,OK,Thread Group 1-8,text,true,,2126,152,20,20,https://example.com/add-to-cart,1067,0,44
+1788602487540,2921,Checkout,200,OK,Thread Group 1-8,text,true,,2844,196,20,20,https://example.com/checkout,2045,0,14
+1788602487675,406,Logout,200,OK,Thread Group 1-8,text,true,,991,104,20,20,https://example.com/logout,284,0,10
+1788602488000,606,Login,200,OK,Thread Group 1-9,text,true,,1104,232,20,20,https://example.com/login,424,0,49
+1788602488135,1424,Search Products,200,OK,Thread Group 1-9,text,true,,2432,122,20,20,https://example.com/search-products,997,0,21
+1788602488270,959,View Product,200,OK,Thread Group 1-9,text,true,,1785,159,20,20,https://example.com/view-product,671,0,42
+1788602488405,2840,Add to Cart,200,OK,Thread Group 1-9,text,true,,2600,191,20,20,https://example.com/add-to-cart,1988,0,29
+1788602488540,1094,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1637,215,20,20,https://example.com/checkout,766,0,14
+1788602488675,345,Logout,200,OK,Thread Group 1-9,text,true,,1616,137,20,20,https://example.com/logout,241,0,33
+1788602489000,380,Login,200,OK,Thread Group 1-10,text,true,,1486,131,20,20,https://example.com/login,266,0,42
+1788602489135,758,Search Products,200,OK,Thread Group 1-10,text,true,,2823,81,20,20,https://example.com/search-products,531,0,14
+1788602489270,1115,View Product,200,OK,Thread Group 1-10,text,true,,1448,176,20,20,https://example.com/view-product,780,0,36
+1788602489405,766,Add to Cart,200,OK,Thread Group 1-10,text,true,,2376,91,20,20,https://example.com/add-to-cart,536,0,21
+1788602489540,2445,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1299,230,20,20,https://example.com/checkout,1712,0,50
+1788602489675,477,Logout,200,OK,Thread Group 1-10,text,true,,2845,191,20,20,https://example.com/logout,334,0,34
+1788602490000,901,Login,200,OK,Thread Group 1-11,text,true,,2076,205,20,20,https://example.com/login,631,0,42
+1788602490135,796,Search Products,200,OK,Thread Group 1-11,text,true,,2314,139,20,20,https://example.com/search-products,557,0,27
+1788602490270,741,View Product,200,OK,Thread Group 1-11,text,true,,1775,93,20,20,https://example.com/view-product,519,0,46
+1788602490405,763,Add to Cart,200,OK,Thread Group 1-11,text,true,,1962,167,20,20,https://example.com/add-to-cart,534,0,11
+1788602490540,2283,Checkout,200,OK,Thread Group 1-11,text,true,,2907,208,20,20,https://example.com/checkout,1598,0,47
+1788602490675,204,Logout,200,OK,Thread Group 1-11,text,true,,1002,194,20,20,https://example.com/logout,143,0,45
+1788602491000,644,Login,200,OK,Thread Group 1-12,text,true,,2466,197,20,20,https://example.com/login,451,0,31
+1788602491135,783,Search Products,200,OK,Thread Group 1-12,text,true,,2214,237,20,20,https://example.com/search-products,548,0,19
+1788602491270,757,View Product,200,OK,Thread Group 1-12,text,true,,2047,221,20,20,https://example.com/view-product,530,0,31
+1788602491405,749,Add to Cart,200,OK,Thread Group 1-12,text,true,,1054,80,20,20,https://example.com/add-to-cart,524,0,29
+1788602491540,2359,Checkout,200,OK,Thread Group 1-12,text,true,,1678,176,20,20,https://example.com/checkout,1651,0,26
+1788602491675,435,Logout,200,OK,Thread Group 1-12,text,true,,834,150,20,20,https://example.com/logout,304,0,44
+1788602492000,400,Login,200,OK,Thread Group 1-13,text,true,,1042,204,20,20,https://example.com/login,280,0,19
+1788602492135,861,Search Products,200,OK,Thread Group 1-13,text,true,,1506,197,20,20,https://example.com/search-products,603,0,15
+1788602492270,797,View Product,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1057,139,20,20,https://example.com/view-product,558,0,18
+1788602492405,999,Add to Cart,200,OK,Thread Group 1-13,text,true,,2763,199,20,20,https://example.com/add-to-cart,699,0,30
+1788602492540,2035,Checkout,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1614,194,20,20,https://example.com/checkout,1424,0,48
+1788602492675,457,Logout,200,OK,Thread Group 1-13,text,true,,2755,130,20,20,https://example.com/logout,320,0,40
+1788602493000,364,Login,200,OK,Thread Group 1-14,text,true,,2569,91,20,20,https://example.com/login,255,0,42
+1788602493135,1208,Search Products,200,OK,Thread Group 1-14,text,true,,2029,128,20,20,https://example.com/search-products,846,0,14
+1788602493270,1073,View Product,200,OK,Thread Group 1-14,text,true,,1560,182,20,20,https://example.com/view-product,751,0,16
+1788602493405,1517,Add to Cart,200,OK,Thread Group 1-14,text,true,,805,114,20,20,https://example.com/add-to-cart,1062,0,28
+1788602493540,1400,Checkout,200,OK,Thread Group 1-14,text,true,,902,102,20,20,https://example.com/checkout,980,0,15
+1788602493675,473,Logout,200,OK,Thread Group 1-14,text,true,,2911,210,20,20,https://example.com/logout,331,0,39
+1788602494000,724,Login,200,OK,Thread Group 1-15,text,true,,2992,188,20,20,https://example.com/login,507,0,21
+1788602494135,1069,Search Products,200,OK,Thread Group 1-15,text,true,,806,105,20,20,https://example.com/search-products,748,0,31
+1788602494270,1735,View Product,200,OK,Thread Group 1-15,text,true,,2938,178,20,20,https://example.com/view-product,1214,0,17
+1788602494405,1374,Add to Cart,200,OK,Thread Group 1-15,text,true,,2513,91,20,20,https://example.com/add-to-cart,962,0,25
+1788602494540,1777,Checkout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1334,190,20,20,https://example.com/checkout,1244,0,30
+1788602494675,300,Logout,200,OK,Thread Group 1-15,text,true,,2375,211,20,20,https://example.com/logout,210,0,23
+1788602495000,1009,Login,200,OK,Thread Group 1-16,text,true,,2938,214,20,20,https://example.com/login,706,0,32
+1788602495135,1064,Search Products,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2443,143,20,20,https://example.com/search-products,745,0,10
+1788602495270,1066,View Product,200,OK,Thread Group 1-16,text,true,,987,114,20,20,https://example.com/view-product,746,0,33
+1788602495405,793,Add to Cart,200,OK,Thread Group 1-16,text,true,,2856,95,20,20,https://example.com/add-to-cart,555,0,43
+1788602495540,2224,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,799,146,20,20,https://example.com/checkout,1557,0,36
+1788602495675,255,Logout,200,OK,Thread Group 1-16,text,true,,1759,168,20,20,https://example.com/logout,178,0,27
+1788602496000,683,Login,200,OK,Thread Group 1-17,text,true,,2334,224,20,20,https://example.com/login,478,0,12
+1788602496135,874,Search Products,200,OK,Thread Group 1-17,text,true,,1347,240,20,20,https://example.com/search-products,612,0,23
+1788602496270,631,View Product,200,OK,Thread Group 1-17,text,true,,1235,210,20,20,https://example.com/view-product,442,0,47
+1788602496405,1492,Add to Cart,200,OK,Thread Group 1-17,text,true,,2342,134,20,20,https://example.com/add-to-cart,1044,0,47
+1788602496540,1242,Checkout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,1631,164,20,20,https://example.com/checkout,869,0,12
+1788602496675,325,Logout,200,OK,Thread Group 1-17,text,true,,2108,153,20,20,https://example.com/logout,227,0,33
+1788602497000,596,Login,200,OK,Thread Group 1-18,text,true,,1902,139,20,20,https://example.com/login,417,0,18
+1788602497135,1114,Search Products,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,2620,162,20,20,https://example.com/search-products,780,0,42
+1788602497270,585,View Product,200,OK,Thread Group 1-18,text,true,,1707,180,20,20,https://example.com/view-product,410,0,18
+1788602497405,1149,Add to Cart,200,OK,Thread Group 1-18,text,true,,1207,116,20,20,https://example.com/add-to-cart,804,0,22
+1788602497540,1175,Checkout,200,OK,Thread Group 1-18,text,true,,1381,97,20,20,https://example.com/checkout,822,0,41
+1788602497675,237,Logout,200,OK,Thread Group 1-18,text,true,,1694,205,20,20,https://example.com/logout,166,0,17
+1788602498000,685,Login,200,OK,Thread Group 1-19,text,true,,1614,195,20,20,https://example.com/login,479,0,28
+1788602498135,922,Search Products,200,OK,Thread Group 1-19,text,true,,2180,222,20,20,https://example.com/search-products,645,0,50
+1788602498270,908,View Product,200,OK,Thread Group 1-19,text,true,,2902,94,20,20,https://example.com/view-product,636,0,46
+1788602498405,1003,Add to Cart,200,OK,Thread Group 1-19,text,true,,1361,165,20,20,https://example.com/add-to-cart,702,0,15
+1788602498540,1681,Checkout,200,OK,Thread Group 1-19,text,true,,2380,127,20,20,https://example.com/checkout,1177,0,38
+1788602498675,393,Logout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1174,101,20,20,https://example.com/logout,275,0,27
+1788602499000,787,Login,200,OK,Thread Group 1-20,text,true,,1755,187,20,20,https://example.com/login,551,0,48
+1788602499135,683,Search Products,200,OK,Thread Group 1-20,text,true,,761,143,20,20,https://example.com/search-products,478,0,37
+1788602499270,1268,View Product,200,OK,Thread Group 1-20,text,true,,2781,131,20,20,https://example.com/view-product,888,0,26
+1788602499405,1536,Add to Cart,200,OK,Thread Group 1-20,text,true,,2672,91,20,20,https://example.com/add-to-cart,1075,0,34
+1788602499540,2964,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,2763,207,20,20,https://example.com/checkout,2075,0,34
+1788602499675,286,Logout,200,OK,Thread Group 1-20,text,true,,2061,173,20,20,https://example.com/logout,200,0,14
+1788602500000,820,Login,200,OK,Thread Group 1-1,text,true,,1911,118,20,20,https://example.com/login,574,0,15
+1788602500135,2543,Search Products,200,OK,Thread Group 1-1,text,true,,2375,129,20,20,https://example.com/search-products,1780,0,25
+1788602500270,768,View Product,200,OK,Thread Group 1-1,text,true,,2433,194,20,20,https://example.com/view-product,538,0,15
+1788602500405,980,Add to Cart,200,OK,Thread Group 1-1,text,true,,1997,90,20,20,https://example.com/add-to-cart,686,0,36
+1788602500540,1583,Checkout,200,OK,Thread Group 1-1,text,true,,2129,209,20,20,https://example.com/checkout,1108,0,16
+1788602500675,473,Logout,200,OK,Thread Group 1-1,text,true,,2174,104,20,20,https://example.com/logout,331,0,23
+1788602501000,483,Login,200,OK,Thread Group 1-2,text,true,,1458,112,20,20,https://example.com/login,338,0,32
+1788602501135,758,Search Products,200,OK,Thread Group 1-2,text,true,,1014,174,20,20,https://example.com/search-products,531,0,15
+1788602501270,960,View Product,200,OK,Thread Group 1-2,text,true,,839,150,20,20,https://example.com/view-product,672,0,40
+1788602501405,1000,Add to Cart,200,OK,Thread Group 1-2,text,true,,1678,141,20,20,https://example.com/add-to-cart,700,0,15
+1788602501540,2822,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,953,177,20,20,https://example.com/checkout,1975,0,31
+1788602501675,338,Logout,200,OK,Thread Group 1-2,text,true,,1155,197,20,20,https://example.com/logout,237,0,31
+1788602502000,431,Login,200,OK,Thread Group 1-3,text,true,,1454,192,20,20,https://example.com/login,302,0,38
+1788602502135,1119,Search Products,200,OK,Thread Group 1-3,text,true,,1710,132,20,20,https://example.com/search-products,783,0,21
+1788602502270,1037,View Product,200,OK,Thread Group 1-3,text,true,,2163,159,20,20,https://example.com/view-product,726,0,42
+1788602502405,1229,Add to Cart,200,OK,Thread Group 1-3,text,true,,2122,100,20,20,https://example.com/add-to-cart,860,0,18
+1788602502540,1859,Checkout,200,OK,Thread Group 1-3,text,true,,1547,219,20,20,https://example.com/checkout,1301,0,25
+1788602502675,402,Logout,200,OK,Thread Group 1-3,text,true,,2326,195,20,20,https://example.com/logout,281,0,29
+1788602503000,718,Login,200,OK,Thread Group 1-4,text,true,,1005,230,20,20,https://example.com/login,503,0,39
+1788602503135,786,Search Products,200,OK,Thread Group 1-4,text,true,,2975,223,20,20,https://example.com/search-products,550,0,42
+1788602503270,873,View Product,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1131,120,20,20,https://example.com/view-product,611,0,40
+1788602503405,1659,Add to Cart,200,OK,Thread Group 1-4,text,true,,1642,218,20,20,https://example.com/add-to-cart,1161,0,41
+1788602503540,1677,Checkout,200,OK,Thread Group 1-4,text,true,,2611,104,20,20,https://example.com/checkout,1174,0,35
+1788602503675,353,Logout,200,OK,Thread Group 1-4,text,true,,2797,234,20,20,https://example.com/logout,247,0,17
+1788602504000,818,Login,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1289,206,20,20,https://example.com/login,573,0,40
+1788602504135,1119,Search Products,200,OK,Thread Group 1-5,text,true,,1338,97,20,20,https://example.com/search-products,783,0,14
+1788602504270,917,View Product,200,OK,Thread Group 1-5,text,true,,1252,217,20,20,https://example.com/view-product,642,0,13
+1788602504405,1861,Add to Cart,200,OK,Thread Group 1-5,text,true,,2992,225,20,20,https://example.com/add-to-cart,1303,0,48
+1788602504540,2201,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,747,104,20,20,https://example.com/checkout,1541,0,50
+1788602504675,332,Logout,200,OK,Thread Group 1-5,text,true,,2921,99,20,20,https://example.com/logout,232,0,17
+1788602505000,1718,Login,200,OK,Thread Group 1-6,text,true,,2391,217,20,20,https://example.com/login,1203,0,11
+1788602505135,1139,Search Products,200,OK,Thread Group 1-6,text,true,,1220,185,20,20,https://example.com/search-products,797,0,19
+1788602505270,984,View Product,200,OK,Thread Group 1-6,text,true,,2962,199,20,20,https://example.com/view-product,689,0,43
+1788602505405,1650,Add to Cart,200,OK,Thread Group 1-6,text,true,,1648,127,20,20,https://example.com/add-to-cart,1155,0,47
+1788602505540,1162,Checkout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1736,145,20,20,https://example.com/checkout,813,0,10
+1788602505675,489,Logout,200,OK,Thread Group 1-6,text,true,,1813,201,20,20,https://example.com/logout,342,0,16
+1788602506000,768,Login,200,OK,Thread Group 1-7,text,true,,2460,213,20,20,https://example.com/login,538,0,35
+1788602506135,1350,Search Products,200,OK,Thread Group 1-7,text,true,,2774,235,20,20,https://example.com/search-products,945,0,26
+1788602506270,945,View Product,200,OK,Thread Group 1-7,text,true,,1771,164,20,20,https://example.com/view-product,662,0,29
+1788602506405,1246,Add to Cart,200,OK,Thread Group 1-7,text,true,,952,114,20,20,https://example.com/add-to-cart,872,0,28
+1788602506540,2966,Checkout,200,OK,Thread Group 1-7,text,true,,1495,86,20,20,https://example.com/checkout,2076,0,11
+1788602506675,314,Logout,200,OK,Thread Group 1-7,text,true,,2754,130,20,20,https://example.com/logout,220,0,13
+1788602507000,511,Login,200,OK,Thread Group 1-8,text,true,,2556,104,20,20,https://example.com/login,358,0,11
+1788602507135,1052,Search Products,200,OK,Thread Group 1-8,text,true,,1780,235,20,20,https://example.com/search-products,736,0,11
+1788602507270,1024,View Product,200,OK,Thread Group 1-8,text,true,,1856,215,20,20,https://example.com/view-product,717,0,14
+1788602507405,1229,Add to Cart,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2041,105,20,20,https://example.com/add-to-cart,860,0,37
+1788602507540,1824,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2883,80,20,20,https://example.com/checkout,1277,0,23
+1788602507675,392,Logout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1462,156,20,20,https://example.com/logout,274,0,25
+1788602508000,526,Login,200,OK,Thread Group 1-9,text,true,,1634,96,20,20,https://example.com/login,368,0,46
+1788602508135,1283,Search Products,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2062,108,20,20,https://example.com/search-products,898,0,14
+1788602508270,994,View Product,200,OK,Thread Group 1-9,text,true,,1920,193,20,20,https://example.com/view-product,696,0,22
+1788602508405,1001,Add to Cart,200,OK,Thread Group 1-9,text,true,,1036,205,20,20,https://example.com/add-to-cart,701,0,20
+1788602508540,1820,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1527,170,20,20,https://example.com/checkout,1274,0,22
+1788602508675,580,Logout,200,OK,Thread Group 1-9,text,true,,2844,90,20,20,https://example.com/logout,406,0,43
+1788602509000,651,Login,200,OK,Thread Group 1-10,text,true,,1007,104,20,20,https://example.com/login,456,0,10
+1788602509135,1096,Search Products,200,OK,Thread Group 1-10,text,true,,884,215,20,20,https://example.com/search-products,767,0,34
+1788602509270,768,View Product,200,OK,Thread Group 1-10,text,true,,1139,230,20,20,https://example.com/view-product,538,0,21
+1788602509405,849,Add to Cart,200,OK,Thread Group 1-10,text,true,,1380,221,20,20,https://example.com/add-to-cart,594,0,15
+1788602509540,1768,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1439,199,20,20,https://example.com/checkout,1238,0,10
+1788602509675,353,Logout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1870,216,20,20,https://example.com/logout,247,0,27
+1788602510000,999,Login,200,OK,Thread Group 1-11,text,true,,1282,105,20,20,https://example.com/login,699,0,20
+1788602510135,896,Search Products,200,OK,Thread Group 1-11,text,true,,2748,225,20,20,https://example.com/search-products,627,0,20
+1788602510270,1034,View Product,200,OK,Thread Group 1-11,text,true,,1670,238,20,20,https://example.com/view-product,724,0,15
+1788602510405,829,Add to Cart,200,OK,Thread Group 1-11,text,true,,2804,84,20,20,https://example.com/add-to-cart,580,0,26
+1788602510540,1972,Checkout,200,OK,Thread Group 1-11,text,true,,1815,234,20,20,https://example.com/checkout,1380,0,44
+1788602510675,359,Logout,200,OK,Thread Group 1-11,text,true,,1253,91,20,20,https://example.com/logout,251,0,19
+1788602511000,501,Login,200,OK,Thread Group 1-12,text,true,,1665,166,20,20,https://example.com/login,351,0,50
+1788602511135,1175,Search Products,200,OK,Thread Group 1-12,text,true,,2142,144,20,20,https://example.com/search-products,822,0,22
+1788602511270,938,View Product,200,OK,Thread Group 1-12,text,true,,1482,131,20,20,https://example.com/view-product,657,0,45
+1788602511405,1849,Add to Cart,200,OK,Thread Group 1-12,text,true,,998,116,20,20,https://example.com/add-to-cart,1294,0,34
+1788602511540,1685,Checkout,200,OK,Thread Group 1-12,text,true,,874,90,20,20,https://example.com/checkout,1180,0,16
+1788602511675,658,Logout,200,OK,Thread Group 1-12,text,true,,2903,141,20,20,https://example.com/logout,461,0,25
+1788602512000,919,Login,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1755,108,20,20,https://example.com/login,643,0,43
+1788602512135,798,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1417,116,20,20,https://example.com/search-products,559,0,37
+1788602512270,1009,View Product,200,OK,Thread Group 1-13,text,true,,2865,125,20,20,https://example.com/view-product,706,0,34
+1788602512405,1355,Add to Cart,200,OK,Thread Group 1-13,text,true,,2394,180,20,20,https://example.com/add-to-cart,948,0,17
+1788602512540,1848,Checkout,200,OK,Thread Group 1-13,text,true,,1810,228,20,20,https://example.com/checkout,1294,0,42
+1788602512675,423,Logout,200,OK,Thread Group 1-13,text,true,,820,228,20,20,https://example.com/logout,296,0,12
+1788602513000,497,Login,200,OK,Thread Group 1-14,text,true,,703,146,20,20,https://example.com/login,348,0,14
+1788602513135,1069,Search Products,200,OK,Thread Group 1-14,text,true,,1816,157,20,20,https://example.com/search-products,748,0,31
+1788602513270,781,View Product,200,OK,Thread Group 1-14,text,true,,1260,211,20,20,https://example.com/view-product,547,0,37
+1788602513405,1221,Add to Cart,200,OK,Thread Group 1-14,text,true,,1180,199,20,20,https://example.com/add-to-cart,855,0,39
+1788602513540,1938,Checkout,200,OK,Thread Group 1-14,text,true,,1909,122,20,20,https://example.com/checkout,1357,0,34
+1788602513675,244,Logout,200,OK,Thread Group 1-14,text,true,,1570,228,20,20,https://example.com/logout,171,0,35
+1788602514000,468,Login,200,OK,Thread Group 1-15,text,true,,1829,200,20,20,https://example.com/login,328,0,46
+1788602514135,1399,Search Products,200,OK,Thread Group 1-15,text,true,,2391,136,20,20,https://example.com/search-products,979,0,41
+1788602514270,889,View Product,200,OK,Thread Group 1-15,text,true,,1257,133,20,20,https://example.com/view-product,622,0,34
+1788602514405,2124,Add to Cart,200,OK,Thread Group 1-15,text,true,,1506,112,20,20,https://example.com/add-to-cart,1487,0,15
+1788602514540,1701,Checkout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1440,98,20,20,https://example.com/checkout,1191,0,31
+1788602514675,451,Logout,200,OK,Thread Group 1-15,text,true,,1491,220,20,20,https://example.com/logout,316,0,37
+1788602515000,616,Login,200,OK,Thread Group 1-16,text,true,,2086,225,20,20,https://example.com/login,431,0,32
+1788602515135,1118,Search Products,200,OK,Thread Group 1-16,text,true,,745,233,20,20,https://example.com/search-products,783,0,10
+1788602515270,782,View Product,200,OK,Thread Group 1-16,text,true,,931,101,20,20,https://example.com/view-product,547,0,19
+1788602515405,1165,Add to Cart,200,OK,Thread Group 1-16,text,true,,2881,172,20,20,https://example.com/add-to-cart,816,0,12
+1788602515540,1569,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2917,194,20,20,https://example.com/checkout,1098,0,11
+1788602515675,496,Logout,200,OK,Thread Group 1-16,text,true,,2599,122,20,20,https://example.com/logout,347,0,25
+1788602516000,485,Login,200,OK,Thread Group 1-17,text,true,,1249,139,20,20,https://example.com/login,340,0,43
+1788602516135,1186,Search Products,200,OK,Thread Group 1-17,text,true,,1525,190,20,20,https://example.com/search-products,830,0,35
+1788602516270,1106,View Product,200,OK,Thread Group 1-17,text,true,,2952,214,20,20,https://example.com/view-product,774,0,18
+1788602516405,1458,Add to Cart,200,OK,Thread Group 1-17,text,true,,797,136,20,20,https://example.com/add-to-cart,1021,0,21
+1788602516540,841,Checkout,200,OK,Thread Group 1-17,text,true,,1192,136,20,20,https://example.com/checkout,589,0,40
+1788602516675,400,Logout,200,OK,Thread Group 1-17,text,true,,1327,130,20,20,https://example.com/logout,280,0,46
+1788602517000,515,Login,200,OK,Thread Group 1-18,text,true,,2849,144,20,20,https://example.com/login,360,0,44
+1788602517135,1398,Search Products,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,2782,220,20,20,https://example.com/search-products,979,0,13
+1788602517270,910,View Product,200,OK,Thread Group 1-18,text,true,,2076,84,20,20,https://example.com/view-product,637,0,34
+1788602517405,1440,Add to Cart,200,OK,Thread Group 1-18,text,true,,2648,93,20,20,https://example.com/add-to-cart,1008,0,27
+1788602517540,1191,Checkout,200,OK,Thread Group 1-18,text,true,,1687,151,20,20,https://example.com/checkout,834,0,35
+1788602517675,350,Logout,200,OK,Thread Group 1-18,text,true,,1655,222,20,20,https://example.com/logout,245,0,27
+1788602518000,631,Login,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,2989,239,20,20,https://example.com/login,442,0,23
+1788602518135,674,Search Products,200,OK,Thread Group 1-19,text,true,,1477,223,20,20,https://example.com/search-products,472,0,28
+1788602518270,889,View Product,200,OK,Thread Group 1-19,text,true,,2519,171,20,20,https://example.com/view-product,622,0,32
+1788602518405,781,Add to Cart,200,OK,Thread Group 1-19,text,true,,1535,238,20,20,https://example.com/add-to-cart,547,0,40
+1788602518540,1461,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,2580,135,20,20,https://example.com/checkout,1023,0,18
+1788602518675,559,Logout,200,OK,Thread Group 1-19,text,true,,2170,167,20,20,https://example.com/logout,391,0,25
+1788602519000,308,Login,200,OK,Thread Group 1-20,text,true,,1376,218,20,20,https://example.com/login,216,0,36
+1788602519135,1197,Search Products,200,OK,Thread Group 1-20,text,true,,2547,184,20,20,https://example.com/search-products,838,0,39
+1788602519270,1249,View Product,200,OK,Thread Group 1-20,text,true,,1717,188,20,20,https://example.com/view-product,874,0,45
+1788602519405,1590,Add to Cart,200,OK,Thread Group 1-20,text,true,,1839,187,20,20,https://example.com/add-to-cart,1113,0,14
+1788602519540,1702,Checkout,200,OK,Thread Group 1-20,text,true,,1581,226,20,20,https://example.com/checkout,1191,0,20
+1788602519675,350,Logout,200,OK,Thread Group 1-20,text,true,,1368,83,20,20,https://example.com/logout,245,0,30
+1788602520000,411,Login,200,OK,Thread Group 1-1,text,true,,1031,156,20,20,https://example.com/login,288,0,41
+1788602520135,705,Search Products,200,OK,Thread Group 1-1,text,true,,2157,156,20,20,https://example.com/search-products,493,0,50
+1788602520270,954,View Product,200,OK,Thread Group 1-1,text,true,,2954,177,20,20,https://example.com/view-product,668,0,30
+1788602520405,1038,Add to Cart,200,OK,Thread Group 1-1,text,true,,1086,223,20,20,https://example.com/add-to-cart,727,0,24
+1788602520540,1247,Checkout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2316,189,20,20,https://example.com/checkout,873,0,19
+1788602520675,401,Logout,200,OK,Thread Group 1-1,text,true,,1506,146,20,20,https://example.com/logout,281,0,17
+1788602521000,959,Login,200,OK,Thread Group 1-2,text,true,,2875,213,20,20,https://example.com/login,671,0,26
+1788602521135,1053,Search Products,200,OK,Thread Group 1-2,text,true,,2520,130,20,20,https://example.com/search-products,737,0,47
+1788602521270,767,View Product,200,OK,Thread Group 1-2,text,true,,2985,192,20,20,https://example.com/view-product,537,0,42
+1788602521405,1039,Add to Cart,200,OK,Thread Group 1-2,text,true,,1957,240,20,20,https://example.com/add-to-cart,727,0,39
+1788602521540,2438,Checkout,200,OK,Thread Group 1-2,text,true,,2714,98,20,20,https://example.com/checkout,1707,0,12
+1788602521675,501,Logout,200,OK,Thread Group 1-2,text,true,,2504,119,20,20,https://example.com/logout,351,0,30
+1788602522000,509,Login,200,OK,Thread Group 1-3,text,true,,1660,181,20,20,https://example.com/login,356,0,10
+1788602522135,1136,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2543,176,20,20,https://example.com/search-products,795,0,19
+1788602522270,921,View Product,200,OK,Thread Group 1-3,text,true,,2731,125,20,20,https://example.com/view-product,645,0,36
+1788602522405,1265,Add to Cart,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1257,187,20,20,https://example.com/add-to-cart,886,0,41
+1788602522540,1042,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2192,206,20,20,https://example.com/checkout,729,0,36
+1788602522675,425,Logout,200,OK,Thread Group 1-3,text,true,,2428,206,20,20,https://example.com/logout,298,0,49
+1788602523000,590,Login,200,OK,Thread Group 1-4,text,true,,1028,187,20,20,https://example.com/login,413,0,39
+1788602523135,1418,Search Products,200,OK,Thread Group 1-4,text,true,,1369,182,20,20,https://example.com/search-products,993,0,38
+1788602523270,1067,View Product,200,OK,Thread Group 1-4,text,true,,2716,127,20,20,https://example.com/view-product,747,0,15
+1788602523405,478,Add to Cart,200,OK,Thread Group 1-4,text,true,,2124,154,20,20,https://example.com/add-to-cart,335,0,35
+1788602523540,1127,Checkout,200,OK,Thread Group 1-4,text,true,,2876,98,20,20,https://example.com/checkout,789,0,18
+1788602523675,323,Logout,200,OK,Thread Group 1-4,text,true,,752,203,20,20,https://example.com/logout,226,0,11
+1788602524000,866,Login,200,OK,Thread Group 1-5,text,true,,2073,226,20,20,https://example.com/login,606,0,10
+1788602524135,787,Search Products,200,OK,Thread Group 1-5,text,true,,1492,202,20,20,https://example.com/search-products,551,0,25
+1788602524270,960,View Product,200,OK,Thread Group 1-5,text,true,,1310,165,20,20,https://example.com/view-product,672,0,33
+1788602524405,1742,Add to Cart,200,OK,Thread Group 1-5,text,true,,2707,163,20,20,https://example.com/add-to-cart,1219,0,19
+1788602524540,1360,Checkout,200,OK,Thread Group 1-5,text,true,,1331,152,20,20,https://example.com/checkout,952,0,20
+1788602524675,281,Logout,200,OK,Thread Group 1-5,text,true,,2237,214,20,20,https://example.com/logout,197,0,20
+1788602525000,844,Login,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,2292,239,20,20,https://example.com/login,591,0,22
+1788602525135,1278,Search Products,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,1909,207,20,20,https://example.com/search-products,895,0,11
+1788602525270,1450,View Product,200,OK,Thread Group 1-6,text,true,,1401,178,20,20,https://example.com/view-product,1015,0,49
+1788602525405,2341,Add to Cart,200,OK,Thread Group 1-6,text,true,,2345,127,20,20,https://example.com/add-to-cart,1639,0,45
+1788602525540,2346,Checkout,200,OK,Thread Group 1-6,text,true,,1608,84,20,20,https://example.com/checkout,1642,0,13
+1788602525675,387,Logout,200,OK,Thread Group 1-6,text,true,,1974,176,20,20,https://example.com/logout,271,0,48
+1788602526000,550,Login,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1732,152,20,20,https://example.com/login,385,0,45
+1788602526135,686,Search Products,200,OK,Thread Group 1-7,text,true,,1136,98,20,20,https://example.com/search-products,480,0,26
+1788602526270,836,View Product,200,OK,Thread Group 1-7,text,true,,1819,173,20,20,https://example.com/view-product,585,0,23
+1788602526405,1479,Add to Cart,200,OK,Thread Group 1-7,text,true,,1823,92,20,20,https://example.com/add-to-cart,1035,0,11
+1788602526540,1858,Checkout,200,OK,Thread Group 1-7,text,true,,1068,162,20,20,https://example.com/checkout,1301,0,38
+1788602526675,397,Logout,200,OK,Thread Group 1-7,text,true,,1326,236,20,20,https://example.com/logout,278,0,50
+1788602527000,713,Login,200,OK,Thread Group 1-8,text,true,,901,179,20,20,https://example.com/login,499,0,41
+1788602527135,921,Search Products,200,OK,Thread Group 1-8,text,true,,2053,137,20,20,https://example.com/search-products,645,0,50
+1788602527270,485,View Product,200,OK,Thread Group 1-8,text,true,,2632,87,20,20,https://example.com/view-product,340,0,20
+1788602527405,1376,Add to Cart,200,OK,Thread Group 1-8,text,true,,1585,110,20,20,https://example.com/add-to-cart,963,0,36
+1788602527540,1617,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2480,126,20,20,https://example.com/checkout,1132,0,32
+1788602527675,457,Logout,200,OK,Thread Group 1-8,text,true,,1437,112,20,20,https://example.com/logout,320,0,28
+1788602528000,530,Login,200,OK,Thread Group 1-9,text,true,,1247,185,20,20,https://example.com/login,371,0,47
+1788602528135,1087,Search Products,200,OK,Thread Group 1-9,text,true,,2252,210,20,20,https://example.com/search-products,761,0,47
+1788602528270,579,View Product,200,OK,Thread Group 1-9,text,true,,2824,239,20,20,https://example.com/view-product,405,0,46
+1788602528405,1378,Add to Cart,200,OK,Thread Group 1-9,text,true,,2552,156,20,20,https://example.com/add-to-cart,965,0,42
+1788602528540,1846,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,864,185,20,20,https://example.com/checkout,1292,0,40
+1788602528675,392,Logout,200,OK,Thread Group 1-9,text,true,,977,86,20,20,https://example.com/logout,274,0,42
+1788602529000,621,Login,200,OK,Thread Group 1-10,text,true,,1334,170,20,20,https://example.com/login,435,0,15
+1788602529135,1470,Search Products,200,OK,Thread Group 1-10,text,true,,1501,179,20,20,https://example.com/search-products,1029,0,38
+1788602529270,1214,View Product,200,OK,Thread Group 1-10,text,true,,968,182,20,20,https://example.com/view-product,850,0,50
+1788602529405,1717,Add to Cart,200,OK,Thread Group 1-10,text,true,,1971,125,20,20,https://example.com/add-to-cart,1202,0,22
+1788602529540,1302,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,2510,117,20,20,https://example.com/checkout,911,0,14
+1788602529675,429,Logout,200,OK,Thread Group 1-10,text,true,,2231,190,20,20,https://example.com/logout,300,0,33
+1788602530000,648,Login,200,OK,Thread Group 1-11,text,true,,2537,106,20,20,https://example.com/login,454,0,38
+1788602530135,1290,Search Products,200,OK,Thread Group 1-11,text,true,,1486,231,20,20,https://example.com/search-products,903,0,29
+1788602530270,773,View Product,200,OK,Thread Group 1-11,text,true,,1668,219,20,20,https://example.com/view-product,541,0,39
+1788602530405,1811,Add to Cart,200,OK,Thread Group 1-11,text,true,,1327,146,20,20,https://example.com/add-to-cart,1268,0,10
+1788602530540,2326,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,1811,172,20,20,https://example.com/checkout,1628,0,27
+1788602530675,498,Logout,200,OK,Thread Group 1-11,text,true,,760,120,20,20,https://example.com/logout,349,0,27
+1788602531000,1085,Login,200,OK,Thread Group 1-12,text,true,,1428,117,20,20,https://example.com/login,760,0,21
+1788602531135,1296,Search Products,200,OK,Thread Group 1-12,text,true,,1590,109,20,20,https://example.com/search-products,907,0,23
+1788602531270,649,View Product,200,OK,Thread Group 1-12,text,true,,1978,149,20,20,https://example.com/view-product,454,0,43
+1788602531405,753,Add to Cart,200,OK,Thread Group 1-12,text,true,,2484,226,20,20,https://example.com/add-to-cart,527,0,12
+1788602531540,1524,Checkout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,2096,171,20,20,https://example.com/checkout,1067,0,32
+1788602531675,592,Logout,200,OK,Thread Group 1-12,text,true,,1919,178,20,20,https://example.com/logout,414,0,13
+1788602532000,832,Login,200,OK,Thread Group 1-13,text,true,,2367,178,20,20,https://example.com/login,582,0,30
+1788602532135,748,Search Products,200,OK,Thread Group 1-13,text,true,,861,109,20,20,https://example.com/search-products,524,0,50
+1788602532270,660,View Product,200,OK,Thread Group 1-13,text,true,,2076,139,20,20,https://example.com/view-product,462,0,11
+1788602532405,1372,Add to Cart,200,OK,Thread Group 1-13,text,true,,2603,112,20,20,https://example.com/add-to-cart,960,0,18
+1788602532540,1018,Checkout,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1180,113,20,20,https://example.com/checkout,713,0,10
+1788602532675,337,Logout,200,OK,Thread Group 1-13,text,true,,2703,171,20,20,https://example.com/logout,236,0,44
+1788602533000,473,Login,200,OK,Thread Group 1-14,text,true,,951,231,20,20,https://example.com/login,331,0,23
+1788602533135,952,Search Products,200,OK,Thread Group 1-14,text,true,,2728,136,20,20,https://example.com/search-products,666,0,49
+1788602533270,613,View Product,200,OK,Thread Group 1-14,text,true,,921,112,20,20,https://example.com/view-product,429,0,23
+1788602533405,975,Add to Cart,200,OK,Thread Group 1-14,text,true,,2529,216,20,20,https://example.com/add-to-cart,682,0,36
+1788602533540,1799,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,1033,154,20,20,https://example.com/checkout,1259,0,38
+1788602533675,555,Logout,200,OK,Thread Group 1-14,text,true,,1035,205,20,20,https://example.com/logout,388,0,18
+1788602534000,782,Login,200,OK,Thread Group 1-15,text,true,,2540,110,20,20,https://example.com/login,547,0,43
+1788602534135,666,Search Products,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,2903,126,20,20,https://example.com/search-products,466,0,12
+1788602534270,814,View Product,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1033,190,20,20,https://example.com/view-product,570,0,19
+1788602534405,734,Add to Cart,200,OK,Thread Group 1-15,text,true,,1786,201,20,20,https://example.com/add-to-cart,514,0,44
+1788602534540,1917,Checkout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,842,209,20,20,https://example.com/checkout,1342,0,48
+1788602534675,502,Logout,200,OK,Thread Group 1-15,text,true,,812,159,20,20,https://example.com/logout,351,0,21
+1788602535000,735,Login,200,OK,Thread Group 1-16,text,true,,1043,228,20,20,https://example.com/login,514,0,32
+1788602535135,724,Search Products,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,1667,176,20,20,https://example.com/search-products,507,0,43
+1788602535270,802,View Product,200,OK,Thread Group 1-16,text,true,,2046,131,20,20,https://example.com/view-product,561,0,48
+1788602535405,969,Add to Cart,200,OK,Thread Group 1-16,text,true,,1939,211,20,20,https://example.com/add-to-cart,678,0,39
+1788602535540,1529,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,820,95,20,20,https://example.com/checkout,1070,0,43
+1788602535675,423,Logout,200,OK,Thread Group 1-16,text,true,,933,228,20,20,https://example.com/logout,296,0,32
+1788602536000,800,Login,200,OK,Thread Group 1-17,text,true,,759,173,20,20,https://example.com/login,560,0,31
+1788602536135,921,Search Products,200,OK,Thread Group 1-17,text,true,,2435,184,20,20,https://example.com/search-products,645,0,16
+1788602536270,674,View Product,200,OK,Thread Group 1-17,text,true,,2903,113,20,20,https://example.com/view-product,472,0,23
+1788602536405,1568,Add to Cart,200,OK,Thread Group 1-17,text,true,,875,112,20,20,https://example.com/add-to-cart,1098,0,42
+1788602536540,1456,Checkout,200,OK,Thread Group 1-17,text,true,,2898,218,20,20,https://example.com/checkout,1019,0,27
+1788602536675,493,Logout,200,OK,Thread Group 1-17,text,true,,1571,212,20,20,https://example.com/logout,345,0,49
+1788602537000,1053,Login,200,OK,Thread Group 1-18,text,true,,2853,152,20,20,https://example.com/login,737,0,20
+1788602537135,760,Search Products,200,OK,Thread Group 1-18,text,true,,870,192,20,20,https://example.com/search-products,532,0,12
+1788602537270,879,View Product,200,OK,Thread Group 1-18,text,true,,931,126,20,20,https://example.com/view-product,615,0,31
+1788602537405,1523,Add to Cart,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,1761,198,20,20,https://example.com/add-to-cart,1066,0,42
+1788602537540,1615,Checkout,200,OK,Thread Group 1-18,text,true,,2988,86,20,20,https://example.com/checkout,1130,0,27
+1788602537675,457,Logout,200,OK,Thread Group 1-18,text,true,,2922,96,20,20,https://example.com/logout,320,0,14
+1788602538000,569,Login,200,OK,Thread Group 1-19,text,true,,899,116,20,20,https://example.com/login,398,0,45
+1788602538135,1304,Search Products,200,OK,Thread Group 1-19,text,true,,933,171,20,20,https://example.com/search-products,913,0,43
+1788602538270,795,View Product,200,OK,Thread Group 1-19,text,true,,954,211,20,20,https://example.com/view-product,556,0,22
+1788602538405,1282,Add to Cart,200,OK,Thread Group 1-19,text,true,,2652,128,20,20,https://example.com/add-to-cart,897,0,40
+1788602538540,2408,Checkout,200,OK,Thread Group 1-19,text,true,,1899,217,20,20,https://example.com/checkout,1686,0,25
+1788602538675,424,Logout,200,OK,Thread Group 1-19,text,true,,1291,156,20,20,https://example.com/logout,297,0,39
+1788602539000,621,Login,200,OK,Thread Group 1-20,text,true,,765,176,20,20,https://example.com/login,435,0,42
+1788602539135,924,Search Products,200,OK,Thread Group 1-20,text,true,,2412,239,20,20,https://example.com/search-products,647,0,44
+1788602539270,855,View Product,200,OK,Thread Group 1-20,text,true,,2309,190,20,20,https://example.com/view-product,598,0,45
+1788602539405,1405,Add to Cart,200,OK,Thread Group 1-20,text,true,,2955,127,20,20,https://example.com/add-to-cart,983,0,44
+1788602539540,2131,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1898,81,20,20,https://example.com/checkout,1492,0,13
+1788602539675,852,Logout,200,OK,Thread Group 1-20,text,true,,1865,148,20,20,https://example.com/logout,596,0,11
+1788602540000,297,Login,200,OK,Thread Group 1-1,text,true,,2085,180,20,20,https://example.com/login,208,0,12
+1788602540135,900,Search Products,200,OK,Thread Group 1-1,text,true,,891,193,20,20,https://example.com/search-products,630,0,27
+1788602540270,1087,View Product,200,OK,Thread Group 1-1,text,true,,733,164,20,20,https://example.com/view-product,761,0,35
+1788602540405,1027,Add to Cart,200,OK,Thread Group 1-1,text,true,,1160,165,20,20,https://example.com/add-to-cart,719,0,19
+1788602540540,1314,Checkout,200,OK,Thread Group 1-1,text,true,,1410,195,20,20,https://example.com/checkout,920,0,40
+1788602540675,392,Logout,200,OK,Thread Group 1-1,text,true,,2588,118,20,20,https://example.com/logout,274,0,45
+1788602541000,1007,Login,200,OK,Thread Group 1-2,text,true,,1255,240,20,20,https://example.com/login,705,0,41
+1788602541135,1182,Search Products,200,OK,Thread Group 1-2,text,true,,2917,204,20,20,https://example.com/search-products,827,0,38
+1788602541270,978,View Product,200,OK,Thread Group 1-2,text,true,,2819,97,20,20,https://example.com/view-product,685,0,43
+1788602541405,1296,Add to Cart,200,OK,Thread Group 1-2,text,true,,1352,126,20,20,https://example.com/add-to-cart,907,0,20
+1788602541540,2121,Checkout,200,OK,Thread Group 1-2,text,true,,2625,212,20,20,https://example.com/checkout,1485,0,49
+1788602541675,412,Logout,200,OK,Thread Group 1-2,text,true,,937,86,20,20,https://example.com/logout,288,0,23
+1788602542000,445,Login,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2063,86,20,20,https://example.com/login,312,0,38
+1788602542135,737,Search Products,200,OK,Thread Group 1-3,text,true,,1060,135,20,20,https://example.com/search-products,516,0,38
+1788602542270,698,View Product,200,OK,Thread Group 1-3,text,true,,2964,164,20,20,https://example.com/view-product,489,0,19
+1788602542405,948,Add to Cart,200,OK,Thread Group 1-3,text,true,,874,237,20,20,https://example.com/add-to-cart,664,0,23
+1788602542540,1552,Checkout,200,OK,Thread Group 1-3,text,true,,2776,186,20,20,https://example.com/checkout,1086,0,16
+1788602542675,391,Logout,200,OK,Thread Group 1-3,text,true,,2675,175,20,20,https://example.com/logout,274,0,18
+1788602543000,683,Login,200,OK,Thread Group 1-4,text,true,,830,175,20,20,https://example.com/login,478,0,23
+1788602543135,1927,Search Products,200,OK,Thread Group 1-4,text,true,,2459,190,20,20,https://example.com/search-products,1349,0,48
+1788602543270,572,View Product,200,OK,Thread Group 1-4,text,true,,956,213,20,20,https://example.com/view-product,400,0,43
+1788602543405,1234,Add to Cart,200,OK,Thread Group 1-4,text,true,,1871,213,20,20,https://example.com/add-to-cart,864,0,27
+1788602543540,1224,Checkout,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1308,202,20,20,https://example.com/checkout,857,0,44
+1788602543675,462,Logout,200,OK,Thread Group 1-4,text,true,,1216,206,20,20,https://example.com/logout,323,0,29
+1788602544000,564,Login,200,OK,Thread Group 1-5,text,true,,2483,117,20,20,https://example.com/login,395,0,43
+1788602544135,978,Search Products,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1282,232,20,20,https://example.com/search-products,685,0,47
+1788602544270,973,View Product,200,OK,Thread Group 1-5,text,true,,1010,212,20,20,https://example.com/view-product,681,0,50
+1788602544405,2246,Add to Cart,200,OK,Thread Group 1-5,text,true,,1301,81,20,20,https://example.com/add-to-cart,1572,0,41
+1788602544540,1459,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1057,206,20,20,https://example.com/checkout,1021,0,18
+1788602544675,400,Logout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,2506,108,20,20,https://example.com/logout,280,0,29
+1788602545000,584,Login,200,OK,Thread Group 1-6,text,true,,2416,190,20,20,https://example.com/login,409,0,34
+1788602545135,1014,Search Products,200,OK,Thread Group 1-6,text,true,,1791,143,20,20,https://example.com/search-products,710,0,29
+1788602545270,778,View Product,200,OK,Thread Group 1-6,text,true,,2735,127,20,20,https://example.com/view-product,545,0,32
+1788602545405,2623,Add to Cart,200,OK,Thread Group 1-6,text,true,,1958,207,20,20,https://example.com/add-to-cart,1836,0,43
+1788602545540,1446,Checkout,200,OK,Thread Group 1-6,text,true,,1812,120,20,20,https://example.com/checkout,1012,0,42
+1788602545675,528,Logout,200,OK,Thread Group 1-6,text,true,,2362,203,20,20,https://example.com/logout,370,0,48
+1788602546000,328,Login,200,OK,Thread Group 1-7,text,true,,1376,145,20,20,https://example.com/login,230,0,11
+1788602546135,1321,Search Products,200,OK,Thread Group 1-7,text,true,,1969,240,20,20,https://example.com/search-products,925,0,16
+1788602546270,719,View Product,200,OK,Thread Group 1-7,text,true,,1999,211,20,20,https://example.com/view-product,503,0,19
+1788602546405,1416,Add to Cart,200,OK,Thread Group 1-7,text,true,,1879,166,20,20,https://example.com/add-to-cart,991,0,21
+1788602546540,1150,Checkout,200,OK,Thread Group 1-7,text,true,,2938,108,20,20,https://example.com/checkout,805,0,37
+1788602546675,453,Logout,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,2752,136,20,20,https://example.com/logout,317,0,19
+1788602547000,440,Login,200,OK,Thread Group 1-8,text,true,,2592,182,20,20,https://example.com/login,308,0,19
+1788602547135,1300,Search Products,200,OK,Thread Group 1-8,text,true,,2256,238,20,20,https://example.com/search-products,910,0,23
+1788602547270,480,View Product,200,OK,Thread Group 1-8,text,true,,2879,108,20,20,https://example.com/view-product,336,0,12
+1788602547405,769,Add to Cart,200,OK,Thread Group 1-8,text,true,,1595,192,20,20,https://example.com/add-to-cart,538,0,12
+1788602547540,1017,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1273,236,20,20,https://example.com/checkout,712,0,22
+1788602547675,499,Logout,200,OK,Thread Group 1-8,text,true,,1610,155,20,20,https://example.com/logout,349,0,13
+1788602548000,333,Login,200,OK,Thread Group 1-9,text,true,,836,86,20,20,https://example.com/login,233,0,17
+1788602548135,1438,Search Products,200,OK,Thread Group 1-9,text,true,,2204,117,20,20,https://example.com/search-products,1007,0,26
+1788602548270,761,View Product,200,OK,Thread Group 1-9,text,true,,1107,124,20,20,https://example.com/view-product,533,0,17
+1788602548405,1350,Add to Cart,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1148,100,20,20,https://example.com/add-to-cart,945,0,36
+1788602548540,2260,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,734,123,20,20,https://example.com/checkout,1582,0,42
+1788602548675,324,Logout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1119,178,20,20,https://example.com/logout,227,0,48
+1788602549000,1030,Login,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1816,222,20,20,https://example.com/login,721,0,45
+1788602549135,896,Search Products,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,2421,154,20,20,https://example.com/search-products,627,0,38
+1788602549270,1104,View Product,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,2118,111,20,20,https://example.com/view-product,773,0,26
+1788602549405,1078,Add to Cart,200,OK,Thread Group 1-10,text,true,,1553,140,20,20,https://example.com/add-to-cart,755,0,13
+1788602549540,1664,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1347,139,20,20,https://example.com/checkout,1165,0,21
+1788602549675,301,Logout,200,OK,Thread Group 1-10,text,true,,706,118,20,20,https://example.com/logout,211,0,22
+1788602550000,656,Login,200,OK,Thread Group 1-11,text,true,,2094,104,20,20,https://example.com/login,459,0,36
+1788602550135,844,Search Products,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,1477,191,20,20,https://example.com/search-products,591,0,40
+1788602550270,848,View Product,200,OK,Thread Group 1-11,text,true,,1809,90,20,20,https://example.com/view-product,594,0,46
+1788602550405,1917,Add to Cart,200,OK,Thread Group 1-11,text,true,,1493,215,20,20,https://example.com/add-to-cart,1342,0,44
+1788602550540,1824,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2671,106,20,20,https://example.com/checkout,1277,0,34
+1788602550675,360,Logout,200,OK,Thread Group 1-11,text,true,,2418,97,20,20,https://example.com/logout,252,0,18
+1788602551000,839,Login,200,OK,Thread Group 1-12,text,true,,839,201,20,20,https://example.com/login,587,0,15
+1788602551135,1067,Search Products,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,1504,134,20,20,https://example.com/search-products,747,0,13
+1788602551270,1234,View Product,200,OK,Thread Group 1-12,text,true,,882,230,20,20,https://example.com/view-product,864,0,50
+1788602551405,1526,Add to Cart,200,OK,Thread Group 1-12,text,true,,1280,167,20,20,https://example.com/add-to-cart,1068,0,16
+1788602551540,1258,Checkout,200,OK,Thread Group 1-12,text,true,,2491,117,20,20,https://example.com/checkout,881,0,17
+1788602551675,524,Logout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,1782,83,20,20,https://example.com/logout,367,0,23
+1788602552000,792,Login,200,OK,Thread Group 1-13,text,true,,1443,147,20,20,https://example.com/login,554,0,49
+1788602552135,823,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1401,80,20,20,https://example.com/search-products,576,0,41
+1788602552270,371,View Product,200,OK,Thread Group 1-13,text,true,,1173,108,20,20,https://example.com/view-product,260,0,26
+1788602552405,1699,Add to Cart,200,OK,Thread Group 1-13,text,true,,2012,195,20,20,https://example.com/add-to-cart,1189,0,17
+1788602552540,1430,Checkout,200,OK,Thread Group 1-13,text,true,,951,149,20,20,https://example.com/checkout,1001,0,19
+1788602552675,434,Logout,200,OK,Thread Group 1-13,text,true,,1431,183,20,20,https://example.com/logout,304,0,18
+1788602553000,467,Login,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2738,130,20,20,https://example.com/login,327,0,33
+1788602553135,1226,Search Products,200,OK,Thread Group 1-14,text,true,,2692,129,20,20,https://example.com/search-products,858,0,20
+1788602553270,621,View Product,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2089,165,20,20,https://example.com/view-product,435,0,34
+1788602553405,804,Add to Cart,200,OK,Thread Group 1-14,text,true,,2648,180,20,20,https://example.com/add-to-cart,563,0,47
+1788602553540,1913,Checkout,200,OK,Thread Group 1-14,text,true,,2482,185,20,20,https://example.com/checkout,1339,0,42
+1788602553675,486,Logout,200,OK,Thread Group 1-14,text,true,,2998,160,20,20,https://example.com/logout,340,0,50
+1788602554000,817,Login,200,OK,Thread Group 1-15,text,true,,2217,182,20,20,https://example.com/login,572,0,24
+1788602554135,799,Search Products,200,OK,Thread Group 1-15,text,true,,1400,227,20,20,https://example.com/search-products,559,0,43
+1788602554270,938,View Product,200,OK,Thread Group 1-15,text,true,,1306,156,20,20,https://example.com/view-product,657,0,26
+1788602554405,1364,Add to Cart,200,OK,Thread Group 1-15,text,true,,1961,132,20,20,https://example.com/add-to-cart,955,0,17
+1788602554540,1235,Checkout,200,OK,Thread Group 1-15,text,true,,2405,102,20,20,https://example.com/checkout,864,0,11
+1788602554675,331,Logout,200,OK,Thread Group 1-15,text,true,,1045,134,20,20,https://example.com/logout,232,0,26
+1788602555000,921,Login,200,OK,Thread Group 1-16,text,true,,1790,129,20,20,https://example.com/login,645,0,48
+1788602555135,1356,Search Products,200,OK,Thread Group 1-16,text,true,,2135,181,20,20,https://example.com/search-products,949,0,27
+1788602555270,809,View Product,200,OK,Thread Group 1-16,text,true,,2238,208,20,20,https://example.com/view-product,566,0,30
+1788602555405,1399,Add to Cart,200,OK,Thread Group 1-16,text,true,,1402,234,20,20,https://example.com/add-to-cart,979,0,25
+1788602555540,1270,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,1690,96,20,20,https://example.com/checkout,889,0,34
+1788602555675,391,Logout,200,OK,Thread Group 1-16,text,true,,2026,201,20,20,https://example.com/logout,274,0,31
+1788602556000,1023,Login,200,OK,Thread Group 1-17,text,true,,1983,108,20,20,https://example.com/login,716,0,40
+1788602556135,1292,Search Products,200,OK,Thread Group 1-17,text,true,,2296,138,20,20,https://example.com/search-products,904,0,11
+1788602556270,770,View Product,200,OK,Thread Group 1-17,text,true,,1089,144,20,20,https://example.com/view-product,539,0,40
+1788602556405,1538,Add to Cart,200,OK,Thread Group 1-17,text,true,,1909,177,20,20,https://example.com/add-to-cart,1077,0,23
+1788602556540,1080,Checkout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,1183,155,20,20,https://example.com/checkout,756,0,32
+1788602556675,388,Logout,200,OK,Thread Group 1-17,text,true,,926,116,20,20,https://example.com/logout,272,0,13
+1788602557000,1187,Login,200,OK,Thread Group 1-18,text,true,,2616,236,20,20,https://example.com/login,831,0,15
+1788602557135,915,Search Products,200,OK,Thread Group 1-18,text,true,,896,100,20,20,https://example.com/search-products,640,0,24
+1788602557270,711,View Product,200,OK,Thread Group 1-18,text,true,,2567,155,20,20,https://example.com/view-product,498,0,37
+1788602557405,1398,Add to Cart,200,OK,Thread Group 1-18,text,true,,1342,214,20,20,https://example.com/add-to-cart,979,0,35
+1788602557540,2016,Checkout,200,OK,Thread Group 1-18,text,true,,1075,163,20,20,https://example.com/checkout,1411,0,44
+1788602557675,424,Logout,200,OK,Thread Group 1-18,text,true,,1194,119,20,20,https://example.com/logout,297,0,29
+1788602558000,559,Login,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,850,212,20,20,https://example.com/login,391,0,30
+1788602558135,863,Search Products,200,OK,Thread Group 1-19,text,true,,2768,233,20,20,https://example.com/search-products,604,0,23
+1788602558270,1083,View Product,200,OK,Thread Group 1-19,text,true,,1378,152,20,20,https://example.com/view-product,758,0,41
+1788602558405,1254,Add to Cart,200,OK,Thread Group 1-19,text,true,,1906,119,20,20,https://example.com/add-to-cart,878,0,40
+1788602558540,1654,Checkout,200,OK,Thread Group 1-19,text,true,,1310,144,20,20,https://example.com/checkout,1158,0,29
+1788602558675,387,Logout,200,OK,Thread Group 1-19,text,true,,2725,171,20,20,https://example.com/logout,271,0,10
+1788602559000,532,Login,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1258,215,20,20,https://example.com/login,372,0,28
+1788602559135,714,Search Products,200,OK,Thread Group 1-20,text,true,,2281,125,20,20,https://example.com/search-products,500,0,37
+1788602559270,1001,View Product,200,OK,Thread Group 1-20,text,true,,2562,202,20,20,https://example.com/view-product,701,0,26
+1788602559405,1376,Add to Cart,200,OK,Thread Group 1-20,text,true,,2914,192,20,20,https://example.com/add-to-cart,963,0,46
+1788602559540,2000,Checkout,200,OK,Thread Group 1-20,text,true,,2701,152,20,20,https://example.com/checkout,1400,0,36
+1788602559675,541,Logout,200,OK,Thread Group 1-20,text,true,,2367,192,20,20,https://example.com/logout,379,0,30
+1788602560000,780,Login,200,OK,Thread Group 1-1,text,true,,1993,223,20,20,https://example.com/login,546,0,22
+1788602560135,1232,Search Products,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2706,202,20,20,https://example.com/search-products,862,0,18
+1788602560270,944,View Product,200,OK,Thread Group 1-1,text,true,,2457,117,20,20,https://example.com/view-product,661,0,14
+1788602560405,963,Add to Cart,200,OK,Thread Group 1-1,text,true,,1728,139,20,20,https://example.com/add-to-cart,674,0,22
+1788602560540,2552,Checkout,200,OK,Thread Group 1-1,text,true,,1054,240,20,20,https://example.com/checkout,1786,0,42
+1788602560675,526,Logout,200,OK,Thread Group 1-1,text,true,,1128,180,20,20,https://example.com/logout,368,0,12
+1788602561000,423,Login,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2073,119,20,20,https://example.com/login,296,0,12
+1788602561135,1462,Search Products,200,OK,Thread Group 1-2,text,true,,2301,81,20,20,https://example.com/search-products,1023,0,29
+1788602561270,1269,View Product,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1705,218,20,20,https://example.com/view-product,888,0,26
+1788602561405,1285,Add to Cart,200,OK,Thread Group 1-2,text,true,,1520,149,20,20,https://example.com/add-to-cart,899,0,42
+1788602561540,2354,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1352,101,20,20,https://example.com/checkout,1648,0,13
+1788602561675,266,Logout,200,OK,Thread Group 1-2,text,true,,2817,80,20,20,https://example.com/logout,186,0,12
+1788602562000,898,Login,200,OK,Thread Group 1-3,text,true,,2428,178,20,20,https://example.com/login,629,0,37
+1788602562135,974,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1001,183,20,20,https://example.com/search-products,682,0,41
+1788602562270,849,View Product,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1582,171,20,20,https://example.com/view-product,594,0,40
+1788602562405,1523,Add to Cart,200,OK,Thread Group 1-3,text,true,,2514,204,20,20,https://example.com/add-to-cart,1066,0,40
+1788602562540,2062,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1063,143,20,20,https://example.com/checkout,1443,0,28
+1788602562675,394,Logout,200,OK,Thread Group 1-3,text,true,,1906,164,20,20,https://example.com/logout,276,0,24
+1788602563000,656,Login,200,OK,Thread Group 1-4,text,true,,1674,154,20,20,https://example.com/login,459,0,32
+1788602563135,781,Search Products,200,OK,Thread Group 1-4,text,true,,2082,194,20,20,https://example.com/search-products,547,0,48
+1788602563270,818,View Product,200,OK,Thread Group 1-4,text,true,,1847,116,20,20,https://example.com/view-product,573,0,26
+1788602563405,1459,Add to Cart,200,OK,Thread Group 1-4,text,true,,2478,166,20,20,https://example.com/add-to-cart,1021,0,37
+1788602563540,1049,Checkout,200,OK,Thread Group 1-4,text,true,,2949,94,20,20,https://example.com/checkout,734,0,44
+1788602563675,434,Logout,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,912,216,20,20,https://example.com/logout,304,0,23
+1788602564000,524,Login,200,OK,Thread Group 1-5,text,true,,1887,100,20,20,https://example.com/login,367,0,39
+1788602564135,1603,Search Products,200,OK,Thread Group 1-5,text,true,,1026,202,20,20,https://example.com/search-products,1122,0,42
+1788602564270,918,View Product,200,OK,Thread Group 1-5,text,true,,1839,226,20,20,https://example.com/view-product,643,0,33
+1788602564405,1366,Add to Cart,200,OK,Thread Group 1-5,text,true,,973,168,20,20,https://example.com/add-to-cart,956,0,22
+1788602564540,1860,Checkout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,2685,117,20,20,https://example.com/checkout,1302,0,40
+1788602564675,350,Logout,200,OK,Thread Group 1-5,text,true,,1493,157,20,20,https://example.com/logout,245,0,24
+1788602565000,407,Login,200,OK,Thread Group 1-6,text,true,,729,159,20,20,https://example.com/login,285,0,12
+1788602565135,685,Search Products,200,OK,Thread Group 1-6,text,true,,1647,143,20,20,https://example.com/search-products,479,0,22
+1788602565270,641,View Product,200,OK,Thread Group 1-6,text,true,,1293,122,20,20,https://example.com/view-product,449,0,39
+1788602565405,1347,Add to Cart,200,OK,Thread Group 1-6,text,true,,2967,106,20,20,https://example.com/add-to-cart,943,0,37
+1788602565540,1550,Checkout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,2839,110,20,20,https://example.com/checkout,1085,0,18
+1788602565675,437,Logout,200,OK,Thread Group 1-6,text,true,,2549,128,20,20,https://example.com/logout,306,0,14
+1788602566000,1187,Login,200,OK,Thread Group 1-7,text,true,,1560,101,20,20,https://example.com/login,831,0,33
+1788602566135,1206,Search Products,200,OK,Thread Group 1-7,text,true,,1953,80,20,20,https://example.com/search-products,844,0,27
+1788602566270,794,View Product,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,2095,81,20,20,https://example.com/view-product,556,0,14
+1788602566405,1016,Add to Cart,200,OK,Thread Group 1-7,text,true,,1771,240,20,20,https://example.com/add-to-cart,711,0,21
+1788602566540,911,Checkout,200,OK,Thread Group 1-7,text,true,,1410,183,20,20,https://example.com/checkout,638,0,21
+1788602566675,426,Logout,200,OK,Thread Group 1-7,text,true,,1444,90,20,20,https://example.com/logout,298,0,24
+1788602567000,807,Login,200,OK,Thread Group 1-8,text,true,,1989,137,20,20,https://example.com/login,565,0,44
+1788602567135,1055,Search Products,200,OK,Thread Group 1-8,text,true,,2958,211,20,20,https://example.com/search-products,738,0,15
+1788602567270,1012,View Product,200,OK,Thread Group 1-8,text,true,,2613,202,20,20,https://example.com/view-product,708,0,10
+1788602567405,1732,Add to Cart,200,OK,Thread Group 1-8,text,true,,1187,91,20,20,https://example.com/add-to-cart,1212,0,14
+1788602567540,1920,Checkout,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2282,154,20,20,https://example.com/checkout,1344,0,11
+1788602567675,756,Logout,200,OK,Thread Group 1-8,text,true,,2053,106,20,20,https://example.com/logout,529,0,42
+1788602568000,687,Login,200,OK,Thread Group 1-9,text,true,,2944,194,20,20,https://example.com/login,481,0,16
+1788602568135,783,Search Products,200,OK,Thread Group 1-9,text,true,,1243,130,20,20,https://example.com/search-products,548,0,39
+1788602568270,1177,View Product,200,OK,Thread Group 1-9,text,true,,1162,134,20,20,https://example.com/view-product,824,0,22
+1788602568405,1624,Add to Cart,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1830,137,20,20,https://example.com/add-to-cart,1137,0,49
+1788602568540,1774,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2299,144,20,20,https://example.com/checkout,1242,0,14
+1788602568675,379,Logout,200,OK,Thread Group 1-9,text,true,,1278,228,20,20,https://example.com/logout,265,0,11
+1788602569000,716,Login,200,OK,Thread Group 1-10,text,true,,2947,126,20,20,https://example.com/login,501,0,20
+1788602569135,877,Search Products,200,OK,Thread Group 1-10,text,true,,1584,186,20,20,https://example.com/search-products,614,0,14
+1788602569270,640,View Product,200,OK,Thread Group 1-10,text,true,,933,220,20,20,https://example.com/view-product,448,0,46
+1788602569405,829,Add to Cart,200,OK,Thread Group 1-10,text,true,,1391,108,20,20,https://example.com/add-to-cart,580,0,12
+1788602569540,1379,Checkout,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,2088,86,20,20,https://example.com/checkout,965,0,39
+1788602569675,455,Logout,200,OK,Thread Group 1-10,text,true,,1520,208,20,20,https://example.com/logout,318,0,20
+1788602570000,1046,Login,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2893,156,20,20,https://example.com/login,732,0,13
+1788602570135,1506,Search Products,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,1290,116,20,20,https://example.com/search-products,1054,0,38
+1788602570270,958,View Product,200,OK,Thread Group 1-11,text,true,,2017,224,20,20,https://example.com/view-product,671,0,18
+1788602570405,990,Add to Cart,200,OK,Thread Group 1-11,text,true,,1876,112,20,20,https://example.com/add-to-cart,693,0,29
+1788602570540,1216,Checkout,200,OK,Thread Group 1-11,text,true,,2918,156,20,20,https://example.com/checkout,851,0,19
+1788602570675,503,Logout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,990,151,20,20,https://example.com/logout,352,0,49
+1788602571000,966,Login,200,OK,Thread Group 1-12,text,true,,2225,232,20,20,https://example.com/login,676,0,30
+1788602571135,806,Search Products,200,OK,Thread Group 1-12,text,true,,2553,100,20,20,https://example.com/search-products,564,0,14
+1788602571270,1163,View Product,200,OK,Thread Group 1-12,text,true,,913,213,20,20,https://example.com/view-product,814,0,36
+1788602571405,1969,Add to Cart,200,OK,Thread Group 1-12,text,true,,2861,101,20,20,https://example.com/add-to-cart,1378,0,30
+1788602571540,3425,Checkout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,909,94,20,20,https://example.com/checkout,2398,0,10
+1788602571675,617,Logout,200,OK,Thread Group 1-12,text,true,,2485,186,20,20,https://example.com/logout,432,0,24
+1788602572000,609,Login,200,OK,Thread Group 1-13,text,true,,1801,163,20,20,https://example.com/login,426,0,35
+1788602572135,978,Search Products,200,OK,Thread Group 1-13,text,true,,1923,147,20,20,https://example.com/search-products,685,0,13
+1788602572270,719,View Product,200,OK,Thread Group 1-13,text,true,,2196,231,20,20,https://example.com/view-product,503,0,28
+1788602572405,1174,Add to Cart,200,OK,Thread Group 1-13,text,true,,2699,133,20,20,https://example.com/add-to-cart,822,0,12
+1788602572540,1775,Checkout,200,OK,Thread Group 1-13,text,true,,2661,110,20,20,https://example.com/checkout,1242,0,39
+1788602572675,312,Logout,200,OK,Thread Group 1-13,text,true,,1333,225,20,20,https://example.com/logout,218,0,12
+1788602573000,644,Login,200,OK,Thread Group 1-14,text,true,,1631,89,20,20,https://example.com/login,451,0,32
+1788602573135,1087,Search Products,200,OK,Thread Group 1-14,text,true,,1032,210,20,20,https://example.com/search-products,761,0,19
+1788602573270,1213,View Product,200,OK,Thread Group 1-14,text,true,,1547,178,20,20,https://example.com/view-product,849,0,16
+1788602573405,1205,Add to Cart,200,OK,Thread Group 1-14,text,true,,2835,103,20,20,https://example.com/add-to-cart,844,0,22
+1788602573540,1530,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2009,147,20,20,https://example.com/checkout,1071,0,27
+1788602573675,374,Logout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2306,189,20,20,https://example.com/logout,262,0,36
+1788602574000,558,Login,200,OK,Thread Group 1-15,text,true,,2417,142,20,20,https://example.com/login,391,0,39
+1788602574135,1410,Search Products,200,OK,Thread Group 1-15,text,true,,1369,109,20,20,https://example.com/search-products,987,0,40
+1788602574270,646,View Product,200,OK,Thread Group 1-15,text,true,,1854,211,20,20,https://example.com/view-product,452,0,44
+1788602574405,1030,Add to Cart,200,OK,Thread Group 1-15,text,true,,2559,208,20,20,https://example.com/add-to-cart,721,0,36
+1788602574540,1551,Checkout,200,OK,Thread Group 1-15,text,true,,1888,80,20,20,https://example.com/checkout,1086,0,22
+1788602574675,282,Logout,200,OK,Thread Group 1-15,text,true,,2980,141,20,20,https://example.com/logout,197,0,43
+1788602575000,749,Login,200,OK,Thread Group 1-16,text,true,,1097,184,20,20,https://example.com/login,524,0,39
+1788602575135,1046,Search Products,200,OK,Thread Group 1-16,text,true,,1489,94,20,20,https://example.com/search-products,732,0,34
+1788602575270,566,View Product,200,OK,Thread Group 1-16,text,true,,2160,127,20,20,https://example.com/view-product,396,0,17
+1788602575405,1989,Add to Cart,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,1853,203,20,20,https://example.com/add-to-cart,1392,0,25
+1788602575540,1643,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,873,115,20,20,https://example.com/checkout,1150,0,34
+1788602575675,294,Logout,200,OK,Thread Group 1-16,text,true,,1580,129,20,20,https://example.com/logout,206,0,21
+1788602576000,797,Login,200,OK,Thread Group 1-17,text,true,,1719,124,20,20,https://example.com/login,558,0,26
+1788602576135,1525,Search Products,200,OK,Thread Group 1-17,text,true,,1505,234,20,20,https://example.com/search-products,1068,0,50
+1788602576270,759,View Product,200,OK,Thread Group 1-17,text,true,,1841,96,20,20,https://example.com/view-product,531,0,26
+1788602576405,1507,Add to Cart,200,OK,Thread Group 1-17,text,true,,844,199,20,20,https://example.com/add-to-cart,1055,0,17
+1788602576540,1317,Checkout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,1943,204,20,20,https://example.com/checkout,922,0,14
+1788602576675,565,Logout,200,OK,Thread Group 1-17,text,true,,2415,103,20,20,https://example.com/logout,396,0,16
+1788602577000,607,Login,200,OK,Thread Group 1-18,text,true,,2407,192,20,20,https://example.com/login,425,0,34
+1788602577135,1221,Search Products,200,OK,Thread Group 1-18,text,true,,1303,236,20,20,https://example.com/search-products,855,0,18
+1788602577270,892,View Product,200,OK,Thread Group 1-18,text,true,,795,92,20,20,https://example.com/view-product,624,0,21
+1788602577405,1461,Add to Cart,200,OK,Thread Group 1-18,text,true,,2585,99,20,20,https://example.com/add-to-cart,1023,0,46
+1788602577540,2051,Checkout,200,OK,Thread Group 1-18,text,true,,2971,101,20,20,https://example.com/checkout,1436,0,45
+1788602577675,477,Logout,200,OK,Thread Group 1-18,text,true,,1460,188,20,20,https://example.com/logout,334,0,26
+1788602578000,384,Login,200,OK,Thread Group 1-19,text,true,,2834,198,20,20,https://example.com/login,269,0,30
+1788602578135,1655,Search Products,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,926,224,20,20,https://example.com/search-products,1158,0,10
+1788602578270,1127,View Product,200,OK,Thread Group 1-19,text,true,,835,175,20,20,https://example.com/view-product,789,0,23
+1788602578405,955,Add to Cart,200,OK,Thread Group 1-19,text,true,,2004,215,20,20,https://example.com/add-to-cart,668,0,41
+1788602578540,3327,Checkout,200,OK,Thread Group 1-19,text,true,,2927,103,20,20,https://example.com/checkout,2329,0,36
+1788602578675,361,Logout,200,OK,Thread Group 1-19,text,true,,1203,152,20,20,https://example.com/logout,253,0,34
+1788602579000,637,Login,200,OK,Thread Group 1-20,text,true,,1872,159,20,20,https://example.com/login,446,0,37
+1788602579135,1081,Search Products,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,2602,112,20,20,https://example.com/search-products,757,0,11
+1788602579270,725,View Product,200,OK,Thread Group 1-20,text,true,,1779,194,20,20,https://example.com/view-product,507,0,17
+1788602579405,906,Add to Cart,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1963,233,20,20,https://example.com/add-to-cart,634,0,43
+1788602579540,1932,Checkout,200,OK,Thread Group 1-20,text,true,,1770,238,20,20,https://example.com/checkout,1352,0,18
+1788602579675,581,Logout,200,OK,Thread Group 1-20,text,true,,1648,139,20,20,https://example.com/logout,407,0,21
+1788602580000,621,Login,200,OK,Thread Group 1-1,text,true,,2416,153,20,20,https://example.com/login,435,0,46
+1788602580135,775,Search Products,200,OK,Thread Group 1-1,text,true,,1831,176,20,20,https://example.com/search-products,542,0,16
+1788602580270,670,View Product,200,OK,Thread Group 1-1,text,true,,1591,106,20,20,https://example.com/view-product,469,0,48
+1788602580405,679,Add to Cart,200,OK,Thread Group 1-1,text,true,,2736,163,20,20,https://example.com/add-to-cart,475,0,33
+1788602580540,1730,Checkout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2799,100,20,20,https://example.com/checkout,1211,0,26
+1788602580675,343,Logout,200,OK,Thread Group 1-1,text,true,,1456,229,20,20,https://example.com/logout,240,0,25
+1788602581000,368,Login,200,OK,Thread Group 1-2,text,true,,1278,120,20,20,https://example.com/login,258,0,44
+1788602581135,807,Search Products,200,OK,Thread Group 1-2,text,true,,1325,92,20,20,https://example.com/search-products,565,0,36
+1788602581270,1092,View Product,200,OK,Thread Group 1-2,text,true,,2248,152,20,20,https://example.com/view-product,764,0,20
+1788602581405,1078,Add to Cart,200,OK,Thread Group 1-2,text,true,,1915,222,20,20,https://example.com/add-to-cart,755,0,29
+1788602581540,1392,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,702,164,20,20,https://example.com/checkout,974,0,48
+1788602581675,295,Logout,200,OK,Thread Group 1-2,text,true,,2759,238,20,20,https://example.com/logout,206,0,34
+1788602582000,393,Login,200,OK,Thread Group 1-3,text,true,,1945,82,20,20,https://example.com/login,275,0,33
+1788602582135,725,Search Products,200,OK,Thread Group 1-3,text,true,,1119,240,20,20,https://example.com/search-products,507,0,22
+1788602582270,1114,View Product,200,OK,Thread Group 1-3,text,true,,852,170,20,20,https://example.com/view-product,780,0,50
+1788602582405,1690,Add to Cart,200,OK,Thread Group 1-3,text,true,,1044,87,20,20,https://example.com/add-to-cart,1183,0,10
+1788602582540,1792,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,897,158,20,20,https://example.com/checkout,1254,0,14
+1788602582675,265,Logout,200,OK,Thread Group 1-3,text,true,,2815,223,20,20,https://example.com/logout,186,0,10
+1788602583000,940,Login,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1922,225,20,20,https://example.com/login,658,0,12
+1788602583135,746,Search Products,200,OK,Thread Group 1-4,text,true,,2307,115,20,20,https://example.com/search-products,522,0,43
+1788602583270,935,View Product,200,OK,Thread Group 1-4,text,true,,1147,83,20,20,https://example.com/view-product,654,0,34
+1788602583405,1550,Add to Cart,200,OK,Thread Group 1-4,text,true,,1050,129,20,20,https://example.com/add-to-cart,1085,0,32
+1788602583540,2708,Checkout,200,OK,Thread Group 1-4,text,true,,1695,112,20,20,https://example.com/checkout,1896,0,26
+1788602583675,356,Logout,200,OK,Thread Group 1-4,text,true,,992,116,20,20,https://example.com/logout,249,0,12
+1788602584000,526,Login,200,OK,Thread Group 1-5,text,true,,2419,93,20,20,https://example.com/login,368,0,38
+1788602584135,928,Search Products,200,OK,Thread Group 1-5,text,true,,1887,140,20,20,https://example.com/search-products,650,0,34
+1788602584270,416,View Product,200,OK,Thread Group 1-5,text,true,,953,202,20,20,https://example.com/view-product,291,0,14
+1788602584405,1461,Add to Cart,200,OK,Thread Group 1-5,text,true,,1955,119,20,20,https://example.com/add-to-cart,1023,0,15
+1788602584540,1465,Checkout,200,OK,Thread Group 1-5,text,true,,1868,199,20,20,https://example.com/checkout,1026,0,45
+1788602584675,546,Logout,500,Synthetic server error,Thread Group 1-5,text,false,Synthetic failure,1290,208,20,20,https://example.com/logout,382,0,20
+1788602585000,657,Login,200,OK,Thread Group 1-6,text,true,,1399,200,20,20,https://example.com/login,460,0,18
+1788602585135,826,Search Products,200,OK,Thread Group 1-6,text,true,,1259,217,20,20,https://example.com/search-products,578,0,35
+1788602585270,932,View Product,200,OK,Thread Group 1-6,text,true,,1269,169,20,20,https://example.com/view-product,652,0,33
+1788602585405,1418,Add to Cart,200,OK,Thread Group 1-6,text,true,,2774,173,20,20,https://example.com/add-to-cart,993,0,13
+1788602585540,1361,Checkout,500,Synthetic server error,Thread Group 1-6,text,false,Synthetic failure,2325,226,20,20,https://example.com/checkout,953,0,16
+1788602585675,323,Logout,200,OK,Thread Group 1-6,text,true,,2274,138,20,20,https://example.com/logout,226,0,42
+1788602586000,402,Login,200,OK,Thread Group 1-7,text,true,,2216,90,20,20,https://example.com/login,281,0,15
+1788602586135,1254,Search Products,200,OK,Thread Group 1-7,text,true,,897,83,20,20,https://example.com/search-products,878,0,42
+1788602586270,1173,View Product,200,OK,Thread Group 1-7,text,true,,1615,234,20,20,https://example.com/view-product,821,0,45
+1788602586405,1437,Add to Cart,200,OK,Thread Group 1-7,text,true,,2668,122,20,20,https://example.com/add-to-cart,1006,0,11
+1788602586540,2428,Checkout,200,OK,Thread Group 1-7,text,true,,1235,193,20,20,https://example.com/checkout,1700,0,12
+1788602586675,401,Logout,200,OK,Thread Group 1-7,text,true,,2393,199,20,20,https://example.com/logout,281,0,12
+1788602587000,702,Login,200,OK,Thread Group 1-8,text,true,,2408,96,20,20,https://example.com/login,491,0,12
+1788602587135,1812,Search Products,200,OK,Thread Group 1-8,text,true,,2175,150,20,20,https://example.com/search-products,1268,0,34
+1788602587270,827,View Product,200,OK,Thread Group 1-8,text,true,,2171,95,20,20,https://example.com/view-product,579,0,17
+1788602587405,1240,Add to Cart,200,OK,Thread Group 1-8,text,true,,1252,186,20,20,https://example.com/add-to-cart,868,0,30
+1788602587540,2399,Checkout,200,OK,Thread Group 1-8,text,true,,1800,236,20,20,https://example.com/checkout,1679,0,18
+1788602587675,476,Logout,200,OK,Thread Group 1-8,text,true,,2014,200,20,20,https://example.com/logout,333,0,11
+1788602588000,1044,Login,200,OK,Thread Group 1-9,text,true,,1352,87,20,20,https://example.com/login,731,0,30
+1788602588135,1513,Search Products,200,OK,Thread Group 1-9,text,true,,1952,201,20,20,https://example.com/search-products,1059,0,39
+1788602588270,1495,View Product,200,OK,Thread Group 1-9,text,true,,2636,233,20,20,https://example.com/view-product,1046,0,39
+1788602588405,1046,Add to Cart,200,OK,Thread Group 1-9,text,true,,1134,135,20,20,https://example.com/add-to-cart,732,0,46
+1788602588540,1986,Checkout,200,OK,Thread Group 1-9,text,true,,1175,92,20,20,https://example.com/checkout,1390,0,28
+1788602588675,359,Logout,200,OK,Thread Group 1-9,text,true,,1456,214,20,20,https://example.com/logout,251,0,30
+1788602589000,581,Login,200,OK,Thread Group 1-10,text,true,,2789,199,20,20,https://example.com/login,407,0,19
+1788602589135,824,Search Products,200,OK,Thread Group 1-10,text,true,,1776,102,20,20,https://example.com/search-products,577,0,48
+1788602589270,1500,View Product,200,OK,Thread Group 1-10,text,true,,2839,98,20,20,https://example.com/view-product,1050,0,22
+1788602589405,1257,Add to Cart,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1877,123,20,20,https://example.com/add-to-cart,880,0,34
+1788602589540,2197,Checkout,200,OK,Thread Group 1-10,text,true,,2163,112,20,20,https://example.com/checkout,1538,0,36
+1788602589675,706,Logout,200,OK,Thread Group 1-10,text,true,,2077,85,20,20,https://example.com/logout,494,0,21
+1788602590000,664,Login,200,OK,Thread Group 1-11,text,true,,883,97,20,20,https://example.com/login,465,0,10
+1788602590135,1322,Search Products,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,1841,154,20,20,https://example.com/search-products,925,0,37
+1788602590270,1384,View Product,200,OK,Thread Group 1-11,text,true,,753,188,20,20,https://example.com/view-product,969,0,35
+1788602590405,1949,Add to Cart,200,OK,Thread Group 1-11,text,true,,1550,234,20,20,https://example.com/add-to-cart,1364,0,25
+1788602590540,1119,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2819,143,20,20,https://example.com/checkout,783,0,39
+1788602590675,404,Logout,200,OK,Thread Group 1-11,text,true,,1765,119,20,20,https://example.com/logout,283,0,20
+1788602591000,684,Login,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,1109,144,20,20,https://example.com/login,479,0,29
+1788602591135,802,Search Products,200,OK,Thread Group 1-12,text,true,,929,229,20,20,https://example.com/search-products,561,0,34
+1788602591270,807,View Product,200,OK,Thread Group 1-12,text,true,,2750,235,20,20,https://example.com/view-product,565,0,38
+1788602591405,1022,Add to Cart,200,OK,Thread Group 1-12,text,true,,1529,153,20,20,https://example.com/add-to-cart,715,0,29
+1788602591540,1320,Checkout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,2250,240,20,20,https://example.com/checkout,924,0,10
+1788602591675,438,Logout,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,898,230,20,20,https://example.com/logout,307,0,32
+1788602592000,384,Login,200,OK,Thread Group 1-13,text,true,,1385,195,20,20,https://example.com/login,269,0,38
+1788602592135,1420,Search Products,200,OK,Thread Group 1-13,text,true,,1330,200,20,20,https://example.com/search-products,994,0,26
+1788602592270,740,View Product,200,OK,Thread Group 1-13,text,true,,1361,84,20,20,https://example.com/view-product,518,0,46
+1788602592405,1611,Add to Cart,200,OK,Thread Group 1-13,text,true,,912,141,20,20,https://example.com/add-to-cart,1128,0,11
+1788602592540,2377,Checkout,200,OK,Thread Group 1-13,text,true,,1932,85,20,20,https://example.com/checkout,1664,0,50
+1788602592675,233,Logout,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1677,141,20,20,https://example.com/logout,163,0,32
+1788602593000,704,Login,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2005,95,20,20,https://example.com/login,493,0,19
+1788602593135,1209,Search Products,200,OK,Thread Group 1-14,text,true,,988,227,20,20,https://example.com/search-products,846,0,31
+1788602593270,1727,View Product,200,OK,Thread Group 1-14,text,true,,1535,118,20,20,https://example.com/view-product,1209,0,36
+1788602593405,941,Add to Cart,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,2173,117,20,20,https://example.com/add-to-cart,659,0,46
+1788602593540,2948,Checkout,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,1673,96,20,20,https://example.com/checkout,2064,0,21
+1788602593675,298,Logout,200,OK,Thread Group 1-14,text,true,,2579,181,20,20,https://example.com/logout,209,0,35
+1788602594000,488,Login,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,1080,210,20,20,https://example.com/login,342,0,40
+1788602594135,840,Search Products,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,995,116,20,20,https://example.com/search-products,588,0,24
+1788602594270,880,View Product,200,OK,Thread Group 1-15,text,true,,2679,125,20,20,https://example.com/view-product,616,0,28
+1788602594405,1263,Add to Cart,200,OK,Thread Group 1-15,text,true,,2341,216,20,20,https://example.com/add-to-cart,884,0,31
+1788602594540,1588,Checkout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,2362,210,20,20,https://example.com/checkout,1112,0,28
+1788602594675,362,Logout,500,Synthetic server error,Thread Group 1-15,text,false,Synthetic failure,2044,192,20,20,https://example.com/logout,253,0,19
+1788602595000,516,Login,200,OK,Thread Group 1-16,text,true,,1736,134,20,20,https://example.com/login,361,0,31
+1788602595135,780,Search Products,200,OK,Thread Group 1-16,text,true,,1431,134,20,20,https://example.com/search-products,546,0,28
+1788602595270,878,View Product,200,OK,Thread Group 1-16,text,true,,2227,102,20,20,https://example.com/view-product,615,0,40
+1788602595405,674,Add to Cart,200,OK,Thread Group 1-16,text,true,,1120,174,20,20,https://example.com/add-to-cart,472,0,46
+1788602595540,1768,Checkout,200,OK,Thread Group 1-16,text,true,,973,165,20,20,https://example.com/checkout,1238,0,50
+1788602595675,503,Logout,200,OK,Thread Group 1-16,text,true,,2765,192,20,20,https://example.com/logout,352,0,14
+1788602596000,669,Login,200,OK,Thread Group 1-17,text,true,,1688,185,20,20,https://example.com/login,468,0,12
+1788602596135,1269,Search Products,200,OK,Thread Group 1-17,text,true,,836,191,20,20,https://example.com/search-products,888,0,19
+1788602596270,607,View Product,200,OK,Thread Group 1-17,text,true,,1320,94,20,20,https://example.com/view-product,425,0,45
+1788602596405,1865,Add to Cart,200,OK,Thread Group 1-17,text,true,,2387,87,20,20,https://example.com/add-to-cart,1306,0,36
+1788602596540,2466,Checkout,200,OK,Thread Group 1-17,text,true,,2981,164,20,20,https://example.com/checkout,1726,0,39
+1788602596675,337,Logout,200,OK,Thread Group 1-17,text,true,,2223,94,20,20,https://example.com/logout,236,0,18
+1788602597000,565,Login,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,805,156,20,20,https://example.com/login,396,0,26
+1788602597135,794,Search Products,200,OK,Thread Group 1-18,text,true,,2448,134,20,20,https://example.com/search-products,556,0,43
+1788602597270,938,View Product,200,OK,Thread Group 1-18,text,true,,895,162,20,20,https://example.com/view-product,657,0,33
+1788602597405,1348,Add to Cart,200,OK,Thread Group 1-18,text,true,,714,115,20,20,https://example.com/add-to-cart,944,0,50
+1788602597540,1338,Checkout,200,OK,Thread Group 1-18,text,true,,770,145,20,20,https://example.com/checkout,937,0,17
+1788602597675,665,Logout,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,702,117,20,20,https://example.com/logout,465,0,39
+1788602598000,911,Login,200,OK,Thread Group 1-19,text,true,,2156,208,20,20,https://example.com/login,638,0,24
+1788602598135,1070,Search Products,200,OK,Thread Group 1-19,text,true,,921,112,20,20,https://example.com/search-products,749,0,25
+1788602598270,617,View Product,200,OK,Thread Group 1-19,text,true,,1413,230,20,20,https://example.com/view-product,432,0,41
+1788602598405,2256,Add to Cart,200,OK,Thread Group 1-19,text,true,,2922,98,20,20,https://example.com/add-to-cart,1579,0,10
+1788602598540,1965,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,908,81,20,20,https://example.com/checkout,1376,0,40
+1788602598675,448,Logout,200,OK,Thread Group 1-19,text,true,,1101,130,20,20,https://example.com/logout,314,0,32
+1788602599000,693,Login,200,OK,Thread Group 1-20,text,true,,1012,134,20,20,https://example.com/login,485,0,45
+1788602599135,976,Search Products,200,OK,Thread Group 1-20,text,true,,1310,164,20,20,https://example.com/search-products,683,0,18
+1788602599270,656,View Product,200,OK,Thread Group 1-20,text,true,,1512,177,20,20,https://example.com/view-product,459,0,15
+1788602599405,1110,Add to Cart,200,OK,Thread Group 1-20,text,true,,1894,200,20,20,https://example.com/add-to-cart,777,0,29
+1788602599540,1938,Checkout,200,OK,Thread Group 1-20,text,true,,2762,122,20,20,https://example.com/checkout,1357,0,50
+1788602599675,307,Logout,200,OK,Thread Group 1-20,text,true,,1375,81,20,20,https://example.com/logout,215,0,29
+1788602600000,692,Login,200,OK,Thread Group 1-1,text,true,,2641,199,20,20,https://example.com/login,484,0,14
+1788602600135,655,Search Products,200,OK,Thread Group 1-1,text,true,,993,142,20,20,https://example.com/search-products,458,0,49
+1788602600270,1194,View Product,200,OK,Thread Group 1-1,text,true,,1718,129,20,20,https://example.com/view-product,836,0,38
+1788602600405,1680,Add to Cart,200,OK,Thread Group 1-1,text,true,,1957,84,20,20,https://example.com/add-to-cart,1176,0,26
+1788602600540,1932,Checkout,200,OK,Thread Group 1-1,text,true,,1571,105,20,20,https://example.com/checkout,1352,0,28
+1788602600675,397,Logout,200,OK,Thread Group 1-1,text,true,,1810,212,20,20,https://example.com/logout,278,0,35
+1788602601000,543,Login,200,OK,Thread Group 1-2,text,true,,2565,240,20,20,https://example.com/login,380,0,40
+1788602601135,1292,Search Products,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,2468,145,20,20,https://example.com/search-products,904,0,17
+1788602601270,776,View Product,200,OK,Thread Group 1-2,text,true,,1547,240,20,20,https://example.com/view-product,543,0,18
+1788602601405,1219,Add to Cart,200,OK,Thread Group 1-2,text,true,,1868,218,20,20,https://example.com/add-to-cart,853,0,39
+1788602601540,1551,Checkout,200,OK,Thread Group 1-2,text,true,,808,189,20,20,https://example.com/checkout,1086,0,44
+1788602601675,422,Logout,200,OK,Thread Group 1-2,text,true,,997,230,20,20,https://example.com/logout,295,0,50
+1788602602000,469,Login,200,OK,Thread Group 1-3,text,true,,808,203,20,20,https://example.com/login,328,0,49
+1788602602135,571,Search Products,200,OK,Thread Group 1-3,text,true,,1900,206,20,20,https://example.com/search-products,400,0,29
+1788602602270,1082,View Product,200,OK,Thread Group 1-3,text,true,,2775,237,20,20,https://example.com/view-product,757,0,18
+1788602602405,1509,Add to Cart,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2494,117,20,20,https://example.com/add-to-cart,1056,0,18
+1788602602540,1218,Checkout,200,OK,Thread Group 1-3,text,true,,2596,117,20,20,https://example.com/checkout,853,0,33
+1788602602675,667,Logout,200,OK,Thread Group 1-3,text,true,,2033,88,20,20,https://example.com/logout,467,0,36
+1788602603000,1320,Login,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,2055,232,20,20,https://example.com/login,924,0,12
+1788602603135,829,Search Products,200,OK,Thread Group 1-4,text,true,,1426,127,20,20,https://example.com/search-products,580,0,48
+1788602603270,560,View Product,200,OK,Thread Group 1-4,text,true,,702,227,20,20,https://example.com/view-product,392,0,46
+1788602603405,1147,Add to Cart,200,OK,Thread Group 1-4,text,true,,1641,108,20,20,https://example.com/add-to-cart,803,0,17
+1788602603540,1378,Checkout,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,2604,115,20,20,https://example.com/checkout,965,0,22
+1788602603675,465,Logout,200,OK,Thread Group 1-4,text,true,,1219,90,20,20,https://example.com/logout,326,0,32
+1788602604000,427,Login,200,OK,Thread Group 1-5,text,true,,2535,179,20,20,https://example.com/login,299,0,45
+1788602604135,926,Search Products,200,OK,Thread Group 1-5,text,true,,2041,167,20,20,https://example.com/search-products,648,0,40
+1788602604270,855,View Product,200,OK,Thread Group 1-5,text,true,,1318,230,20,20,https://example.com/view-product,598,0,17
+1788602604405,1090,Add to Cart,200,OK,Thread Group 1-5,text,true,,2098,219,20,20,https://example.com/add-to-cart,763,0,40
+1788602604540,2019,Checkout,200,OK,Thread Group 1-5,text,true,,2859,138,20,20,https://example.com/checkout,1413,0,41
+1788602604675,580,Logout,200,OK,Thread Group 1-5,text,true,,865,108,20,20,https://example.com/logout,406,0,32
+1788602605000,733,Login,200,OK,Thread Group 1-6,text,true,,2142,228,20,20,https://example.com/login,513,0,32
+1788602605135,721,Search Products,200,OK,Thread Group 1-6,text,true,,2866,108,20,20,https://example.com/search-products,505,0,27
+1788602605270,899,View Product,200,OK,Thread Group 1-6,text,true,,1240,236,20,20,https://example.com/view-product,629,0,19
+1788602605405,1083,Add to Cart,200,OK,Thread Group 1-6,text,true,,2970,169,20,20,https://example.com/add-to-cart,758,0,48
+1788602605540,1244,Checkout,200,OK,Thread Group 1-6,text,true,,2432,221,20,20,https://example.com/checkout,871,0,12
+1788602605675,412,Logout,200,OK,Thread Group 1-6,text,true,,2390,162,20,20,https://example.com/logout,288,0,12
+1788602606000,575,Login,200,OK,Thread Group 1-7,text,true,,1857,219,20,20,https://example.com/login,402,0,18
+1788602606135,438,Search Products,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,2416,208,20,20,https://example.com/search-products,307,0,30
+1788602606270,828,View Product,200,OK,Thread Group 1-7,text,true,,2340,137,20,20,https://example.com/view-product,580,0,49
+1788602606405,720,Add to Cart,200,OK,Thread Group 1-7,text,true,,2475,121,20,20,https://example.com/add-to-cart,504,0,40
+1788602606540,1522,Checkout,500,Synthetic server error,Thread Group 1-7,text,false,Synthetic failure,1772,186,20,20,https://example.com/checkout,1065,0,35
+1788602606675,474,Logout,200,OK,Thread Group 1-7,text,true,,1602,85,20,20,https://example.com/logout,332,0,13
+1788602607000,575,Login,200,OK,Thread Group 1-8,text,true,,1308,240,20,20,https://example.com/login,402,0,19
+1788602607135,651,Search Products,200,OK,Thread Group 1-8,text,true,,2861,223,20,20,https://example.com/search-products,456,0,46
+1788602607270,1529,View Product,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,2402,135,20,20,https://example.com/view-product,1070,0,49
+1788602607405,1353,Add to Cart,200,OK,Thread Group 1-8,text,true,,1868,159,20,20,https://example.com/add-to-cart,947,0,17
+1788602607540,1782,Checkout,200,OK,Thread Group 1-8,text,true,,2604,230,20,20,https://example.com/checkout,1247,0,15
+1788602607675,458,Logout,200,OK,Thread Group 1-8,text,true,,2737,182,20,20,https://example.com/logout,321,0,25
+1788602608000,841,Login,200,OK,Thread Group 1-9,text,true,,1400,138,20,20,https://example.com/login,589,0,13
+1788602608135,956,Search Products,200,OK,Thread Group 1-9,text,true,,953,187,20,20,https://example.com/search-products,669,0,21
+1788602608270,551,View Product,200,OK,Thread Group 1-9,text,true,,1507,157,20,20,https://example.com/view-product,386,0,26
+1788602608405,1052,Add to Cart,200,OK,Thread Group 1-9,text,true,,2801,190,20,20,https://example.com/add-to-cart,736,0,37
+1788602608540,1003,Checkout,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,2510,164,20,20,https://example.com/checkout,702,0,35
+1788602608675,402,Logout,200,OK,Thread Group 1-9,text,true,,2093,197,20,20,https://example.com/logout,281,0,19
+1788602609000,769,Login,200,OK,Thread Group 1-10,text,true,,2364,93,20,20,https://example.com/login,538,0,17
+1788602609135,945,Search Products,200,OK,Thread Group 1-10,text,true,,1162,158,20,20,https://example.com/search-products,662,0,49
+1788602609270,642,View Product,200,OK,Thread Group 1-10,text,true,,1074,215,20,20,https://example.com/view-product,449,0,41
+1788602609405,1026,Add to Cart,500,Synthetic server error,Thread Group 1-10,text,false,Synthetic failure,1740,83,20,20,https://example.com/add-to-cart,718,0,39
+1788602609540,1897,Checkout,200,OK,Thread Group 1-10,text,true,,707,171,20,20,https://example.com/checkout,1328,0,10
+1788602609675,359,Logout,200,OK,Thread Group 1-10,text,true,,2561,133,20,20,https://example.com/logout,251,0,32
+1788602610000,625,Login,200,OK,Thread Group 1-11,text,true,,2107,84,20,20,https://example.com/login,438,0,50
+1788602610135,684,Search Products,200,OK,Thread Group 1-11,text,true,,714,152,20,20,https://example.com/search-products,479,0,39
+1788602610270,723,View Product,200,OK,Thread Group 1-11,text,true,,1800,205,20,20,https://example.com/view-product,506,0,28
+1788602610405,2089,Add to Cart,200,OK,Thread Group 1-11,text,true,,2756,101,20,20,https://example.com/add-to-cart,1462,0,20
+1788602610540,1443,Checkout,200,OK,Thread Group 1-11,text,true,,2366,194,20,20,https://example.com/checkout,1010,0,37
+1788602610675,494,Logout,200,OK,Thread Group 1-11,text,true,,832,202,20,20,https://example.com/logout,346,0,41
+1788602611000,551,Login,200,OK,Thread Group 1-12,text,true,,1936,95,20,20,https://example.com/login,386,0,14
+1788602611135,561,Search Products,200,OK,Thread Group 1-12,text,true,,2706,156,20,20,https://example.com/search-products,393,0,27
+1788602611270,790,View Product,500,Synthetic server error,Thread Group 1-12,text,false,Synthetic failure,979,102,20,20,https://example.com/view-product,553,0,13
+1788602611405,991,Add to Cart,200,OK,Thread Group 1-12,text,true,,1409,147,20,20,https://example.com/add-to-cart,694,0,17
+1788602611540,2721,Checkout,200,OK,Thread Group 1-12,text,true,,1921,169,20,20,https://example.com/checkout,1905,0,36
+1788602611675,399,Logout,200,OK,Thread Group 1-12,text,true,,2747,239,20,20,https://example.com/logout,279,0,10
+1788602612000,844,Login,200,OK,Thread Group 1-13,text,true,,2158,126,20,20,https://example.com/login,591,0,44
+1788602612135,1056,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,2480,226,20,20,https://example.com/search-products,739,0,30
+1788602612270,908,View Product,200,OK,Thread Group 1-13,text,true,,2992,141,20,20,https://example.com/view-product,636,0,27
+1788602612405,856,Add to Cart,200,OK,Thread Group 1-13,text,true,,1070,128,20,20,https://example.com/add-to-cart,599,0,31
+1788602612540,1165,Checkout,200,OK,Thread Group 1-13,text,true,,1828,110,20,20,https://example.com/checkout,816,0,38
+1788602612675,209,Logout,200,OK,Thread Group 1-13,text,true,,2674,130,20,20,https://example.com/logout,146,0,25
+1788602613000,859,Login,200,OK,Thread Group 1-14,text,true,,1195,217,20,20,https://example.com/login,601,0,45
+1788602613135,970,Search Products,200,OK,Thread Group 1-14,text,true,,1375,160,20,20,https://example.com/search-products,679,0,40
+1788602613270,886,View Product,200,OK,Thread Group 1-14,text,true,,2875,137,20,20,https://example.com/view-product,620,0,22
+1788602613405,1181,Add to Cart,200,OK,Thread Group 1-14,text,true,,1611,81,20,20,https://example.com/add-to-cart,827,0,23
+1788602613540,2600,Checkout,200,OK,Thread Group 1-14,text,true,,1882,99,20,20,https://example.com/checkout,1820,0,19
+1788602613675,738,Logout,200,OK,Thread Group 1-14,text,true,,2055,185,20,20,https://example.com/logout,517,0,16
+1788602614000,756,Login,200,OK,Thread Group 1-15,text,true,,930,84,20,20,https://example.com/login,529,0,17
+1788602614135,1014,Search Products,200,OK,Thread Group 1-15,text,true,,1358,135,20,20,https://example.com/search-products,710,0,29
+1788602614270,959,View Product,200,OK,Thread Group 1-15,text,true,,1898,172,20,20,https://example.com/view-product,671,0,49
+1788602614405,2985,Add to Cart,200,OK,Thread Group 1-15,text,true,,2671,192,20,20,https://example.com/add-to-cart,2090,0,36
+1788602614540,1959,Checkout,200,OK,Thread Group 1-15,text,true,,1549,203,20,20,https://example.com/checkout,1371,0,11
+1788602614675,280,Logout,200,OK,Thread Group 1-15,text,true,,3000,223,20,20,https://example.com/logout,196,0,25
+1788602615000,628,Login,200,OK,Thread Group 1-16,text,true,,2267,90,20,20,https://example.com/login,440,0,26
+1788602615135,944,Search Products,200,OK,Thread Group 1-16,text,true,,1834,97,20,20,https://example.com/search-products,661,0,22
+1788602615270,736,View Product,200,OK,Thread Group 1-16,text,true,,1895,138,20,20,https://example.com/view-product,515,0,37
+1788602615405,1434,Add to Cart,200,OK,Thread Group 1-16,text,true,,1843,151,20,20,https://example.com/add-to-cart,1004,0,41
+1788602615540,2890,Checkout,500,Synthetic server error,Thread Group 1-16,text,false,Synthetic failure,2699,215,20,20,https://example.com/checkout,2023,0,10
+1788602615675,502,Logout,200,OK,Thread Group 1-16,text,true,,1347,94,20,20,https://example.com/logout,351,0,12
+1788602616000,661,Login,200,OK,Thread Group 1-17,text,true,,2206,121,20,20,https://example.com/login,463,0,28
+1788602616135,1218,Search Products,200,OK,Thread Group 1-17,text,true,,858,225,20,20,https://example.com/search-products,853,0,14
+1788602616270,613,View Product,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,712,229,20,20,https://example.com/view-product,429,0,30
+1788602616405,1144,Add to Cart,200,OK,Thread Group 1-17,text,true,,766,142,20,20,https://example.com/add-to-cart,801,0,19
+1788602616540,3188,Checkout,200,OK,Thread Group 1-17,text,true,,2998,173,20,20,https://example.com/checkout,2232,0,31
+1788602616675,296,Logout,200,OK,Thread Group 1-17,text,true,,1242,191,20,20,https://example.com/logout,207,0,41
+1788602617000,950,Login,200,OK,Thread Group 1-18,text,true,,921,103,20,20,https://example.com/login,665,0,28
+1788602617135,1054,Search Products,200,OK,Thread Group 1-18,text,true,,2490,204,20,20,https://example.com/search-products,738,0,23
+1788602617270,1408,View Product,200,OK,Thread Group 1-18,text,true,,2422,237,20,20,https://example.com/view-product,986,0,29
+1788602617405,1691,Add to Cart,200,OK,Thread Group 1-18,text,true,,2191,201,20,20,https://example.com/add-to-cart,1184,0,17
+1788602617540,1426,Checkout,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,1239,164,20,20,https://example.com/checkout,998,0,13
+1788602617675,350,Logout,200,OK,Thread Group 1-18,text,true,,1840,187,20,20,https://example.com/logout,245,0,24
+1788602618000,491,Login,200,OK,Thread Group 1-19,text,true,,2928,160,20,20,https://example.com/login,344,0,14
+1788602618135,1266,Search Products,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1011,201,20,20,https://example.com/search-products,886,0,35
+1788602618270,663,View Product,200,OK,Thread Group 1-19,text,true,,2121,199,20,20,https://example.com/view-product,464,0,16
+1788602618405,1978,Add to Cart,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,707,140,20,20,https://example.com/add-to-cart,1385,0,50
+1788602618540,1050,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1655,103,20,20,https://example.com/checkout,735,0,15
+1788602618675,385,Logout,200,OK,Thread Group 1-19,text,true,,1329,187,20,20,https://example.com/logout,270,0,24
+1788602619000,955,Login,200,OK,Thread Group 1-20,text,true,,2715,198,20,20,https://example.com/login,668,0,31
+1788602619135,802,Search Products,200,OK,Thread Group 1-20,text,true,,1524,222,20,20,https://example.com/search-products,561,0,26
+1788602619270,1240,View Product,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1433,239,20,20,https://example.com/view-product,868,0,11
+1788602619405,727,Add to Cart,200,OK,Thread Group 1-20,text,true,,2411,120,20,20,https://example.com/add-to-cart,509,0,10
+1788602619540,1723,Checkout,200,OK,Thread Group 1-20,text,true,,715,185,20,20,https://example.com/checkout,1206,0,29
+1788602619675,671,Logout,200,OK,Thread Group 1-20,text,true,,2358,178,20,20,https://example.com/logout,470,0,12
+1788602620000,1370,Login,200,OK,Thread Group 1-1,text,true,,890,111,20,20,https://example.com/login,959,0,11
+1788602620135,1477,Search Products,200,OK,Thread Group 1-1,text,true,,2451,226,20,20,https://example.com/search-products,1034,0,23
+1788602620270,1145,View Product,200,OK,Thread Group 1-1,text,true,,2094,143,20,20,https://example.com/view-product,802,0,24
+1788602620405,1610,Add to Cart,200,OK,Thread Group 1-1,text,true,,2727,139,20,20,https://example.com/add-to-cart,1127,0,10
+1788602620540,981,Checkout,200,OK,Thread Group 1-1,text,true,,2744,98,20,20,https://example.com/checkout,687,0,39
+1788602620675,347,Logout,500,Synthetic server error,Thread Group 1-1,text,false,Synthetic failure,2548,151,20,20,https://example.com/logout,243,0,40
+1788602621000,583,Login,200,OK,Thread Group 1-2,text,true,,2848,103,20,20,https://example.com/login,408,0,22
+1788602621135,831,Search Products,200,OK,Thread Group 1-2,text,true,,2866,92,20,20,https://example.com/search-products,582,0,18
+1788602621270,811,View Product,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1607,133,20,20,https://example.com/view-product,568,0,41
+1788602621405,516,Add to Cart,200,OK,Thread Group 1-2,text,true,,2054,103,20,20,https://example.com/add-to-cart,361,0,41
+1788602621540,1983,Checkout,500,Synthetic server error,Thread Group 1-2,text,false,Synthetic failure,1754,151,20,20,https://example.com/checkout,1388,0,29
+1788602621675,319,Logout,200,OK,Thread Group 1-2,text,true,,2203,134,20,20,https://example.com/logout,223,0,32
+1788602622000,1174,Login,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,2301,193,20,20,https://example.com/login,822,0,43
+1788602622135,1636,Search Products,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1452,227,20,20,https://example.com/search-products,1145,0,43
+1788602622270,808,View Product,200,OK,Thread Group 1-3,text,true,,858,93,20,20,https://example.com/view-product,566,0,23
+1788602622405,1148,Add to Cart,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,926,156,20,20,https://example.com/add-to-cart,804,0,14
+1788602622540,1325,Checkout,500,Synthetic server error,Thread Group 1-3,text,false,Synthetic failure,1393,209,20,20,https://example.com/checkout,927,0,41
+1788602622675,378,Logout,200,OK,Thread Group 1-3,text,true,,1180,213,20,20,https://example.com/logout,265,0,12
+1788602623000,432,Login,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1175,132,20,20,https://example.com/login,302,0,17
+1788602623135,847,Search Products,200,OK,Thread Group 1-4,text,true,,2738,184,20,20,https://example.com/search-products,593,0,17
+1788602623270,486,View Product,500,Synthetic server error,Thread Group 1-4,text,false,Synthetic failure,1008,104,20,20,https://example.com/view-product,340,0,27
+1788602623405,1298,Add to Cart,200,OK,Thread Group 1-4,text,true,,2815,225,20,20,https://example.com/add-to-cart,909,0,40
+1788602623540,3721,Checkout,200,OK,Thread Group 1-4,text,true,,1831,145,20,20,https://example.com/checkout,2605,0,41
+1788602623675,465,Logout,200,OK,Thread Group 1-4,text,true,,2712,225,20,20,https://example.com/logout,326,0,24
+1788602624000,645,Login,200,OK,Thread Group 1-5,text,true,,960,209,20,20,https://example.com/login,451,0,34
+1788602624135,1768,Search Products,200,OK,Thread Group 1-5,text,true,,1983,170,20,20,https://example.com/search-products,1238,0,19
+1788602624270,483,View Product,200,OK,Thread Group 1-5,text,true,,2307,191,20,20,https://example.com/view-product,338,0,31
+1788602624405,1583,Add to Cart,200,OK,Thread Group 1-5,text,true,,1744,93,20,20,https://example.com/add-to-cart,1108,0,13
+1788602624540,2175,Checkout,200,OK,Thread Group 1-5,text,true,,1163,119,20,20,https://example.com/checkout,1522,0,40
+1788602624675,429,Logout,200,OK,Thread Group 1-5,text,true,,2959,210,20,20,https://example.com/logout,300,0,36
+1788602625000,540,Login,200,OK,Thread Group 1-6,text,true,,1077,203,20,20,https://example.com/login,378,0,12
+1788602625135,1238,Search Products,200,OK,Thread Group 1-6,text,true,,2973,144,20,20,https://example.com/search-products,867,0,47
+1788602625270,1136,View Product,200,OK,Thread Group 1-6,text,true,,2727,150,20,20,https://example.com/view-product,795,0,43
+1788602625405,1359,Add to Cart,200,OK,Thread Group 1-6,text,true,,744,179,20,20,https://example.com/add-to-cart,951,0,50
+1788602625540,2685,Checkout,200,OK,Thread Group 1-6,text,true,,2833,178,20,20,https://example.com/checkout,1879,0,44
+1788602625675,299,Logout,200,OK,Thread Group 1-6,text,true,,2872,185,20,20,https://example.com/logout,209,0,23
+1788602626000,709,Login,200,OK,Thread Group 1-7,text,true,,1758,219,20,20,https://example.com/login,496,0,15
+1788602626135,835,Search Products,200,OK,Thread Group 1-7,text,true,,2039,187,20,20,https://example.com/search-products,584,0,18
+1788602626270,903,View Product,200,OK,Thread Group 1-7,text,true,,1984,211,20,20,https://example.com/view-product,632,0,44
+1788602626405,1557,Add to Cart,200,OK,Thread Group 1-7,text,true,,2707,171,20,20,https://example.com/add-to-cart,1090,0,16
+1788602626540,2025,Checkout,200,OK,Thread Group 1-7,text,true,,1604,213,20,20,https://example.com/checkout,1418,0,36
+1788602626675,219,Logout,200,OK,Thread Group 1-7,text,true,,1080,218,20,20,https://example.com/logout,153,0,31
+1788602627000,877,Login,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1297,183,20,20,https://example.com/login,614,0,11
+1788602627135,1432,Search Products,500,Synthetic server error,Thread Group 1-8,text,false,Synthetic failure,1242,106,20,20,https://example.com/search-products,1002,0,27
+1788602627270,576,View Product,200,OK,Thread Group 1-8,text,true,,882,105,20,20,https://example.com/view-product,403,0,17
+1788602627405,1369,Add to Cart,200,OK,Thread Group 1-8,text,true,,2289,193,20,20,https://example.com/add-to-cart,958,0,36
+1788602627540,1524,Checkout,200,OK,Thread Group 1-8,text,true,,732,202,20,20,https://example.com/checkout,1067,0,11
+1788602627675,437,Logout,200,OK,Thread Group 1-8,text,true,,1753,136,20,20,https://example.com/logout,306,0,43
+1788602628000,882,Login,200,OK,Thread Group 1-9,text,true,,2546,170,20,20,https://example.com/login,617,0,10
+1788602628135,844,Search Products,200,OK,Thread Group 1-9,text,true,,1335,128,20,20,https://example.com/search-products,591,0,11
+1788602628270,942,View Product,200,OK,Thread Group 1-9,text,true,,2515,150,20,20,https://example.com/view-product,659,0,26
+1788602628405,1398,Add to Cart,500,Synthetic server error,Thread Group 1-9,text,false,Synthetic failure,1929,218,20,20,https://example.com/add-to-cart,979,0,21
+1788602628540,2243,Checkout,200,OK,Thread Group 1-9,text,true,,1257,231,20,20,https://example.com/checkout,1570,0,16
+1788602628675,276,Logout,200,OK,Thread Group 1-9,text,true,,1876,164,20,20,https://example.com/logout,193,0,46
+1788602629000,792,Login,200,OK,Thread Group 1-10,text,true,,935,112,20,20,https://example.com/login,554,0,21
+1788602629135,1377,Search Products,200,OK,Thread Group 1-10,text,true,,898,148,20,20,https://example.com/search-products,964,0,19
+1788602629270,950,View Product,200,OK,Thread Group 1-10,text,true,,1762,224,20,20,https://example.com/view-product,665,0,46
+1788602629405,814,Add to Cart,200,OK,Thread Group 1-10,text,true,,2866,185,20,20,https://example.com/add-to-cart,570,0,27
+1788602629540,1756,Checkout,200,OK,Thread Group 1-10,text,true,,1576,97,20,20,https://example.com/checkout,1229,0,37
+1788602629675,279,Logout,200,OK,Thread Group 1-10,text,true,,1860,91,20,20,https://example.com/logout,195,0,36
+1788602630000,579,Login,200,OK,Thread Group 1-11,text,true,,1801,164,20,20,https://example.com/login,405,0,15
+1788602630135,931,Search Products,200,OK,Thread Group 1-11,text,true,,2027,207,20,20,https://example.com/search-products,652,0,50
+1788602630270,449,View Product,200,OK,Thread Group 1-11,text,true,,1090,145,20,20,https://example.com/view-product,314,0,13
+1788602630405,652,Add to Cart,200,OK,Thread Group 1-11,text,true,,985,230,20,20,https://example.com/add-to-cart,456,0,33
+1788602630540,1357,Checkout,500,Synthetic server error,Thread Group 1-11,text,false,Synthetic failure,2292,173,20,20,https://example.com/checkout,950,0,12
+1788602630675,229,Logout,200,OK,Thread Group 1-11,text,true,,2044,199,20,20,https://example.com/logout,160,0,47
+1788602631000,453,Login,200,OK,Thread Group 1-12,text,true,,1112,90,20,20,https://example.com/login,317,0,27
+1788602631135,863,Search Products,200,OK,Thread Group 1-12,text,true,,1026,222,20,20,https://example.com/search-products,604,0,36
+1788602631270,499,View Product,200,OK,Thread Group 1-12,text,true,,1133,207,20,20,https://example.com/view-product,349,0,44
+1788602631405,1512,Add to Cart,200,OK,Thread Group 1-12,text,true,,2910,153,20,20,https://example.com/add-to-cart,1058,0,41
+1788602631540,760,Checkout,200,OK,Thread Group 1-12,text,true,,2350,140,20,20,https://example.com/checkout,532,0,33
+1788602631675,504,Logout,200,OK,Thread Group 1-12,text,true,,1559,107,20,20,https://example.com/logout,353,0,15
+1788602632000,570,Login,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,2454,213,20,20,https://example.com/login,399,0,25
+1788602632135,769,Search Products,500,Synthetic server error,Thread Group 1-13,text,false,Synthetic failure,1609,237,20,20,https://example.com/search-products,538,0,45
+1788602632270,1007,View Product,200,OK,Thread Group 1-13,text,true,,1719,125,20,20,https://example.com/view-product,705,0,37
+1788602632405,1364,Add to Cart,200,OK,Thread Group 1-13,text,true,,1422,146,20,20,https://example.com/add-to-cart,955,0,16
+1788602632540,1867,Checkout,200,OK,Thread Group 1-13,text,true,,2385,101,20,20,https://example.com/checkout,1307,0,35
+1788602632675,279,Logout,200,OK,Thread Group 1-13,text,true,,2575,215,20,20,https://example.com/logout,195,0,20
+1788602633000,779,Login,200,OK,Thread Group 1-14,text,true,,1667,217,20,20,https://example.com/login,545,0,48
+1788602633135,550,Search Products,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,1987,145,20,20,https://example.com/search-products,385,0,30
+1788602633270,725,View Product,200,OK,Thread Group 1-14,text,true,,2890,93,20,20,https://example.com/view-product,507,0,11
+1788602633405,1289,Add to Cart,500,Synthetic server error,Thread Group 1-14,text,false,Synthetic failure,1813,178,20,20,https://example.com/add-to-cart,902,0,45
+1788602633540,1803,Checkout,200,OK,Thread Group 1-14,text,true,,2639,87,20,20,https://example.com/checkout,1262,0,38
+1788602633675,362,Logout,200,OK,Thread Group 1-14,text,true,,1978,228,20,20,https://example.com/logout,253,0,17
+1788602634000,522,Login,200,OK,Thread Group 1-15,text,true,,2137,106,20,20,https://example.com/login,365,0,48
+1788602634135,889,Search Products,200,OK,Thread Group 1-15,text,true,,2672,198,20,20,https://example.com/search-products,622,0,32
+1788602634270,754,View Product,200,OK,Thread Group 1-15,text,true,,2411,200,20,20,https://example.com/view-product,528,0,11
+1788602634405,815,Add to Cart,200,OK,Thread Group 1-15,text,true,,2827,230,20,20,https://example.com/add-to-cart,570,0,42
+1788602634540,1693,Checkout,200,OK,Thread Group 1-15,text,true,,2427,99,20,20,https://example.com/checkout,1185,0,27
+1788602634675,368,Logout,200,OK,Thread Group 1-15,text,true,,2854,94,20,20,https://example.com/logout,258,0,32
+1788602635000,805,Login,200,OK,Thread Group 1-16,text,true,,2401,225,20,20,https://example.com/login,564,0,17
+1788602635135,1562,Search Products,200,OK,Thread Group 1-16,text,true,,2931,172,20,20,https://example.com/search-products,1093,0,19
+1788602635270,903,View Product,200,OK,Thread Group 1-16,text,true,,1350,118,20,20,https://example.com/view-product,632,0,49
+1788602635405,842,Add to Cart,200,OK,Thread Group 1-16,text,true,,1622,201,20,20,https://example.com/add-to-cart,589,0,30
+1788602635540,2399,Checkout,200,OK,Thread Group 1-16,text,true,,718,235,20,20,https://example.com/checkout,1679,0,15
+1788602635675,277,Logout,200,OK,Thread Group 1-16,text,true,,2151,85,20,20,https://example.com/logout,194,0,27
+1788602636000,359,Login,200,OK,Thread Group 1-17,text,true,,1037,95,20,20,https://example.com/login,251,0,44
+1788602636135,1081,Search Products,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,2958,198,20,20,https://example.com/search-products,757,0,39
+1788602636270,563,View Product,200,OK,Thread Group 1-17,text,true,,2317,148,20,20,https://example.com/view-product,394,0,48
+1788602636405,578,Add to Cart,200,OK,Thread Group 1-17,text,true,,1033,186,20,20,https://example.com/add-to-cart,405,0,49
+1788602636540,1835,Checkout,500,Synthetic server error,Thread Group 1-17,text,false,Synthetic failure,1038,213,20,20,https://example.com/checkout,1284,0,36
+1788602636675,340,Logout,200,OK,Thread Group 1-17,text,true,,705,201,20,20,https://example.com/logout,238,0,46
+1788602637000,915,Login,500,Synthetic server error,Thread Group 1-18,text,false,Synthetic failure,1557,191,20,20,https://example.com/login,640,0,15
+1788602637135,1290,Search Products,200,OK,Thread Group 1-18,text,true,,1717,231,20,20,https://example.com/search-products,903,0,28
+1788602637270,863,View Product,200,OK,Thread Group 1-18,text,true,,2615,104,20,20,https://example.com/view-product,604,0,50
+1788602637405,1278,Add to Cart,200,OK,Thread Group 1-18,text,true,,1904,148,20,20,https://example.com/add-to-cart,895,0,23
+1788602637540,1864,Checkout,200,OK,Thread Group 1-18,text,true,,1438,187,20,20,https://example.com/checkout,1305,0,11
+1788602637675,191,Logout,200,OK,Thread Group 1-18,text,true,,1427,168,20,20,https://example.com/logout,134,0,11
+1788602638000,654,Login,200,OK,Thread Group 1-19,text,true,,1290,101,20,20,https://example.com/login,458,0,38
+1788602638135,1306,Search Products,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,718,121,20,20,https://example.com/search-products,914,0,23
+1788602638270,503,View Product,200,OK,Thread Group 1-19,text,true,,935,210,20,20,https://example.com/view-product,352,0,13
+1788602638405,1439,Add to Cart,200,OK,Thread Group 1-19,text,true,,2499,205,20,20,https://example.com/add-to-cart,1007,0,45
+1788602638540,1118,Checkout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,2524,238,20,20,https://example.com/checkout,783,0,15
+1788602638675,541,Logout,500,Synthetic server error,Thread Group 1-19,text,false,Synthetic failure,1587,108,20,20,https://example.com/logout,379,0,17
+1788602639000,1263,Login,200,OK,Thread Group 1-20,text,true,,2656,127,20,20,https://example.com/login,884,0,12
+1788602639135,1042,Search Products,200,OK,Thread Group 1-20,text,true,,1680,229,20,20,https://example.com/search-products,729,0,18
+1788602639270,882,View Product,200,OK,Thread Group 1-20,text,true,,2156,159,20,20,https://example.com/view-product,617,0,33
+1788602639405,824,Add to Cart,200,OK,Thread Group 1-20,text,true,,2166,131,20,20,https://example.com/add-to-cart,577,0,35
+1788602639540,1760,Checkout,500,Synthetic server error,Thread Group 1-20,text,false,Synthetic failure,1644,160,20,20,https://example.com/checkout,1232,0,28
+1788602639675,361,Logout,200,OK,Thread Group 1-20,text,true,,1601,170,20,20,https://example.com/logout,253,0,11

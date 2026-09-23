@@ -45,6 +45,20 @@
     </tbody>
   </table>
 
+  <section class="trend-insights" aria-labelledby="trend-insights-title">
+    <h3 id="trend-insights-title" class="section-title">Trend insights</h3>
+    <div class="trend-insight-list">
+      {% for observation in trend_observations|default([]) %}
+        <div class="trend-insight trend-insight--{{ observation.type|default('info') }}">
+          <strong>{{ observation.title }}</strong>
+          <span>{{ observation.text }}</span>
+        </div>
+      {% else %}
+        <div class="trend-insight trend-insight--info">No trend insights are available.</div>
+      {% endfor %}
+    </div>
+  </section>
+
   <h3 class="section-title">Trend Graph</h3>
   <canvas id="trendChart" width="800" height="400"></canvas>
 </div>
@@ -125,5 +139,15 @@
     }
   });
 </script>
+
+<style>
+  .trend-insights { margin-top: 28px; }
+  .trend-insight-list { display:grid; gap:10px; }
+  .trend-insight { display:flex; flex-direction:column; gap:4px; padding:12px 14px; border-left:5px solid #2a5298; border-radius:6px; background:#f5f8fc; color:#334155; line-height:1.45; }
+  .trend-insight strong { color:#1e3c72; }
+  .trend-insight--success { border-left-color:#28a745; background:#effaf1; }
+  .trend-insight--warning { border-left-color:#e0a800; background:#fff9e8; }
+  .trend-insight--danger { border-left-color:#dc3545; background:#fff1f2; }
+</style>
 
 {% endblock %}
