@@ -71,10 +71,22 @@
 
 <!-- Server Monitoring -->
 <h3 class="section-title">Server Monitoring Stats</h3>
+<div class="monitoring-summary" id="monitoringSummary">No monitoring data received yet.</div>
+<div class="monitoring-table-wrap">
+  <table class="metrics-table" id="monitoringTable">
+    <thead><tr><th>Server</th><th>CPU %</th><th>Memory</th><th>Last update</th></tr></thead>
+    <tbody><tr><td colspan="4">No monitoring data yet</td></tr></tbody>
+  </table>
+</div>
 <div class="charts">
   <canvas id="cpuChart" width="600" height="300"></canvas>
   <canvas id="memChart" width="600" height="300"></canvas>
 </div>
+
+<style>
+  .monitoring-summary { margin: 8px 0 14px; padding: 12px 14px; border-radius: 8px; background:#edf4ff; color:#244771; }
+  .monitoring-table-wrap { overflow-x:auto; margin-bottom:20px; }
+</style>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -89,6 +101,16 @@
   socket.on('connect_error', function() {
     document.getElementById('statusBanner').innerText = "⏳ Waiting for live connection…";
   });
+
+  function clearLiveRun() {
+    document.getElementById('logPanel').innerHTML = '';
+    document.querySelector('#metricsTable tbody').innerHTML = '<tr><td colspan="6">No data yet</td></tr>';
+    document.getElementById('summaryCard').style.display = 'none';
+    responseChart.data.labels = []; responseChart.data.datasets[0].data = []; responseChart.update();
+    errorChart.data.labels = []; errorChart.data.datasets[0].data = []; errorChart.update();
+  }
+
+  socket.on('run_reset', clearLiveRun);
 
   // JMeter charts
   const responseCtx = document.getElementById('responseChart').getContext('2d');
@@ -197,6 +219,9 @@
           tbody.appendChild(tr);
         });
       }
+      if (snapshot.monitoring) {
+        applyMonitoringSnapshot(snapshot.monitoring.latest || []);
+      }
     } catch (error) {
       // Socket.IO remains the primary live stream; do not replace its data.
     }
@@ -216,6 +241,22 @@
   const cpuChart = new Chart(cpuCtx, { type: 'line', data: { labels: [], datasets: [] } });
   const memChart = new Chart(memCtx, { type: 'line', data: { labels: [], datasets: [] } });
 
+  const monitoringRows = new Map();
+  function renderMonitoringRow(data) {
+    if (!data || !data.server) return;
+    monitoringRows.set(data.server, { ...data, updated: new Date().toLocaleTimeString() });
+    const tbody = document.querySelector('#monitoringTable tbody');
+    tbody.innerHTML = '';
+    monitoringRows.forEach(row => {
+      const tr = document.createElement('tr');
+      [row.server, row.cpu == null ? '—' : Number(row.cpu).toFixed(1), row.mem == null ? '—' : Number(row.mem).toFixed(1) + '%', row.updated].forEach(value => {
+        const td = document.createElement('td'); td.textContent = value; tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    document.getElementById('monitoringSummary').textContent = `Receiving data from ${monitoringRows.size} monitored server${monitoringRows.size === 1 ? '' : 's'}.`;
+  }
+
   function ensureDataset(chart, serverName, label, color) {
     let ds = chart.data.datasets.find(d => d.label === serverName + " " + label);
     if (!ds) {
@@ -228,6 +269,7 @@
   // FIXED: listen for server_metrics without broadcast flag issues
   socket.on('server_metrics', function(data) {
     console.log("Received metrics:", data); // debug log
+    renderMonitoringRow(data);
     const timestamp = new Date().toLocaleTimeString();
     if (!cpuChart.data.labels.includes(timestamp)) {
       cpuChart.data.labels.push(timestamp);
@@ -241,6 +283,10 @@
     cpuChart.update();
     memChart.update();
   });
+
+  function applyMonitoringSnapshot(rows) {
+    (rows || []).forEach(renderMonitoringRow);
+  }
 </script>
 
 {% endblock %}

@@ -1,5 +1,72 @@
 [
   {
+    "report_name": "Live Test run_e9ce81a7",
+    "file_name": "results.jtl",
+    "summary": [
+      {
+        "Transaction": "Add to Cart",
+        "#Samples": 60,
+        "Avg (s)": "1.02",
+        "90th % (s)": "1.31",
+        "95th % (s)": "1.34",
+        "Error %": "0.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Checkout",
+        "#Samples": 60,
+        "Avg (s)": "1.32",
+        "90th % (s)": "1.62",
+        "95th % (s)": "1.68",
+        "Error %": "16.67",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Login",
+        "#Samples": 60,
+        "Avg (s)": "0.60",
+        "90th % (s)": "0.91",
+        "95th % (s)": "0.93",
+        "Error %": "1.67",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Logout",
+        "#Samples": 60,
+        "Avg (s)": "0.55",
+        "90th % (s)": "0.80",
+        "95th % (s)": "0.82",
+        "Error %": "6.67",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "Search Products",
+        "#Samples": 60,
+        "Avg (s)": "0.86",
+        "90th % (s)": "1.16",
+        "95th % (s)": "1.18",
+        "Error %": "5.00",
+        "RAG": "GREEN"
+      },
+      {
+        "Transaction": "View Product",
+        "#Samples": 60,
+        "Avg (s)": "0.70",
+        "90th % (s)": "1.00",
+        "95th % (s)": "1.02",
+        "Error %": "5.00",
+        "RAG": "GREEN"
+      }
+    ],
+    "rag_result": "GREEN",
+    "test_date": "23-09-2026",
+    "test_period": "23-09-2026 13:57:24 to 23-09-2026 13:58:29",
+    "total_duration": "0:01:05.020000",
+    "concurrent_users": 5,
+    "steady_state": "Yes",
+    "timestamp": "2026-09-23T13:00:32.535688"
+  },
+  {
     "report_name": "Test3_Sep23",
     "file_name": "velocitypulse_09_partial_recovery.csv",
     "summary": [

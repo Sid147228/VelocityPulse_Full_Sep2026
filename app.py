@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 import os, json, uuid, subprocess, threading, time, csv
 import pandas as pd
 from datetime import datetime
@@ -530,6 +530,7 @@ def run_test():
             return redirect(url_for("live_progress"))
         test_running = True
         transaction_stats.clear()  # reset metrics
+        socketio.emit("run_reset", {"status": "new test"})
         run_dir = make_run_dir()
 
         jmx_file = request.files.get("jmx_file")
@@ -593,7 +594,8 @@ def live_status():
         "metrics": compute_summary(),
         "monitoring": {
             "active": monitoring_active,
-            "servers": len(monitoring_threads)
+            "servers": len(monitoring_threads),
+            "latest": list(monitoring_latest.values())
         }
     })
 
@@ -802,6 +804,7 @@ from flask import request, jsonify, render_template
 # Monitoring globals
 monitoring_active = False
 monitoring_threads = []
+monitoring_latest = {}
 
 def collect_linux_metrics(host, user, password, name, socketio):
     ssh = paramiko.SSHClient()
@@ -813,8 +816,9 @@ def collect_linux_metrics(host, user, password, name, socketio):
         if len(fields) >= 15:
             cpu = 100 - int(fields[14])   # idle column
             mem = int(fields[3])          # free memory (KB)
-            socketio.emit("server_metrics",
-                          {"server": name, "cpu": cpu, "mem": mem},
+            sample = {"server": name, "cpu": cpu, "mem": mem}
+            monitoring_latest[name] = sample
+            socketio.emit("server_metrics", sample,
     			  namespace="/")
                           
         time.sleep(5)
@@ -823,8 +827,9 @@ def collect_windows_metrics(host, name, socketio):
     while monitoring_active:
         cpu = psutil.cpu_percent(interval=1)
         mem = psutil.virtual_memory().percent
-        socketio.emit("server_metrics",
-                          {"server": name, "cpu": cpu, "mem": mem},
+        sample = {"server": name, "cpu": cpu, "mem": mem}
+        monitoring_latest[name] = sample
+        socketio.emit("server_metrics", sample,
     			  namespace="/")
         time.sleep(5)
 
@@ -835,9 +840,10 @@ def monitor():
 
 @app.route("/start_monitoring", methods=["POST"])
 def start_monitoring():
-    global monitoring_active, monitoring_threads
+    global monitoring_active, monitoring_threads, monitoring_latest
     monitoring_active = True
     monitoring_threads = []
+    monitoring_latest = {}
 
     data = request.get_json(silent=True) or {}
     servers = data.get("servers", [])
@@ -851,7 +857,15 @@ def start_monitoring():
     for srv in servers:
         try:
             os_type = srv.get("os")
-            if os_type == "linux":
+            # localhost is always collected from this machine. Do not try to
+            # SSH to localhost merely because the user selected Linux.
+            if srv.get("host", "").lower() in ["localhost", "127.0.0.1"]:
+                t = threading.Thread(
+                    target=collect_windows_metrics,
+                    args=(srv.get("host"), srv.get("name"), socketio),
+                    daemon=True
+                )
+            elif os_type == "linux":
                 t = threading.Thread(
                     target=collect_linux_metrics,
                     args=(srv.get("host"), srv.get("user"), srv.get("password"), srv.get("name"), socketio),
@@ -881,7 +895,7 @@ def start_monitoring():
 
 @app.route("/stop_monitoring", methods=["POST"])
 def stop_monitoring():
-    global monitoring_active, monitoring_threads
+    global monitoring_active, monitoring_threads, monitoring_latest
     monitoring_active = False
 
     print("🛑 Stopping monitoring...")
@@ -894,6 +908,7 @@ def stop_monitoring():
             print(f"⚠️ Error stopping thread: {e}")
 
     monitoring_threads.clear()
+    monitoring_latest = {}
     print("✅ Monitoring stopped")
 
     return jsonify({"status": "monitoring stopped"})
@@ -903,7 +918,8 @@ def monitor_status():
     # Allow frontend to check if monitoring is active
     return jsonify({
         "active": monitoring_active,
-        "servers": len(monitoring_threads)
+        "servers": len(monitoring_threads),
+        "latest": list(monitoring_latest.values())
     })
 
 

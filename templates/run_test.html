@@ -31,7 +31,15 @@
         </form>
       </div>
     {% else %}
-      <form action="{{ url_for('run_test') }}" method="post" enctype="multipart/form-data" class="run-form">
+      <div class="monitoring-choice">
+        <div>
+          <strong>Server monitoring</strong>
+          <span id="monitoringStatus" class="monitoring-badge">Checking…</span>
+          <p>Monitor CPU and memory during this JMeter run.</p>
+        </div>
+        <a class="run-button run-button--secondary" href="{{ url_for('monitor') }}">Configure monitoring</a>
+      </div>
+      <form id="runForm" action="{{ url_for('run_test') }}" method="post" enctype="multipart/form-data" class="run-form">
         <div class="run-field">
           <label for="jmx_file">JMX test plan <span class="run-required">Required</span></label>
           <input type="file" id="jmx_file" name="jmx_file" accept=".jmx" required>
@@ -70,6 +78,13 @@
   .run-actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
   .run-stop-button { background:#aa2b33; }
   .run-stop-button:hover { background:#87212a; }
+  .run-button--secondary { background:#64748b; }
+  .run-button--secondary:hover { background:#475569; }
+  .monitoring-choice { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:22px; padding:15px 16px; border:1px solid #dbe5f2; border-radius:10px; background:#f8fbff; color:#1f344d; }
+  .monitoring-choice p { margin:4px 0 0; color:#62738a; font-size:.92rem; }
+  .monitoring-badge { display:inline-block; margin-left:8px; padding:3px 8px; border-radius:999px; background:#eef2f7; color:#52647b; font-size:.76rem; font-weight:650; }
+  .monitoring-badge--active { background:#e9f7ef; color:#18643b; }
+  .monitoring-badge--inactive { background:#fff4df; color:#8a5a00; }
   .run-alerts { margin-bottom: 18px; }
   .run-alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; background: #eaf2ff; color: #214677; }
   .run-alert--error { background: #fff0f0; color: #8b1c1c; }
@@ -79,5 +94,29 @@
   .run-status p { margin: 4px 0 0; line-height: 1.45; }
   @media (max-width: 600px) { .run-page { margin: 24px auto; padding: 0 12px; } .run-button { width: 100%; box-sizing: border-box; } }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const status = document.getElementById('monitoringStatus');
+    const form = document.getElementById('runForm');
+    try {
+      const response = await fetch("{{ url_for('monitor_status') }}", { cache: 'no-store' });
+      const data = await response.json();
+      const active = Boolean(data.active && data.servers > 0);
+      status.textContent = active ? `Configured (${data.servers} server${data.servers === 1 ? '' : 's'})` : 'Not configured';
+      status.classList.add(active ? 'monitoring-badge--active' : 'monitoring-badge--inactive');
+      form.addEventListener('submit', event => {
+        if (!active && !window.confirm('No servers added to monitor. Do you want to continue without monitoring?')) {
+          event.preventDefault();
+        }
+      });
+    } catch (error) {
+      status.textContent = 'Status unavailable';
+      form.addEventListener('submit', event => {
+        if (!window.confirm('Monitoring status is unavailable. Do you want to continue without monitoring?')) event.preventDefault();
+      });
+    }
+  });
+</script>
 
 {% endblock %}

@@ -8,10 +8,10 @@
     <div id="serverList"></div>
 
     <div class="actions">
-      <button id="addServerBtn" type="button" class="btn btn-secondary">➕ Add Server</button>
-      <button id="startBtn" type="button" class="btn btn-primary" disabled>▶️ Start Monitoring</button>
-      <button id="stopBtn" type="button" class="btn btn-danger">⏹ Stop Monitoring</button>
-      <a href="{{ url_for('run_test') }}" class="btn btn-info">➡️ Go to Run Test</a>
+      <button id="addServerBtn" type="button" class="monitor-btn monitor-btn--secondary">➕ Add Server</button>
+      <button id="startBtn" type="button" class="monitor-btn monitor-btn--primary" disabled>▶️ Start Monitoring</button>
+      <button id="stopBtn" type="button" class="monitor-btn monitor-btn--danger">⏹ Stop Monitoring</button>
+      <a href="{{ url_for('run_test') }}" class="monitor-btn monitor-btn--info">➡️ Go to Run Test</a>
     </div>
   </form>
 
@@ -22,20 +22,16 @@
 </div>
 
 <style>
-  .card { background:#f9f9f9; border-radius:8px; padding:20px; max-width:900px; margin:30px auto; box-shadow:0 2px 6px rgba(0,0,0,0.15) }
-  .card-title { margin-bottom:20px; color:#2a5298; text-align:center }
-  .actions { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap }
-  .btn-primary, .btn-secondary, .btn-danger, .btn-info {
-    padding:8px 16px; border:none; border-radius:4px; font-weight:bold; cursor:pointer;
-  }
-  .btn-primary { background:#2a5298; color:#fff; }
-  .btn-secondary { background:#7f8c8d; color:#fff; }
-  .btn-danger { background:#c0392b; color:#fff; }
-  .btn-info { background:#2980b9; color:#fff; }
-  .btn-primary:hover { background:#1e3c72 }
-  .btn-secondary:hover { background:#606060 }
-  .btn-danger:hover { background:#96281b }
-  .btn-info:hover { background:#1c5980 }
+  .card { background:#fff; border:1px solid #dce6f2; border-radius:14px; padding:clamp(22px,4vw,36px); max-width:1000px; margin:30px auto; box-shadow:0 12px 32px rgba(19,42,80,.08) }
+  .card-title { margin:0 0 24px; color:#20477f; text-align:center; font-size:1.7rem }
+  .actions { margin-top:24px; display:flex; gap:12px; flex-wrap:wrap; align-items:center }
+  .monitor-btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; box-sizing:border-box; padding:10px 17px; border:0; border-radius:8px; font:inherit; font-weight:700; cursor:pointer; text-decoration:none; transition:transform .15s,background .15s,box-shadow .15s; }
+  .monitor-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 4px 10px rgba(19,42,80,.16); }
+  .monitor-btn:disabled { opacity:.5; cursor:not-allowed; }
+  .monitor-btn--primary { background:#2a5298; color:#fff; }
+  .monitor-btn--secondary { background:#64748b; color:#fff; }
+  .monitor-btn--danger { background:#c0392b; color:#fff; }
+  .monitor-btn--info { background:#1784b8; color:#fff; }
 
   .server-entry { margin:15px 0; padding:12px; border:1px solid #ccc; border-radius:6px; background:#f5f5f5 }
   .server-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
@@ -117,7 +113,7 @@
           <input type="password" name="password" placeholder="password">
         </div>
         <div>
-          <button type="button" class="btn btn-info test-btn">🔍 Test Connection</button>
+          <button type="button" class="monitor-btn monitor-btn--info test-btn">🔍 Test Connection</button>
         </div>
       `;
 
