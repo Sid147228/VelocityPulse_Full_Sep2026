@@ -15,22 +15,29 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
     # Normalize column names consistently
     df.columns = [c.strip() for c in df.columns]
 
-    # ✅ Handle timestamp normalization
-    if 'timeStamp' in df.columns and 'timestamp' not in df.columns:
-        df['timeStamp'] = pd.to_numeric(df['timeStamp'], errors='coerce')
-        df['timestamp'] = pd.to_datetime(df['timeStamp'], unit='ms', errors='coerce')
-    elif 'timestamp' in df.columns:
-        # ensure it's datetime
-        if not pd.api.types.is_datetime64_any_dtype(df['timestamp']):
-            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms', errors='coerce')
-    else:
-        df['timestamp'] = pd.NaT
-
-    # ✅ Elapsed normalization
+    # Elapsed time is required to reproduce JMeter's over-time bucketing,
+    # because JMeter assigns graph points using sample END time.
     if 'elapsed' in df.columns:
         df['elapsed'] = pd.to_numeric(df['elapsed'], errors='coerce')
     else:
         df['elapsed'] = pd.NA
+
+    if 'timeStamp' in df.columns:
+        start_ms = pd.to_numeric(df['timeStamp'], errors='coerce')
+        start_timestamp = pd.to_datetime(start_ms, unit='ms', errors='coerce')
+    elif 'timestamp' in df.columns:
+        if pd.api.types.is_datetime64_any_dtype(df['timestamp']):
+            start_timestamp = df['timestamp']
+        else:
+            numeric_timestamp = pd.to_numeric(df['timestamp'], errors='coerce')
+            if numeric_timestamp.notna().any():
+                start_timestamp = pd.to_datetime(numeric_timestamp, unit='ms', errors='coerce')
+            else:
+                start_timestamp = pd.to_datetime(df['timestamp'], errors='coerce')
+    else:
+        start_timestamp = pd.Series(pd.NaT, index=df.index)
+
+    df['timestamp'] = start_timestamp + pd.to_timedelta(df['elapsed'], unit='ms')
 
     # ✅ Success normalization
     if 'success' in df.columns:
