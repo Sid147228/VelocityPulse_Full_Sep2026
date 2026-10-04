@@ -1,8 +1,59 @@
+import math
+
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
+
+
+def jmeter_percentile(values, percentile):
+    """Match Apache Commons Math Percentile.EstimationType.LEGACY used by JMeter HTML reports.
+
+    JMeter's report generator uses Apache Commons Math's LEGACY estimator:
+      pos = p * (N + 1)
+    where p is in the range 0..1. Values below/above the sample range are
+    clamped to min/max; otherwise the adjacent sorted values are linearly
+    interpolated.
+    """
+    cleaned = []
+    for value in values:
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            continue
+        if math.isnan(numeric):
+            continue
+        cleaned.append(numeric)
+
+    if not cleaned:
+        return None
+
+    cleaned.sort()
+    n = len(cleaned)
+    if n == 1:
+        return cleaned[0]
+
+    p = float(percentile)
+    if p > 1:
+        p = p / 100.0
+    if p < 0 or p > 1:
+        raise ValueError("percentile must be between 0 and 1 (or 0 and 100)")
+
+    pos = p * (n + 1)
+    if pos < 1:
+        return cleaned[0]
+    if pos >= n:
+        return cleaned[-1]
+
+    lower_position = math.floor(pos)
+    fraction = pos - lower_position
+
+    # Apache Commons Math describes positions as 1-based.
+    lower = cleaned[lower_position - 1]
+    upper = cleaned[lower_position]
+    return lower + fraction * (upper - lower)
+
 
 def detect_test_window(file_path):
     """Return the first and last valid JMeter timestamps in epoch milliseconds."""
@@ -16,6 +67,7 @@ def detect_test_window(file_path):
 
     return int(timestamps.min()), int(timestamps.max())
 
+
 def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None, end_time=None, error_sla=2.0):
     df = pd.read_csv(file_path)
 
@@ -28,14 +80,13 @@ def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None
     # Remove rows with missing core fields
     df = df.dropna(subset=['timeStamp', 'elapsed', 'label'])
 
-    # Filter by steady state window if provided and valid
-    if start_time and end_time:
+    # Filter by steady-state window if provided.
+    if start_time is not None and end_time is not None:
         try:
             start_time = int(start_time)
             end_time = int(end_time)
             df = df[(df['timeStamp'] >= start_time) & (df['timeStamp'] <= end_time)]
-        except ValueError:
-            # Skip filtering if inputs are not valid integers
+        except (TypeError, ValueError):
             pass
 
     summary = []
@@ -46,12 +97,14 @@ def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None
         if samples == 0:
             continue
 
-        # Compute metrics in seconds
+        # Match JMeter statistics-summary calculations. Summary percentiles include
+        # all samples (successful and failed); the over-time percentile graph is
+        # success-only and is handled separately in build_report_chart_data().
+        elapsed_values = group['elapsed'].dropna().tolist()
         avg = group['elapsed'].mean() / 1000.0
-        p90 = group['elapsed'].quantile(0.90) / 1000.0
-        p95 = group['elapsed'].quantile(0.95) / 1000.0
+        p90 = jmeter_percentile(elapsed_values, 0.90) / 1000.0
+        p95 = jmeter_percentile(elapsed_values, 0.95) / 1000.0
 
-        # Error percentage across all rows (do not filter successes for timing)
         error_count = (group['success'] != 'true').sum()
         error_pct = 100.0 * error_count / samples
 
@@ -98,7 +151,6 @@ def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None
                 else:
                     rag = "RED"
         else:
-            # Fallback: treat as avg
             metric = avg
             if metric <= green_sla:
                 rag = "GREEN"
@@ -110,19 +162,17 @@ def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None
         summary.append({
             'Transaction': label,
             '#Samples': samples,
-            'Avg (s)': f"{avg:.2f}",
-            '90th % (s)': f"{p90:.2f}",
-            '95th % (s)': f"{p95:.2f}",
-            'Error %': f"{error_pct:.2f}",
+            'Avg (s)': f"{avg:.4f}",
+            '90th % (s)': f"{p90:.4f}",
+            '95th % (s)': f"{p95:.4f}",
+            'Error %': f"{error_pct:.4f}",
             'RAG': rag
         })
 
-    # Overall test RAG
     test_rag = 'GREEN'
     if any(row['RAG'] == 'RED' for row in summary):
         test_rag = 'RED'
     elif any(row['RAG'] == 'AMBER' for row in summary):
         test_rag = 'AMBER'
 
-    # ✅ Removed internal generate_graphs call
     return summary, test_rag
