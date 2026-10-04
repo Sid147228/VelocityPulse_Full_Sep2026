@@ -505,9 +505,15 @@ def build_single_report_pdf(report, overview, static_root="static"):
     if observations:
         story.extend([Spacer(1, 4 * mm), Paragraph("Performance Observations", styles["section"])])
         for observation in observations:
+            category = str(observation.get("category") or "Finding")
             title = str(observation.get("title") or "Observation")
             text = str(observation.get("text") or "")
-            story.append(Paragraph(f"<b>{title}</b> — {text}", styles["body"]))
+            story.append(
+                Paragraph(
+                    f"<b>{category} · {title}</b> — {text}",
+                    styles["body"],
+                )
+            )
             story.append(Spacer(1, 1.5 * mm))
 
     doc.build(story)
