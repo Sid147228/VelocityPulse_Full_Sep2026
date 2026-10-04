@@ -599,7 +599,6 @@ def analyze():
         test_date = start_dt.strftime("%d-%m-%Y")
         test_period = f"{start_dt.strftime('%d-%m-%Y %H:%M:%S')} to {end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
         total_duration = str(end_dt - start_dt)
-        concurrent_users = int(df["allThreads"].max()) if "allThreads" in df.columns else None
         if steady_start_ms is not None and steady_end_ms is not None:
             steady_start_dt = datetime.fromtimestamp(steady_start_ms / 1000.0)
             steady_end_dt = datetime.fromtimestamp(steady_end_ms / 1000.0)
@@ -619,6 +618,12 @@ def analyze():
             (df["timeStamp"] >= steady_start_ms)
             & (df["timeStamp"] <= steady_end_ms)
         ].copy()
+
+    concurrent_users = (
+        int(df["allThreads"].max())
+        if "allThreads" in df.columns and not df.empty
+        else None
+    )
 
     for row in filtered:
         for key in ["Avg (s)", "90th % (s)", "95th % (s)", "Error %"]:
