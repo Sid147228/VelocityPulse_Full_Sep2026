@@ -22,6 +22,7 @@ from generate_TestResult import evaluate_sla
 from generate_graphs import generate_graphs
 from generate_transaction_progress import generate_transaction_progress
 from generate_rag_pie import generate_rag_pie
+from pdf_export import build_single_report_pdf, build_compare_report_pdf
 
 from flask_socketio import SocketIO
 from collections import defaultdict, deque
@@ -1117,15 +1118,12 @@ def export_report_pdf(report_index):
             "observations",
             build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
         )
-        rendered = render_template(
-            "report.html",
-            report_index=report_index,
-            is_pdf=True,
-            overview=report_overview(report_data),
-            **report_data,
+        overview = report_overview(report_data)
+        pdf = build_single_report_pdf(
+            report_data,
+            overview,
+            static_root=app.static_folder or "static",
         )
-        from weasyprint import HTML
-        pdf = HTML(string=rendered, base_url=request.url_root).write_pdf()
         response = make_response(pdf)
         response.headers["Content-Type"] = "application/pdf"
         response.headers["Content-Disposition"] = f"inline; filename=report_{report_index}.pdf"
@@ -1150,23 +1148,17 @@ def export_compare_pdf():
         request.args.getlist("transactions") or None,
     )
 
-    rendered = render_template(
-        "compare_result.html",
-        r1=earlier,
-        r2=later,
-        metric=metric,
-        all_txns=all_txns,
-        selected_txns=selected_txns,
-        comparisons=comparisons,
-        observations=observations,
-        overview1=report_overview(earlier),
-        overview2=report_overview(later),
-        compare_progress=None,
-        is_pdf=True,
+    overview1 = report_overview(earlier)
+    overview2 = report_overview(later)
+    pdf = build_compare_report_pdf(
+        earlier,
+        later,
+        overview1,
+        overview2,
+        metric,
+        comparisons,
+        observations,
     )
-
-    from weasyprint import HTML
-    pdf = HTML(string=rendered, base_url=request.url_root).write_pdf()
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
     response.headers["Content-Disposition"] = "inline; filename=compare_report.pdf"
