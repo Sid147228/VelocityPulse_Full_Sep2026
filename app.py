@@ -24,7 +24,7 @@ from generate_transaction_progress import generate_transaction_progress
 from generate_rag_pie import generate_rag_pie
 
 from flask_socketio import SocketIO
-from collections import defaultdict
+from collections import defaultdict, deque
 import numpy as np
 
 # Flask app and Socket.IO
@@ -862,7 +862,8 @@ def compare():
 
 @app.context_processor
 def inject_test_state():
-    return {"test_running": test_running}
+    process_alive = bool(current_process and current_process.poll() is None)
+    return {"test_running": bool(test_running and process_alive)}
 
 
 @app.route("/trend")
@@ -1006,6 +1007,8 @@ def baseline():
 test_running = False
 current_process = None  # track JMeter process globally
 current_run_dir = None
+last_test_summary = None
+live_progress_points = deque(maxlen=500)
 
 def _latest_run_dir():
     candidates = []
@@ -1026,15 +1029,49 @@ def make_run_dir():
     os.makedirs(run_dir, exist_ok=True)
     return run_dir
 
+
+def _read_recent_lines(path, max_lines=200):
+    if not path or not os.path.exists(path):
+        return []
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            return [line.rstrip("\r\n") for line in deque(handle, maxlen=max_lines)]
+    except OSError:
+        return []
+
+
+def _current_results_available():
+    if not current_run_dir:
+        return False
+    results_path = os.path.join(current_run_dir, "results.jtl")
+    try:
+        return os.path.isfile(results_path) and os.path.getsize(results_path) > 0
+    except OSError:
+        return False
+
+
+def _current_log_snapshot():
+    if not current_run_dir:
+        return []
+    jmeter_log = os.path.join(current_run_dir, "jmeter.log")
+    process_log = os.path.join(current_run_dir, "jmeter_process.log")
+    lines = _read_recent_lines(jmeter_log, max_lines=200)
+    if lines:
+        return lines
+    return _read_recent_lines(process_log, max_lines=200)
+
+
 @app.route("/run_test", methods=["GET", "POST"])
 def run_test():
-    global test_running, current_process, current_run_dir
+    global test_running, current_process, current_run_dir, last_test_summary
     if request.method == "POST":
         if test_running and current_process and current_process.poll() is None:
             flash("A JMeter test is already running. Open Live Progress to monitor it.", "warning")
             return redirect(url_for("live_progress"))
         test_running = True
-        transaction_stats.clear()  # reset metrics
+        last_test_summary = None
+        transaction_stats.clear()
+        live_progress_points.clear()
         socketio.emit("run_reset", {"status": "new test"})
         run_dir = make_run_dir()
         current_run_dir = run_dir
@@ -1071,10 +1108,17 @@ def run_test():
             current_process = start_jmeter(jmx_path, saved_data, results_file, jmeter_log)
 
             if current_process.poll() is not None and current_process.returncode != 0:
-                err = current_process.stderr.read().decode(errors="replace")
+                process_log = getattr(current_process, "velocitypulse_output_log", None)
+                error_lines = _read_recent_lines(process_log, max_lines=40)
+                if not error_lines:
+                    error_lines = _read_recent_lines(jmeter_log, max_lines=40)
                 test_running = False
                 current_process = None
-                flash(f"JMeter failed to start: {err or 'Unknown JMeter error'}", "error")
+                flash(
+                    "JMeter failed to start: "
+                    + ("\n".join(error_lines) if error_lines else "Unknown JMeter error"),
+                    "error",
+                )
                 return redirect(url_for("run_test"))
 
             threading.Thread(target=tail_results, args=(results_file,), daemon=True).start()
@@ -1096,9 +1140,30 @@ def start_jmeter(jmx_path, data_files, results_file, jmeter_log):
         r"C:\apache-jmeter-5.6.3\apache-jmeter-5.6.3\bin\jmeter.bat",
     )
     cmd = [jmeter_exe, "-n", "-t", jmx_path, "-l", results_file, "-j", jmeter_log]
-    for idx, df in enumerate(data_files, start=1):
-        cmd.extend(["-J" + f"datafile{idx}", df])
-    return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    for idx, data_file in enumerate(data_files, start=1):
+        cmd.extend([f"-Jdatafile{idx}", data_file])
+
+    process_log = os.path.join(os.path.dirname(jmeter_log), "jmeter_process.log")
+    output_handle = open(process_log, "ab", buffering=0)
+
+    is_windows_batch = (
+        os.name == "nt"
+        and str(jmeter_exe).lower().endswith((".bat", ".cmd"))
+    )
+    launch_cmd = subprocess.list2cmdline(cmd) if is_windows_batch else cmd
+
+    try:
+        process = subprocess.Popen(
+            launch_cmd,
+            stdout=output_handle,
+            stderr=subprocess.STDOUT,
+            shell=is_windows_batch,
+        )
+    finally:
+        output_handle.close()
+
+    process.velocitypulse_output_log = process_log
+    return process
 
 @app.route("/live_progress")
 def live_progress():
@@ -1108,10 +1173,16 @@ def live_progress():
 def live_status():
     """HTTP fallback and page-refresh snapshot for live progress."""
     process_alive = bool(current_process and current_process.poll() is None)
+    running = bool(test_running and process_alive)
     return jsonify({
-        "running": bool(test_running and process_alive),
-        "test_running": bool(test_running),
+        "running": running,
+        "test_running": running,
+        "completed": bool(last_test_summary and not running),
+        "summary": last_test_summary,
+        "results_available": _current_results_available(),
         "metrics": compute_summary(),
+        "progress": list(live_progress_points),
+        "logs": _current_log_snapshot(),
         "monitoring": {
             "active": bool(monitoring_active and any(thread.is_alive() for thread in monitoring_threads)),
             "servers": sum(1 for thread in monitoring_threads if thread.is_alive()),
@@ -1155,7 +1226,7 @@ def follow_file(f):
         yield line
 
 def tail_results(results_file):
-    global test_running, current_process
+    global test_running, current_process, last_test_summary
     start_time = time.time()
     wait_until = time.time() + 30
     while not os.path.exists(results_file) and time.time() < wait_until:
@@ -1164,16 +1235,15 @@ def tail_results(results_file):
     if not os.path.exists(results_file):
         test_running = False
         current_process = None
-        socketio.emit(
-            "test_complete",
-            {
-                "duration": "0 sec",
-                "start": "",
-                "end": "",
-                "users": "N/A",
-                "metrics": [],
-            },
-        )
+        last_test_summary = {
+            "duration": "0 sec",
+            "start": "",
+            "end": "",
+            "users": "N/A",
+            "metrics": [],
+            "error": "JMeter did not create results.jtl.",
+        }
+        socketio.emit("test_complete", last_test_summary)
         return
 
     last_emit = 0.0
@@ -1194,17 +1264,24 @@ def tail_results(results_file):
                     header_map = {name: index for index, name in enumerate(headers)}
                     required = {"timeStamp", "elapsed", "label", "success"}
                     if not required.issubset(header_map):
-                        socketio.emit(
-                            "log_update",
-                            {
-                                "line": (
-                                    "VelocityPulse live parser: JTL header is missing "
-                                    + ", ".join(sorted(required - set(header_map)))
-                                )
-                            },
+                        error_message = (
+                            "VelocityPulse live parser: JTL header is missing "
+                            + ", ".join(sorted(required - set(header_map)))
                         )
+                        socketio.emit("log_update", {"line": error_message})
+                        while current_process and current_process.poll() is None:
+                            time.sleep(0.5)
                         test_running = False
                         current_process = None
+                        last_test_summary = {
+                            "duration": f"{round(time.time() - start_time, 2)} sec",
+                            "start": time.strftime("%H:%M:%S", time.localtime(start_time)),
+                            "end": time.strftime("%H:%M:%S", time.localtime(time.time())),
+                            "users": "N/A",
+                            "metrics": [],
+                            "error": error_message,
+                        }
+                        socketio.emit("test_complete", last_test_summary)
                         return
                     continue
 
@@ -1242,16 +1319,16 @@ def tail_results(results_file):
                     else 0.0
                 )
 
+                progress_point = {
+                    "timestamp": timestamp,
+                    "response_time": response_time,
+                    "error_rate": round(cumulative_error_rate, 4),
+                }
+                live_progress_points.append(progress_point)
+
                 now = time.time()
                 if now - last_emit >= 0.5:
-                    socketio.emit(
-                        "progress_update",
-                        {
-                            "timestamp": timestamp,
-                            "response_time": response_time,
-                            "error_rate": round(cumulative_error_rate, 4),
-                        },
-                    )
+                    socketio.emit("progress_update", progress_point)
                     socketio.emit("metrics_update", compute_summary())
                     last_emit = now
                 continue
@@ -1278,6 +1355,7 @@ def tail_results(results_file):
     }
     test_running = False
     current_process = None
+    last_test_summary = summary
     socketio.emit("metrics_update", summary["metrics"])
     socketio.emit("test_complete", summary)
 
