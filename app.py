@@ -218,6 +218,84 @@ def build_trend_observations(txn_trends):
     if stable:
         observations.append({"type": "info", "title": "Stable transactions", "text": f"{len(stable)} transaction(s) changed by no more than 10% between the oldest and latest test."})
     return observations
+ALLOWED_COMPARE_METRICS = {"Avg (s)", "90th % (s)", "95th % (s)", "Error %"}
+
+
+def build_comparison_data(r1, r2, metric="Avg (s)", selected_txns=None):
+    if metric not in ALLOWED_COMPARE_METRICS:
+        metric = "Avg (s)"
+
+    summary1 = r1.get("summary", [])
+    summary2 = r2.get("summary", [])
+    all_txns = sorted(
+        {row.get("Transaction") for row in summary1 if row.get("Transaction")}
+        | {row.get("Transaction") for row in summary2 if row.get("Transaction")}
+    )
+    txn_filter = selected_txns or all_txns
+
+    comparisons = []
+    for txn in txn_filter:
+        v1 = next(
+            (row.get(metric) for row in summary1 if row.get("Transaction") == txn),
+            None,
+        )
+        v2 = next(
+            (row.get(metric) for row in summary2 if row.get("Transaction") == txn),
+            None,
+        )
+        if v1 is None or v2 is None:
+            continue
+        try:
+            v1, v2 = float(v1), float(v2)
+        except (TypeError, ValueError):
+            continue
+
+        diff = v2 - v1
+        if abs(diff) < 0.001:
+            status, color = "No Change", "grey"
+        elif diff > 0:
+            status, color = "Degraded", "red"
+        else:
+            status, color = "Improved", "green"
+
+        comparisons.append({
+            "transaction": txn,
+            "v1": round(v1, 4),
+            "v2": round(v2, 4),
+            "diff": round(diff, 4),
+            "status": status,
+            "color": color,
+        })
+
+    observations = []
+    degraded = [row for row in comparisons if row["status"] == "Degraded"]
+    improved = [row for row in comparisons if row["status"] == "Improved"]
+    if degraded:
+        observations.append(f"{len(degraded)} transaction(s) show degradation.")
+    if improved:
+        observations.append(f"{len(improved)} transaction(s) improved.")
+    if not observations:
+        observations.append("Performance is stable across compared reports.")
+
+    return metric, all_txns, txn_filter, comparisons, observations
+
+
+def _resolve_report_pair(reports, ids):
+    if len(ids) != 2:
+        raise ValueError("Exactly two reports are required")
+    try:
+        indexes = [int(value) for value in ids]
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Report IDs must be integers") from exc
+    if any(index < 0 or index >= len(reports) for index in indexes):
+        raise IndexError("Report selection is out of range")
+    first, second = reports[indexes[0]], reports[indexes[1]]
+    return tuple(sorted(
+        (first, second),
+        key=lambda report: report.get("timestamp") or "",
+    ))
+
+
 @app.route("/about")
 def about():
     try:
@@ -651,43 +729,35 @@ def export_report_pdf(report_index):
 @app.route("/compare/pdf")
 def export_compare_pdf():
     ids = request.args.getlist("report_ids")
-    if len(ids) != 2:
-        flash("Please select two reports to compare.")
-        return redirect(url_for("history"))
-
     reports = load_history()
     try:
-        r1, r2 = reports[int(ids[0])], reports[int(ids[1])]
-    except (IndexError, ValueError):
-        flash("Invalid report selection.")
-        return redirect(url_for("history"))
+        earlier, later = _resolve_report_pair(reports, ids)
+    except (ValueError, IndexError):
+        flash("Please select two valid reports to compare.")
+        return redirect(url_for("select_compare"))
 
-    metric = request.args.get("metric", "Avg (s)")
-    all_txns = sorted({row["Transaction"] for row in r1["summary"]} |
-                      {row["Transaction"] for row in r2["summary"]})
-    selected_txns = request.args.getlist("transactions") or all_txns
+    metric, all_txns, selected_txns, comparisons, observations = build_comparison_data(
+        earlier,
+        later,
+        request.args.get("metric", "Avg (s)"),
+        request.args.getlist("transactions") or None,
+    )
 
-    for r in (r1, r2):
-        for row in r.get("summary", []):
-            for key in ["Avg (s)", "90th % (s)", "95th % (s)", "Min (s)", "Max (s)", "Error %"]:
-                if key in row and row[key] is not None:
-                    try:
-                        row[key] = float(row[key])
-                    except (ValueError, TypeError):
-                        row[key] = None
+    rendered = render_template(
+        "compare_result.html",
+        r1=earlier,
+        r2=later,
+        metric=metric,
+        all_txns=all_txns,
+        selected_txns=selected_txns,
+        comparisons=comparisons,
+        observations=observations,
+        compare_progress=None,
+        is_pdf=True,
+    )
 
-    comparisons, observations = [], []
-    html = render_template("compare_result.html",
-                           r1=r1, r2=r2,
-                           metric=metric,
-                           all_txns=all_txns,
-                           selected_txns=selected_txns,
-                           comparisons=comparisons,
-                           observations=observations,
-                           compare_progress=None)
-
-    import pdfkit
-    pdf = pdfkit.from_string(html, False)
+    from weasyprint import HTML
+    pdf = HTML(string=rendered, base_url=request.url_root).write_pdf()
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
     response.headers["Content-Disposition"] = "inline; filename=compare_report.pdf"
@@ -701,67 +771,30 @@ def select_compare():
 @app.route("/compare")
 def compare():
     ids = request.args.getlist("report_ids")
-    if len(ids) != 2:
-        flash("Please select exactly 2 reports.")
+    reports = load_history()
+    try:
+        earlier, later = _resolve_report_pair(reports, ids)
+    except (ValueError, IndexError):
+        flash("Please select exactly two valid reports.")
         return redirect(url_for("select_compare"))
 
-    reports = load_history()
-    r1, r2 = reports[int(ids[0])], reports[int(ids[1])]
+    metric, all_txns, txn_filter, comparisons, observations = build_comparison_data(
+        earlier,
+        later,
+        request.args.get("metric", "Avg (s)"),
+        request.args.getlist("transactions") or None,
+    )
 
-    earlier, later = sorted([r1, r2], key=lambda r: r.get("timestamp"))
-
-    all_txns = sorted({row["Transaction"] for row in earlier["summary"]} |
-                      {row["Transaction"] for row in later["summary"]})
-
-    metric = request.args.get("metric", "Avg (s)")
-    txn_filter = request.args.getlist("transactions") or all_txns
-
-    comparisons = []
-    for txn in txn_filter:
-        v1 = next((row.get(metric) for row in earlier["summary"] if row["Transaction"] == txn), None)
-        v2 = next((row.get(metric) for row in later["summary"] if row["Transaction"] == txn), None)
-        if v1 is None or v2 is None:
-            continue
-        try:
-            v1, v2 = float(v1), float(v2)
-        except (ValueError, TypeError):
-            continue
-
-        diff = v2 - v1
-        if abs(diff) < 0.001:
-            status, color = "No Change", "grey"
-        elif diff > 0:
-            status, color = "Degraded", "red"
-        else:
-            status, color = "Improved", "green"
-
-        comparisons.append({
-            "transaction": txn,
-            "v1": round(v1, 2),
-            "v2": round(v2, 2),
-            "diff": round(diff, 2),
-            "status": status,
-            "color": color
-        })
-
-    observations = []
-    degraded = [c for c in comparisons if c["status"] == "Degraded"]
-    improved = [c for c in comparisons if c["status"] == "Improved"]
-    if degraded:
-        observations.append(f"{len(degraded)} transaction(s) show degradation.")
-    if improved:
-        observations.append(f"{len(improved)} transaction(s) improved.")
-    if not observations:
-        observations.append("Performance is stable across compared reports.")
-
-    return render_template("compare.html",
-                           r1=earlier,
-                           r2=later,
-                           metric=metric,
-                           comparisons=comparisons,
-                           observations=observations,
-                           all_txns=all_txns,
-                           selected_txns=txn_filter)
+    return render_template(
+        "compare.html",
+        r1=earlier,
+        r2=later,
+        metric=metric,
+        comparisons=comparisons,
+        observations=observations,
+        all_txns=all_txns,
+        selected_txns=txn_filter,
+    )
 
 @app.context_processor
 def inject_test_state():
@@ -874,12 +907,38 @@ def baseline():
             warnings.append(f"No valid data for transaction '{txn}' across last {n} reports")
 
     labels = list(baselines.keys())
+    avg_values = [baselines[label]["avg"] for label in labels]
+    p90_values = [baselines[label]["p90"] for label in labels]
+    avg_green_values = [
+        round(value * 1.2, 3) if value is not None else None
+        for value in avg_values
+    ]
+    avg_amber_values = [
+        round(value * 1.5, 3) if value is not None else None
+        for value in avg_values
+    ]
+    p90_green_values = [
+        round(value * 1.2, 3) if value is not None else None
+        for value in p90_values
+    ]
+    p90_amber_values = [
+        round(value * 1.5, 3) if value is not None else None
+        for value in p90_values
+    ]
 
-    return render_template("baseline.html",
-                           baselines=baselines,
-                           n=n,
-                           warnings=warnings,
-                           labels=labels)
+    return render_template(
+        "baseline.html",
+        baselines=baselines,
+        n=n,
+        warnings=warnings,
+        labels=labels,
+        avg_values=avg_values,
+        p90_values=p90_values,
+        avg_green_values=avg_green_values,
+        avg_amber_values=avg_amber_values,
+        p90_green_values=p90_green_values,
+        p90_amber_values=p90_amber_values,
+    )
 test_running = False
 current_process = None  # track JMeter process globally
 current_run_dir = None
@@ -948,8 +1007,10 @@ def run_test():
             current_process = start_jmeter(jmx_path, saved_data, results_file, jmeter_log)
 
             if current_process.poll() is not None and current_process.returncode != 0:
-                err = current_process.stderr.read().decode()
-                flash(f"❌ Error starting JMeter: {err}", "error")
+                err = current_process.stderr.read().decode(errors="replace")
+                test_running = False
+                current_process = None
+                flash(f"JMeter failed to start: {err or 'Unknown JMeter error'}", "error")
                 return redirect(url_for("run_test"))
 
             threading.Thread(target=tail_results, args=(results_file,), daemon=True).start()
@@ -988,8 +1049,8 @@ def live_status():
         "test_running": bool(test_running),
         "metrics": compute_summary(),
         "monitoring": {
-            "active": monitoring_active,
-            "servers": len(monitoring_threads),
+            "active": bool(monitoring_active and any(thread.is_alive() for thread in monitoring_threads)),
+            "servers": sum(1 for thread in monitoring_threads if thread.is_alive()),
             "latest": list(monitoring_latest.values())
         }
     })
@@ -1193,9 +1254,15 @@ def stop_test():
     if current_process and current_process.poll() is None:
         current_process.terminate()
         try:
+            current_process.wait(timeout=3)
+        except subprocess.TimeoutExpired:
             current_process.kill()
+            current_process.wait(timeout=2)
         except Exception:
-            pass
+            try:
+                current_process.kill()
+            except Exception:
+                pass
         current_process = None
         test_running = False
         socketio.emit("test_stopped", {"status": "stopped", "metrics": compute_summary()})
