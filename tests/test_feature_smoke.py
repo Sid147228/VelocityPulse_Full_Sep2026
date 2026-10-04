@@ -484,6 +484,32 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertTrue(payload["monitoring"]["active"])
         self.assertEqual(payload["monitoring"]["servers"], 1)
 
+    def test_upload_rejects_partial_jmeter_schema_without_success_banner(self):
+        with tempfile.TemporaryDirectory() as upload_dir:
+            partial_csv = (
+                b"timeStamp,responseCode,responseMessage\n"
+                b"1000,200,OK\n"
+                b"2000,200,OK\n"
+            )
+            with patch.object(velocity_app, "UPLOAD_FOLDER", upload_dir):
+                response = self.client.post(
+                    "/upload",
+                    data={
+                        "file": (io.BytesIO(partial_csv), "partial.csv"),
+                    },
+                    content_type="multipart/form-data",
+                    follow_redirects=True,
+                )
+
+            self.assertEqual(response.status_code, 200)
+            html = response.get_data(as_text=True)
+            self.assertIn("Missing required JMeter column", html)
+            self.assertIn("elapsed", html)
+            self.assertIn("label", html)
+            self.assertIn("success", html)
+            self.assertNotIn("uploaded successfully", html)
+            self.assertFalse(os.path.exists(os.path.join(upload_dir, "partial.csv")))
+
     def test_analyze_filters_charts_and_rag_to_selected_transactions_and_metrics(self):
         fixture = (
             os.path.dirname(__file__)
