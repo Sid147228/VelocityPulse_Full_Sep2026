@@ -99,23 +99,44 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const status = document.getElementById('monitoringStatus');
     const form = document.getElementById('runForm');
+
+    // When a test is already running these controls are intentionally absent.
+    if (!status || !form) return;
+
+    let monitoringAvailable = false;
     try {
       const response = await fetch("{{ url_for('monitor_status') }}", { cache: 'no-store' });
+      if (!response.ok) throw new Error('Monitoring status request failed');
       const data = await response.json();
-      const active = Boolean(data.active && data.servers > 0);
-      status.textContent = active ? `Configured (${data.servers} server${data.servers === 1 ? '' : 's'})` : 'Not configured';
-      status.classList.add(active ? 'monitoring-badge--active' : 'monitoring-badge--inactive');
-      form.addEventListener('submit', event => {
-        if (!active && !window.confirm('No servers added to monitor. Do you want to continue without monitoring?')) {
-          event.preventDefault();
-        }
-      });
+      monitoringAvailable = Boolean(data.active && data.servers > 0);
+      status.textContent = monitoringAvailable
+        ? `Configured (${data.servers} server${data.servers === 1 ? '' : 's'})`
+        : 'Not configured';
+      status.classList.add(
+        monitoringAvailable ? 'monitoring-badge--active' : 'monitoring-badge--inactive'
+      );
     } catch (error) {
       status.textContent = 'Status unavailable';
-      form.addEventListener('submit', event => {
-        if (!window.confirm('Monitoring status is unavailable. Do you want to continue without monitoring?')) event.preventDefault();
-      });
+      status.classList.add('monitoring-badge--inactive');
     }
+
+    form.addEventListener('submit', event => {
+      if (!monitoringAvailable) {
+        const message = status.textContent === 'Status unavailable'
+          ? 'Monitoring status is unavailable. Do you want to continue without monitoring?'
+          : 'No servers added to monitor. Do you want to continue without monitoring?';
+        if (!window.confirm(message)) {
+          event.preventDefault();
+          return;
+        }
+      }
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Starting test…';
+      }
+    });
   });
 </script>
 
