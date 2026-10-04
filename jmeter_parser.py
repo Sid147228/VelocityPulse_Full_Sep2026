@@ -172,10 +172,13 @@ def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None
         summary.append({
             'Transaction': label,
             '#Samples': samples,
-            'Avg (s)': f"{avg:.4f}",
-            '90th % (s)': f"{p90:.4f}",
-            '95th % (s)': f"{p95:.4f}",
-            'Error %': f"{error_pct:.4f}",
+            # Preserve full precision internally. Formatting belongs in the UI;
+            # rounding here can change the value after converting seconds back
+            # to JMeter's millisecond display.
+            'Avg (s)': float(avg),
+            '90th % (s)': float(p90),
+            '95th % (s)': float(p95),
+            'Error %': float(error_pct),
             'RAG': rag
         })
 
