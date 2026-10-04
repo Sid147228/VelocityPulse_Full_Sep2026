@@ -14,7 +14,7 @@
         <h2 id="file-upload-title">Upload result file</h2>
       </div>
       {% if uploaded_file %}
-        <span class="status-pill status-pill--success">✓ File loaded</span>
+        <span class="status-pill status-pill--success">✓ JMeter result loaded</span>
       {% endif %}
     </div>
 
@@ -22,9 +22,9 @@
       <div class="field-grow">
         <label for="resultFile">JMeter CSV / JTL file</label>
         <input id="resultFile" type="file" name="file" accept=".csv,.jtl" required>
-        <small>Upload the JMeter result file containing the <code>timeStamp</code> column.</small>
+        <small>Upload a JMeter <strong>.csv</strong> or <strong>.jtl</strong> result file.</small>
       </div>
-      <button type="submit" class="primary-button">{{ 'Replace file' if uploaded_file else 'Upload file' }}</button>
+      <button type="submit" class="primary-button">Upload CSV/JTL</button>
     </form>
   </section>
 
