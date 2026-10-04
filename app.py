@@ -1,9 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
-import os, json, uuid, subprocess, threading, time, csv
+import os, json, uuid, subprocess, threading, time, csv, secrets
+from urllib.parse import urlparse, urlencode
+
+import msal
 import pandas as pd
+from dotenv import load_dotenv
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from version import __version__, __build__, __codename__
+
+load_dotenv()
 
 # Helpers
 from jmeter_parser import parse_jmeter_csv
@@ -18,13 +24,74 @@ import numpy as np
 
 # Flask app and Socket.IO
 app = Flask(__name__)
-app.secret_key = "velocitypulse_secret"
+app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true",
+)
 socketio = SocketIO(app)
 
 UPLOAD_FOLDER = "uploads"
 HISTORY_FILE = "static/reports/history.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
+
+# Microsoft identity platform configuration.
+MICROSOFT_CLIENT_ID = os.getenv("MICROSOFT_CLIENT_ID", "").strip()
+MICROSOFT_CLIENT_SECRET = os.getenv("MICROSOFT_CLIENT_SECRET", "").strip()
+MICROSOFT_TENANT_ID = os.getenv("MICROSOFT_TENANT_ID", "common").strip() or "common"
+MICROSOFT_AUTHORITY = f"https://login.microsoftonline.com/{MICROSOFT_TENANT_ID}"
+MICROSOFT_REDIRECT_URI = os.getenv(
+    "MICROSOFT_REDIRECT_URI",
+    "http://localhost:5000/auth/callback",
+).strip()
+MICROSOFT_POST_LOGOUT_REDIRECT_URI = os.getenv(
+    "MICROSOFT_POST_LOGOUT_REDIRECT_URI",
+    "http://localhost:5000/login",
+).strip()
+MICROSOFT_SCOPES = [
+    scope
+    for scope in os.getenv("MICROSOFT_SCOPES", "User.Read").replace(",", " ").split()
+    if scope
+]
+
+def microsoft_auth_configured():
+    return bool(MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET and MICROSOFT_TENANT_ID)
+
+def build_msal_app():
+    if not microsoft_auth_configured():
+        return None
+    return msal.ConfidentialClientApplication(
+        MICROSOFT_CLIENT_ID,
+        authority=MICROSOFT_AUTHORITY,
+        client_credential=MICROSOFT_CLIENT_SECRET,
+    )
+
+def is_safe_local_redirect(target):
+    if not target:
+        return False
+    parsed = urlparse(target)
+    return not parsed.scheme and not parsed.netloc and target.startswith("/")
+
+@app.before_request
+def require_microsoft_authentication():
+    """Require Microsoft sign-in for all application routes."""
+    public_endpoints = {"login", "microsoft_login", "auth_callback", "logout", "static"}
+    if request.endpoint in public_endpoints or request.path.startswith("/socket.io/"):
+        return None
+
+    if "user_profile" not in session:
+        if request.method == "GET" and is_safe_local_redirect(request.full_path.rstrip("?")):
+            session["post_login_redirect"] = request.full_path.rstrip("?")
+        return redirect(url_for("login"))
+    return None
+
+@socketio.on("connect")
+def authenticated_socket_connection(auth=None):
+    # Reject unauthenticated real-time connections.
+    if "user_profile" not in session:
+        return False
 
 # Inject version info into templates
 @app.context_processor
@@ -252,21 +319,104 @@ def about():
 def home():
     return redirect(url_for("upload"))
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
-    if request.method == "POST":
-        user = request.form.get("username")
-        if user:
-            session["user"] = user
-            return redirect(url_for("upload"))
-        else:
-            flash("Username required")
-    return render_template("login.html")
+    if "user_profile" in session:
+        return redirect(url_for("upload"))
+
+    error = request.args.get("error")
+    return render_template(
+        "login.html",
+        error=error,
+        auth_configured=microsoft_auth_configured(),
+    )
+
+@app.route("/login/microsoft")
+def microsoft_login():
+    if not microsoft_auth_configured():
+        flash(
+            "Microsoft authentication is not configured. Set the Microsoft Entra environment variables first.",
+            "error",
+        )
+        return redirect(url_for("login"))
+
+    requested_next = request.args.get("next")
+    if is_safe_local_redirect(requested_next):
+        session["post_login_redirect"] = requested_next
+
+    msal_app = build_msal_app()
+    flow = msal_app.initiate_auth_code_flow(
+        scopes=MICROSOFT_SCOPES,
+        redirect_uri=MICROSOFT_REDIRECT_URI,
+    )
+    if "auth_uri" not in flow:
+        flash(
+            flow.get("error_description") or "Unable to start Microsoft sign-in.",
+            "error",
+        )
+        return redirect(url_for("login"))
+
+    session["auth_flow"] = flow
+    return redirect(flow["auth_uri"])
+
+@app.route("/auth/callback")
+def auth_callback():
+    if not microsoft_auth_configured():
+        return redirect(url_for("login", error="Microsoft authentication is not configured."))
+
+    flow = session.get("auth_flow")
+    if not flow:
+        return redirect(url_for("login", error="Your sign-in session expired. Please try again."))
+
+    try:
+        result = build_msal_app().acquire_token_by_auth_code_flow(flow, request.args)
+    except ValueError:
+        # MSAL raises ValueError when the state/flow validation fails.
+        session.pop("auth_flow", None)
+        return redirect(url_for("login", error="Microsoft sign-in validation failed. Please try again."))
+
+    session.pop("auth_flow", None)
+
+    if "error" in result:
+        message = result.get("error_description") or result.get("error") or "Microsoft sign-in failed."
+        return redirect(url_for("login", error=message))
+
+    claims = result.get("id_token_claims") or {}
+    display_name = (
+        claims.get("name")
+        or claims.get("preferred_username")
+        or claims.get("email")
+        or "Microsoft user"
+    )
+    email = (
+        claims.get("preferred_username")
+        or claims.get("email")
+        or claims.get("upn")
+        or ""
+    )
+
+    session.clear()
+    session["user"] = display_name  # backward compatibility with existing templates
+    session["user_profile"] = {
+        "name": display_name,
+        "email": email,
+        "tenant_id": claims.get("tid"),
+        "object_id": claims.get("oid") or claims.get("sub"),
+    }
+
+    destination = session.pop("post_login_redirect", None)
+    if not is_safe_local_redirect(destination):
+        destination = url_for("upload")
+    return redirect(destination)
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    if not microsoft_auth_configured():
+        return redirect(url_for("login"))
+
+    query = urlencode({"post_logout_redirect_uri": MICROSOFT_POST_LOGOUT_REDIRECT_URI})
+    return redirect(f"{MICROSOFT_AUTHORITY}/oauth2/v2.0/logout?{query}")
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
