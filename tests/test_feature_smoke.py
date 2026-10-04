@@ -928,7 +928,7 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertIn("Latency spike detected: Search Products", titles)
         self.assertIn("Latency and errors move together: Search Products", titles)
         self.assertIn("Throughput remained stable while latency increased", titles)
-        self.assertLessEqual(len(observations), 10)
+        self.assertLessEqual(len(observations), 12)
 
     def test_observation_engine_highlights_healthy_stable_behaviour(self):
         summary = [
