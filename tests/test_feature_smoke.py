@@ -217,6 +217,54 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertIn("Stop Test", html)
         self.assertNotIn('id="runForm"', html)
 
+    def test_invalid_run_test_upload_does_not_create_run_state(self):
+        with patch.object(velocity_app, "make_run_dir") as make_run_dir_mock:
+            response = self.client.post(
+                "/run_test",
+                data={
+                    "jmx_file": (io.BytesIO(b"not jmx"), "load.txt"),
+                },
+                content_type="multipart/form-data",
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(velocity_app.test_running)
+        self.assertIsNone(velocity_app.current_run_dir)
+        make_run_dir_mock.assert_not_called()
+
+    def test_unsupported_run_data_file_is_rejected_before_run_directory(self):
+        with patch.object(velocity_app, "make_run_dir") as make_run_dir_mock:
+            response = self.client.post(
+                "/run_test",
+                data={
+                    "jmx_file": (io.BytesIO(b"<jmeterTestPlan/>"), "load.jmx"),
+                    "data_files": (io.BytesIO(b"bad"), "payload.exe"),
+                },
+                content_type="multipart/form-data",
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(velocity_app.test_running)
+        self.assertIsNone(velocity_app.current_run_dir)
+        make_run_dir_mock.assert_not_called()
+
+    def test_start_jmeter_redirects_process_output_instead_of_unread_pipes(self):
+        with tempfile.TemporaryDirectory() as run_dir:
+            process = RunningProcess()
+            with patch.object(velocity_app.subprocess, "Popen", return_value=process) as popen:
+                returned = velocity_app.start_jmeter(
+                    os.path.join(run_dir, "load.jmx"),
+                    [],
+                    os.path.join(run_dir, "results.jtl"),
+                    os.path.join(run_dir, "jmeter.log"),
+                )
+
+            self.assertIs(returned, process)
+            kwargs = popen.call_args.kwargs
+            self.assertIs(kwargs["stderr"], velocity_app.subprocess.STDOUT)
+            self.assertIsNot(kwargs["stdout"], velocity_app.subprocess.PIPE)
+            self.assertTrue(returned.velocitypulse_output_log.endswith("jmeter_process.log"))
+
     def test_successful_run_test_start_redirects_to_live_progress(self):
         with tempfile.TemporaryDirectory() as run_dir:
             running = RunningProcess()
@@ -383,6 +431,7 @@ class FeatureSmokeTests(unittest.TestCase):
             self.assertEqual(len(completion_calls), 1)
             summary = completion_calls[0].args[1]
             self.assertEqual(summary["users"], 7)
+            self.assertEqual(summary["duration"], "0.40 sec")
             self.assertEqual(len(summary["metrics"]), 1)
             self.assertEqual(summary["metrics"][0]["label"], "Login")
             self.assertEqual(summary["metrics"][0]["samples"], 2)
