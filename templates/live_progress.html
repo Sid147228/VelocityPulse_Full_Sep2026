@@ -49,6 +49,9 @@
     <p><strong>Start Time:</strong> <span id="startTime"></span></p>
     <p><strong>End Time:</strong> <span id="endTime"></span></p>
     <p><strong>Concurrent Users:</strong> <span id="users"></span></p>
+    <p id="summaryErrorRow" style="display:none; color:#a12f36;">
+      <strong>Status:</strong> <span id="summaryError"></span>
+    </p>
 
     <h4>Final Transaction Metrics</h4>
     <table class="metrics-table" id="finalMetricsTable">
@@ -65,7 +68,7 @@
       <tbody></tbody>
     </table>
 
-    <button class="btn btn-primary" onclick="generateReport()">📄 Generate Report</button>
+    <button id="generateReportButton" class="btn btn-primary" onclick="generateReport()">📄 Generate Report</button>
   </div>
 </div>
 
@@ -104,11 +107,17 @@
   });
 
   function clearLiveRun() {
-    document.getElementById('logPanel').innerHTML = '';
+    document.getElementById('logPanel').textContent = '';
     document.querySelector('#metricsTable tbody').innerHTML = '<tr><td colspan="6">No data yet</td></tr>';
+    document.querySelector('#finalMetricsTable tbody').innerHTML = '';
     document.getElementById('summaryCard').style.display = 'none';
-    responseChart.data.labels = []; responseChart.data.datasets[0].data = []; responseChart.update();
-    errorChart.data.labels = []; errorChart.data.datasets[0].data = []; errorChart.update();
+    document.getElementById('summaryErrorRow').style.display = 'none';
+    responseChart.data.labels = [];
+    responseChart.data.datasets[0].data = [];
+    responseChart.update('none');
+    errorChart.data.labels = [];
+    errorChart.data.datasets[0].data = [];
+    errorChart.update('none');
   }
 
   socket.on('run_reset', clearLiveRun);
@@ -119,6 +128,43 @@
 
   const responseChart = new Chart(responseCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Response Time (ms)', data: [] }] } });
   const errorChart = new Chart(errorCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Error %', data: [] }] } });
+  const MAX_LIVE_POINTS = 500;
+
+  function formatSampleTime(value) {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) {
+      return new Date(numeric).toLocaleTimeString();
+    }
+    return String(value ?? '');
+  }
+
+  function setProgressSnapshot(points) {
+    const safePoints = (points || []).slice(-MAX_LIVE_POINTS);
+    responseChart.data.labels = safePoints.map(point => formatSampleTime(point.timestamp));
+    responseChart.data.datasets[0].data = safePoints.map(point => point.response_time);
+    errorChart.data.labels = [...responseChart.data.labels];
+    errorChart.data.datasets[0].data = safePoints.map(point => point.error_rate);
+    responseChart.update('none');
+    errorChart.update('none');
+  }
+
+  function appendProgressPoint(point) {
+    const label = formatSampleTime(point.timestamp);
+    responseChart.data.labels.push(label);
+    responseChart.data.datasets[0].data.push(point.response_time);
+    errorChart.data.labels.push(label);
+    errorChart.data.datasets[0].data.push(point.error_rate);
+
+    while (responseChart.data.labels.length > MAX_LIVE_POINTS) {
+      responseChart.data.labels.shift();
+      responseChart.data.datasets[0].data.shift();
+      errorChart.data.labels.shift();
+      errorChart.data.datasets[0].data.shift();
+    }
+
+    responseChart.update('none');
+    errorChart.update('none');
+  }
 
   function renderMetricRows(tbody, rows) {
     tbody.innerHTML = '';
@@ -141,6 +187,41 @@
     }
   }
 
+  function renderCompletionSummary(summary, resultsAvailable) {
+    const card = document.getElementById('summaryCard');
+    const generateButton = document.getElementById('generateReportButton');
+    const errorRow = document.getElementById('summaryErrorRow');
+    const errorText = document.getElementById('summaryError');
+
+    if (!summary && !resultsAvailable) {
+      card.style.display = 'none';
+      return;
+    }
+
+    card.style.display = 'block';
+    document.getElementById('duration').textContent = summary?.duration || '—';
+    document.getElementById('startTime').textContent = summary?.start || '—';
+    document.getElementById('endTime').textContent = summary?.end || '—';
+    document.getElementById('users').textContent = summary?.users ?? 'N/A';
+    renderMetricRows(
+      document.querySelector('#finalMetricsTable tbody'),
+      summary?.metrics || []
+    );
+
+    if (summary?.error) {
+      errorRow.style.display = 'block';
+      errorText.textContent = summary.error;
+    } else {
+      errorRow.style.display = 'none';
+      errorText.textContent = '';
+    }
+
+    generateButton.disabled = !resultsAvailable;
+    generateButton.title = resultsAvailable
+      ? 'Generate report from the current JMeter result file'
+      : 'No JMeter result file is available yet';
+  }
+
   // Transaction table updates
   socket.on('metrics_update', function(data) {
     document.getElementById('statusBanner').innerText = "📊 Receiving live metrics...";
@@ -151,14 +232,7 @@
   socket.on('progress_update', function(data) {
     document.getElementById('statusBanner').innerText = "🚀 Test running...";
     document.getElementById('stopForm').style.display = 'block';
-
-    responseChart.data.labels.push(data.timestamp);
-    responseChart.data.datasets[0].data.push(data.response_time);
-    responseChart.update();
-
-    errorChart.data.labels.push(data.timestamp);
-    errorChart.data.datasets[0].data.push(data.error_rate);
-    errorChart.update();
+    appendProgressPoint(data);
   });
 
   // Logs
@@ -176,19 +250,14 @@
 
   // Completion
   socket.on('test_complete', function(summary) {
-    document.getElementById('statusBanner').innerText = "✅ Test finished";
+    document.getElementById('statusBanner').innerText =
+      summary?.error ? "⚠️ Test finished with an issue" : "✅ Test finished";
     document.getElementById('stopForm').style.display = 'none';
-    document.getElementById('summaryCard').style.display = 'block';
-    document.getElementById('duration').innerText = summary.duration;
-    document.getElementById('startTime').innerText = summary.start;
-    document.getElementById('endTime').innerText = summary.end;
-    document.getElementById('users').innerText = summary.users;
-
-    renderMetricRows(document.querySelector('#finalMetricsTable tbody'), summary.metrics || []);
+    renderCompletionSummary(summary, !summary?.error || (summary?.metrics || []).length > 0);
   });
 
-  socket.on('test_stopped', function(summary) {
-    document.getElementById('statusBanner').innerText = "🛑 Test stopped";
+  socket.on('test_stopped', function() {
+    document.getElementById('statusBanner').innerText = "🛑 Test stopping — finalising results…";
     document.getElementById('stopForm').style.display = 'none';
   });
 
@@ -197,29 +266,48 @@
   async function refreshLiveSnapshot() {
     try {
       const response = await fetch("{{ url_for('live_status') }}", { cache: 'no-store' });
-      if (!response.ok) throw new Error();
+      if (!response.ok) throw new Error('Live status request failed');
+
       const snapshot = await response.json();
       const stopForm = document.getElementById('stopForm');
       stopForm.style.display = snapshot.running ? 'block' : 'none';
+
       if (snapshot.running) {
         document.getElementById('statusBanner').innerText = "🚀 Test running…";
+      } else if (snapshot.completed) {
+        document.getElementById('statusBanner').innerText =
+          snapshot.summary?.error ? "⚠️ Test finished with an issue" : "✅ Test finished";
+      } else if (snapshot.results_available) {
+        document.getElementById('statusBanner').innerText = "🛑 Test stopped — results available";
+      } else if (!(snapshot.metrics || []).length) {
+        document.getElementById('statusBanner').innerText = "⏳ Waiting for JMeter results…";
       }
-      const tbody = document.querySelector('#metricsTable tbody');
-      if (snapshot.metrics && snapshot.metrics.length) {
-        tbody.innerHTML = '';
-        snapshot.metrics.forEach(row => {
-          const tr = document.createElement('tr');
-          [row.label, row.samples, row.avg, row.p90, row.p95, row.error_pct + '%'].forEach(value => {
-            const td = document.createElement('td'); td.textContent = value; tr.appendChild(td);
-          });
-          tbody.appendChild(tr);
-        });
+
+      renderMetricRows(
+        document.querySelector('#metricsTable tbody'),
+        snapshot.metrics || []
+      );
+
+      if ((snapshot.progress || []).length) {
+        setProgressSnapshot(snapshot.progress);
       }
+
+      if ((snapshot.logs || []).length) {
+        const logPanel = document.getElementById('logPanel');
+        const logText = snapshot.logs.join("\n");
+        if (logPanel.textContent !== logText) {
+          logPanel.textContent = logText;
+          logPanel.scrollTop = logPanel.scrollHeight;
+        }
+      }
+
+      renderCompletionSummary(snapshot.summary, Boolean(snapshot.results_available));
+
       if (snapshot.monitoring) {
         applyMonitoringSnapshot(snapshot.monitoring.latest || []);
       }
     } catch (error) {
-      // Socket.IO remains the primary live stream; do not replace its data.
+      // Socket.IO remains the primary stream if the HTTP fallback is unavailable.
     }
     window.setTimeout(refreshLiveSnapshot, 1000);
   }
