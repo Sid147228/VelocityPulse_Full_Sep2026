@@ -1443,7 +1443,14 @@ def analyze():
         "file_name": os.path.basename(file_path),
         "summary": filtered,
         "rag_result": test_rag,
-        "observations": build_report_observations(filtered, test_rag),
+        "observations": build_report_observations(
+            filtered,
+            test_rag,
+            chart_data=chart_data,
+            report_kpis=report_kpis,
+            green_sla=green,
+            amber_sla=amber,
+        ),
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
@@ -1474,7 +1481,14 @@ def report(report_index):
         report_data = reports[report_index]
         report_data.setdefault(
             "observations",
-            build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
+            build_report_observations(
+                report_data.get("summary", []),
+                report_data.get("rag_result"),
+                chart_data=report_data,
+                report_kpis=report_overview(report_data),
+                green_sla=report_data.get("green"),
+                amber_sla=report_data.get("amber"),
+            ),
         )
         return render_template(
             "report.html",
@@ -1519,7 +1533,14 @@ def export_report_pdf(report_index):
         report_data = reports[report_index]
         report_data.setdefault(
             "observations",
-            build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
+            build_report_observations(
+                report_data.get("summary", []),
+                report_data.get("rag_result"),
+                chart_data=report_data,
+                report_kpis=report_overview(report_data),
+                green_sla=report_data.get("green"),
+                amber_sla=report_data.get("amber"),
+            ),
         )
         overview = report_overview(report_data)
         pdf = build_single_report_pdf(
@@ -2214,7 +2235,14 @@ def generate_report():
         "file_name": os.path.basename(results_file),
         "summary": summary,
         "rag_result": test_rag,
-        "observations": build_report_observations(summary, test_rag),
+        "observations": build_report_observations(
+            summary,
+            test_rag,
+            chart_data=chart_data,
+            report_kpis=report_kpis,
+            green_sla=green,
+            amber_sla=amber,
+        ),
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
