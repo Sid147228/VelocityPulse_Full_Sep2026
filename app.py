@@ -1068,6 +1068,37 @@ def run_test():
         if test_running and current_process and current_process.poll() is None:
             flash("A JMeter test is already running. Open Live Progress to monitor it.", "warning")
             return redirect(url_for("live_progress"))
+
+        jmx_file = request.files.get("jmx_file")
+        if not jmx_file or jmx_file.filename == "":
+            flash("Please select a JMX test plan.", "error")
+            return redirect(url_for("run_test"))
+
+        jmx_name = secure_filename(jmx_file.filename)
+        if not jmx_name.lower().endswith(".jmx"):
+            flash("Please upload a valid .jmx test plan.", "error")
+            return redirect(url_for("run_test"))
+
+        data_files = request.files.getlist("data_files")
+        prepared_data_files = []
+        allowed_data_extensions = {".csv", ".tsv", ".txt"}
+        for data_file in data_files:
+            if not data_file or not data_file.filename:
+                continue
+            data_name = secure_filename(data_file.filename)
+            if not data_name:
+                continue
+            extension = os.path.splitext(data_name)[1].lower()
+            if extension not in allowed_data_extensions:
+                flash(
+                    f"Unsupported data file '{data_name}'. "
+                    "Only CSV, TSV and TXT files are allowed.",
+                    "error",
+                )
+                return redirect(url_for("run_test"))
+            prepared_data_files.append((data_file, data_name))
+
+        # Only create a run directory after the request has passed validation.
         test_running = True
         last_test_summary = None
         transaction_stats.clear()
@@ -1076,30 +1107,14 @@ def run_test():
         run_dir = make_run_dir()
         current_run_dir = run_dir
 
-        jmx_file = request.files.get("jmx_file")
-        if not jmx_file or jmx_file.filename == "":
-            test_running = False
-            flash("❌ Please select a JMX test plan.", "error")
-            return redirect(url_for("run_test"))
-        jmx_name = secure_filename(jmx_file.filename)
-        if not jmx_name.lower().endswith(".jmx"):
-            test_running = False
-            flash("Please upload a valid .jmx test plan.", "error")
-            return redirect(url_for("run_test"))
-
         jmx_path = os.path.join(run_dir, jmx_name)
         jmx_file.save(jmx_path)
 
-        data_files = request.files.getlist("data_files")
         saved_data = []
-        for data_file in data_files:
-            if data_file and data_file.filename:
-                data_name = secure_filename(data_file.filename)
-                if not data_name:
-                    continue
-                dest = os.path.join(run_dir, data_name)
-                data_file.save(dest)
-                saved_data.append(dest)
+        for data_file, data_name in prepared_data_files:
+            dest = os.path.join(run_dir, data_name)
+            data_file.save(dest)
+            saved_data.append(dest)
 
         results_file = os.path.join(run_dir, "results.jtl")
         jmeter_log = os.path.join(run_dir, "jmeter.log")
