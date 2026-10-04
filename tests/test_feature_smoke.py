@@ -705,6 +705,147 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertIn("Response Time (seconds)", html)
         self.assertNotIn("(ms)", html)
 
+    def test_observation_engine_identifies_actionable_degradation_patterns(self):
+        summary = [
+            {
+                "Transaction": "Search Products",
+                "#Samples": 300,
+                "Avg (s)": 2.8,
+                "90th % (s)": 4.0,
+                "95th % (s)": 4.6,
+                "Error %": 6.0,
+                "RAG": "RED",
+            },
+            {
+                "Transaction": "Checkout",
+                "#Samples": 300,
+                "Avg (s)": 1.5,
+                "90th % (s)": 2.1,
+                "95th % (s)": 2.4,
+                "Error %": 8.0,
+                "RAG": "RED",
+            },
+            {
+                "Transaction": "Add to Cart",
+                "#Samples": 300,
+                "Avg (s)": 1.2,
+                "90th % (s)": 1.6,
+                "95th % (s)": 1.8,
+                "Error %": 3.0,
+                "RAG": "AMBER",
+            },
+            {
+                "Transaction": "Login",
+                "#Samples": 300,
+                "Avg (s)": 0.5,
+                "90th % (s)": 0.7,
+                "95th % (s)": 0.8,
+                "Error %": 0.0,
+                "RAG": "GREEN",
+            },
+        ]
+        chart_data = {
+            "chart_time_labels": ["10:00", "10:01", "10:02", "10:03", "10:04", "10:05"],
+            "series_avg_by_txn": {
+                "Search Products": [1500.0, 1500.0, 1600.0, 1700.0, 2200.0, 3000.0],
+                "Checkout": [1400.0, 1450.0, 1500.0, 1550.0, 1500.0, 1550.0],
+                "Add to Cart": [1150.0, 1200.0, 1220.0, 1180.0, 1210.0, 1230.0],
+                "Login": [500.0, 490.0, 510.0, 500.0, 495.0, 505.0],
+            },
+            "series_error_rate_by_txn": {
+                "Search Products": [0.0, 1.0, 1.0, 2.0, 5.0, 8.0],
+                "Checkout": [7.0, 8.0, 8.0, 9.0, 8.0, 8.0],
+                "Add to Cart": [2.0, 3.0, 3.0, 4.0, 3.0, 3.0],
+                "Login": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            },
+            "series_throughput_over_time": [4.00, 4.05, 4.02, 4.04, 4.00, 4.03],
+        }
+        kpis = {
+            "total_samples": 1200,
+            "successful_samples": 1149,
+            "failed_samples": 51,
+            "error_pct": 4.25,
+            "avg_s": 1.5,
+            "p90_s": 2.6,
+            "p95_s": 3.2,
+        }
+
+        observations = velocity_app.build_report_observations(
+            summary,
+            "RED",
+            chart_data=chart_data,
+            report_kpis=kpis,
+            green_sla=1.5,
+            amber_sla=3.5,
+        )
+        titles = [item["title"] for item in observations]
+
+        self.assertIn("Overall test result: RED", titles)
+        self.assertIn("SLA attention required", titles)
+        self.assertIn("Primary latency bottleneck: Search Products", titles)
+        self.assertIn("Error hotspot: Checkout", titles)
+        self.assertIn("Failures are concentrated", titles)
+        self.assertIn("Progressive degradation detected: Search Products", titles)
+        self.assertIn("Latency spike detected: Search Products", titles)
+        self.assertIn("Latency and errors move together: Search Products", titles)
+        self.assertIn("Throughput remained stable while latency increased", titles)
+        self.assertLessEqual(len(observations), 10)
+
+    def test_observation_engine_highlights_healthy_stable_behaviour(self):
+        summary = [
+            {
+                "Transaction": "Login",
+                "#Samples": 120,
+                "Avg (s)": 0.42,
+                "90th % (s)": 0.55,
+                "95th % (s)": 0.62,
+                "Error %": 0.0,
+                "RAG": "GREEN",
+            },
+            {
+                "Transaction": "Search",
+                "#Samples": 120,
+                "Avg (s)": 0.74,
+                "90th % (s)": 0.92,
+                "95th % (s)": 1.05,
+                "Error %": 0.0,
+                "RAG": "GREEN",
+            },
+        ]
+        chart_data = {
+            "series_avg_by_txn": {
+                "Login": [410.0, 420.0, 415.0, 425.0, 420.0, 418.0],
+                "Search": [730.0, 740.0, 735.0, 745.0, 750.0, 742.0],
+            },
+            "series_error_rate_by_txn": {
+                "Login": [0.0] * 6,
+                "Search": [0.0] * 6,
+            },
+            "series_throughput_over_time": [2.0, 2.02, 1.99, 2.01, 2.0, 2.01],
+        }
+
+        observations = velocity_app.build_report_observations(
+            summary,
+            "GREEN",
+            chart_data=chart_data,
+            report_kpis={
+                "total_samples": 240,
+                "successful_samples": 240,
+                "failed_samples": 0,
+                "error_pct": 0.0,
+                "avg_s": 0.58,
+                "p95_s": 1.05,
+            },
+            green_sla=1.5,
+            amber_sla=3.5,
+        )
+        titles = [item["title"] for item in observations]
+
+        self.assertIn("Overall test result: GREEN", titles)
+        self.assertIn("All analysed transactions are within SLA", titles)
+        self.assertIn("Throughput remained stable", titles)
+        self.assertTrue(any(title.startswith("Healthy transaction:") for title in titles))
+
     def test_trend_chart_orders_oldest_to_newest(self):
         reports = [
             report("Newest", "2026-10-03T10:00:00", avg=3.0),
