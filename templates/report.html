@@ -11,6 +11,7 @@
 {% set series_error_rate_by_txn = series_error_rate_by_txn or {} %}
 {% set series_throughput_over_time = series_throughput_over_time or [] %}
 {% set series_tps_by_txn = series_tps_by_txn or {} %}
+{% set monitoring_stats = monitoring_stats|default([]) %}
 
 <style>
   {% if is_pdf %}.vp-header { display:none !important; } .content { max-width:none !important; padding:0 !important; }{% endif %}
@@ -84,6 +85,21 @@
   .chart-card canvas { width:100% !important; height:285px !important; }
   .static-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px; }
   .static-grid img { width:100%; border:1px solid #e1e8ef; border-radius:8px; }
+  .monitoring-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px; padding:14px; }
+  .monitoring-card { border:1px solid #dbe5ef; border-radius:10px; padding:14px; background:#fbfdff; }
+  .monitoring-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:11px; }
+  .monitoring-name { font-weight:800; color:#173d68; }
+  .monitoring-meta { color:#72869a; font-size:.76rem; margin-top:2px; }
+  .monitoring-status { border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:800; }
+  .monitoring-status--green { background:#e4f6ea; color:#1d7b3e; }
+  .monitoring-status--amber { background:#fff4d7; color:#936000; }
+  .monitoring-status--red { background:#ffe5e5; color:#bd2d33; }
+  .monitoring-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .monitoring-metric { background:#fff; border:1px solid #e3eaf1; border-radius:8px; padding:9px; }
+  .monitoring-metric strong { display:block; color:#173d68; font-size:.96rem; }
+  .monitoring-metric span { display:block; color:#77899b; font-size:.7rem; margin-top:2px; }
+  .monitoring-divider { grid-column:1/-1; color:#526b83; font-size:.75rem; font-weight:800; margin-top:2px; }
+  .monitoring-empty { padding:14px 17px; color:#72869a; background:#f8fafc; }
   .observations { display:grid; gap:9px; padding:14px; }
   .observation { border-left:4px solid #2a6bb0; border-radius:8px; padding:11px 13px; background:#f6f9fc; }
   .observation--success { border-left-color:#2c9a55; background:#f0faf3; }
@@ -236,6 +252,43 @@
         </tbody>
       </table>
     </div>
+  </section>
+
+  <section class="report-panel">
+    <h2 class="panel-title">Infrastructure Monitoring</h2>
+    {% if monitoring_stats %}
+    <div class="monitoring-grid">
+      {% for monitor in monitoring_stats %}
+      <div class="monitoring-card">
+        <div class="monitoring-head">
+          <div>
+            <div class="monitoring-name">{{ monitor.server }}</div>
+            <div class="monitoring-meta">
+              {{ monitor.host or 'Local host' }} · {{ monitor.os or 'OS unavailable' }} ·
+              {{ monitor.samples }} samples · {{ "%.0f"|format(monitor.duration_seconds|float) }}s coverage
+            </div>
+          </div>
+          {% set monitor_status = monitor.status|default('GREEN') %}
+          <span class="monitoring-status monitoring-status--{{ monitor_status|lower }}">{{ monitor_status }}</span>
+        </div>
+        <div class="monitoring-metrics">
+          <div class="monitoring-divider">CPU</div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.avg_cpu|float) }}%</strong><span>Average</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.p95_cpu|float) }}%</strong><span>P95</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.max_cpu|float) }}%</strong><span>Peak</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.cpu_high_pct|float) }}%</strong><span>Samples ≥85%</span></div>
+          <div class="monitoring-divider">Memory</div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.avg_mem|float) }}%</strong><span>Average</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.p95_mem|float) }}%</strong><span>P95</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.max_mem|float) }}%</strong><span>Peak</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.mem_high_pct|float) }}%</strong><span>Samples ≥85%</span></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="monitoring-empty">Monitoring data was not captured for this report. Monitoring statistics are available for live runs when server monitoring is active during the test.</div>
+    {% endif %}
   </section>
 
   {% if is_pdf or not chart_time_labels %}
