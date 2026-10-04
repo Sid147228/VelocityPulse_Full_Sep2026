@@ -17,11 +17,15 @@
         radial-gradient(circle at top left, rgba(42, 82, 152, .14), transparent 34rem),
         #f4f7fb;
       color: #1f344d;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
     }
     .login-shell {
-      width: min(430px, calc(100% - 32px));
+      width: min(430px, 100%);
+      margin: auto;
     }
     .login-card {
       background: #fff;
@@ -33,8 +37,10 @@
     .brand {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
       margin-bottom: 28px;
+      text-align: left;
     }
     .brand img {
       height: 42px;
@@ -53,11 +59,13 @@
       margin: 0 0 8px;
       color: #1f3f70;
       font-size: 1.7rem;
+      text-align: center;
     }
     .intro {
       margin: 0 0 28px;
       color: #61738a;
       line-height: 1.55;
+      text-align: center;
     }
     .ms-button {
       box-sizing: border-box;
