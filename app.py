@@ -556,7 +556,9 @@ def analyze():
                 except (ValueError, TypeError):
                     row[key] = None
 
-    chart_data = build_report_chart_data(df, filtered)\n\n    report_data = {
+    chart_data = build_report_chart_data(df, filtered)
+
+    report_data = {
         "report_name": report_name,
         "file_name": os.path.basename(file_path),
         "summary": filtered,
