@@ -12,7 +12,12 @@ from version import __version__, __build__, __codename__
 load_dotenv()
 
 # Helpers
-from jmeter_parser import (\n    parse_jmeter_csv, detect_test_window, jmeter_percentile,\n    JMETER_REPORT_GRANULARITY_MS,\n)
+from jmeter_parser import (
+    parse_jmeter_csv,
+    detect_test_window,
+    jmeter_percentile,
+    JMETER_REPORT_GRANULARITY_MS,
+)
 from generate_TestResult import evaluate_sla
 from generate_graphs import generate_graphs
 from generate_transaction_progress import generate_transaction_progress
