@@ -477,61 +477,464 @@ def _metric(row, key):
         return 0.0
 
 
-def build_report_observations(summary, rag_result):
-    """Create concise, deterministic observations for the report UI."""
-    observations = []
+def _mean_valid(values):
+    cleaned = []
+    for value in values or []:
+        if value is None:
+            continue
+        try:
+            cleaned.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    return (sum(cleaned) / len(cleaned)) if cleaned else None
+
+
+def _series_first_last_third(values):
+    cleaned = []
+    for value in values or []:
+        if value is None:
+            continue
+        try:
+            cleaned.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    if len(cleaned) < 3:
+        return None, None
+    width = max(1, len(cleaned) // 3)
+    return _mean_valid(cleaned[:width]), _mean_valid(cleaned[-width:])
+
+
+def _coefficient_of_variation(values):
+    cleaned = []
+    for value in values or []:
+        if value is None:
+            continue
+        try:
+            cleaned.append(float(value))
+        except (TypeError, ValueError):
+            continue
+    if len(cleaned) < 2:
+        return None
+    mean = float(np.mean(cleaned))
+    if mean == 0:
+        return 0.0
+    return float(np.std(cleaned, ddof=0) / abs(mean))
+
+
+def _series_correlation(values1, values2):
+    pairs = []
+    for left, right in zip(values1 or [], values2 or []):
+        if left is None or right is None:
+            continue
+        try:
+            pairs.append((float(left), float(right)))
+        except (TypeError, ValueError):
+            continue
+    if len(pairs) < 4:
+        return None
+    left = np.array([pair[0] for pair in pairs], dtype=float)
+    right = np.array([pair[1] for pair in pairs], dtype=float)
+    if np.std(left) == 0 or np.std(right) == 0:
+        return None
+    return float(np.corrcoef(left, right)[0, 1])
+
+
+def build_report_observations(
+    summary,
+    rag_result,
+    chart_data=None,
+    report_kpis=None,
+    green_sla=None,
+    amber_sla=None,
+    max_observations=10,
+):
+    """Create deterministic, evidence-based performance observations."""
     if not summary:
-        return [{"type": "warning", "title": "No transaction data", "text": "No valid transaction samples were available for analysis."}]
-
-    total_samples = sum(int(_metric(row, "#Samples")) for row in summary)
-    slowest = max(summary, key=lambda row: _metric(row, "Avg (s)"))
-    highest_p95 = max(summary, key=lambda row: _metric(row, "95th % (s)"))
-    highest_error = max(summary, key=lambda row: _metric(row, "Error %"))
-
-    status_type = {"GREEN": "success", "AMBER": "warning", "RED": "danger"}.get(rag_result, "info")
-    observations.append({
-        "type": status_type,
-        "title": f"Overall result: {rag_result or 'UNKNOWN'}",
-        "text": f"The test analysed {len(summary)} transaction(s) and {total_samples} sample(s)."
-    })
-
-    if rag_result in ("RED", "AMBER"):
-        affected = [row for row in summary if row.get("RAG") in ("RED", "AMBER")]
-        names = ", ".join(str(row.get("Transaction")) for row in affected[:4])
-        suffix = " and more" if len(affected) > 4 else ""
-        observations.append({
-            "type": "danger" if rag_result == "RED" else "warning",
-            "title": "SLA attention required",
-            "text": f"{len(affected)} transaction(s) require attention: {names}{suffix}."
-        })
-    else:
-        observations.append({
-            "type": "success",
-            "title": "SLA performance is healthy",
-            "text": "All analysed transactions are within the configured response-time thresholds."
-        })
-
-    observations.append({
-        "type": "info",
-        "title": f"Slowest average response: {slowest.get('Transaction')}",
-        "text": f"Average response time was {_metric(slowest, 'Avg (s)'):.2f}s."
-    })
-
-    if _metric(highest_p95, "95th % (s)") > _metric(highest_p95, "Avg (s)") * 1.5:
-        observations.append({
+        return [{
             "type": "warning",
-            "title": f"Latency spikes: {highest_p95.get('Transaction')}",
-            "text": f"P95 reached {_metric(highest_p95, '95th % (s)'):.2f}s versus an average of {_metric(highest_p95, 'Avg (s)'):.2f}s."
+            "category": "Data quality",
+            "priority": 100,
+            "title": "No transaction data",
+            "text": "No valid transaction samples were available for analysis.",
+        }]
+
+    chart_data = chart_data or {}
+    report_kpis = report_kpis or {}
+    findings = []
+
+    def add(priority, obs_type, category, title, text):
+        findings.append({
+            "type": obs_type,
+            "category": category,
+            "priority": priority,
+            "title": title,
+            "text": text,
         })
 
-    if _metric(highest_error, "Error %") > 0:
-        observations.append({
-            "type": "danger" if _metric(highest_error, "Error %") >= 5 else "warning",
-            "title": f"Highest error rate: {highest_error.get('Transaction')}",
-            "text": f"The transaction recorded {_metric(highest_error, 'Error %'):.2f}% errors."
-        })
-    return observations
+    total_samples = int(
+        report_kpis.get("total_samples")
+        if report_kpis.get("total_samples") is not None
+        else sum(int(_metric(row, "#Samples")) for row in summary)
+    )
+    failed_samples = report_kpis.get("failed_samples")
+    if failed_samples is None:
+        failed_samples = int(round(sum(
+            int(_metric(row, "#Samples")) * _metric(row, "Error %") / 100.0
+            for row in summary
+        )))
+    failed_samples = int(failed_samples)
+    error_pct = (
+        float(report_kpis.get("error_pct"))
+        if report_kpis.get("error_pct") is not None
+        else (100.0 * failed_samples / total_samples if total_samples else 0.0)
+    )
+    overall_avg = report_kpis.get("avg_s")
+    overall_p95 = report_kpis.get("p95_s")
 
+    status_type = {
+        "GREEN": "success",
+        "AMBER": "warning",
+        "RED": "danger",
+    }.get(rag_result, "info")
+
+    verdict_text = (
+        f"The steady-state analysis covered {len(summary)} transaction(s) and "
+        f"{total_samples:,} sample(s), with {failed_samples:,} failure(s) "
+        f"({error_pct:.2f}%)."
+    )
+    if overall_avg is not None:
+        verdict_text += f" Overall average response time was {float(overall_avg):.3f}s."
+    if overall_p95 is not None:
+        verdict_text += f" P95 was {float(overall_p95):.3f}s."
+    add(
+        100,
+        status_type,
+        "Executive verdict",
+        f"Overall test result: {rag_result or 'UNKNOWN'}",
+        verdict_text,
+    )
+
+    affected = [
+        row for row in summary
+        if row.get("RAG") in ("RED", "AMBER")
+    ]
+    if affected:
+        severity = {"RED": 0, "AMBER": 1}
+        affected_sorted = sorted(
+            affected,
+            key=lambda row: (
+                severity.get(row.get("RAG"), 2),
+                -_metric(row, "95th % (s)"),
+                -_metric(row, "Error %"),
+            ),
+        )
+        names = ", ".join(
+            f"{row.get('Transaction')} ({row.get('RAG')})"
+            for row in affected_sorted[:4]
+        )
+        suffix = " and more" if len(affected_sorted) > 4 else ""
+        add(
+            95,
+            "danger" if any(row.get("RAG") == "RED" for row in affected) else "warning",
+            "Critical findings",
+            "SLA attention required",
+            f"{len(affected)} transaction(s) require attention: {names}{suffix}.",
+        )
+    else:
+        add(
+            50,
+            "success",
+            "Healthy behaviour",
+            "All analysed transactions are within SLA",
+            "No transaction breached the configured response-time thresholds during the analysed period.",
+        )
+
+    slowest = max(summary, key=lambda row: _metric(row, "Avg (s)"))
+    slowest_avg = _metric(slowest, "Avg (s)")
+    slowest_p95 = _metric(slowest, "95th % (s)")
+    slowest_error = _metric(slowest, "Error %")
+    add(
+        90 if slowest.get("RAG") in ("RED", "AMBER") else 62,
+        "danger" if slowest.get("RAG") == "RED" else ("warning" if slowest.get("RAG") == "AMBER" else "info"),
+        "Critical findings" if slowest.get("RAG") in ("RED", "AMBER") else "Supporting findings",
+        f"Primary latency bottleneck: {slowest.get('Transaction')}",
+        (
+            f"{slowest.get('Transaction')} recorded the highest average response time at "
+            f"{slowest_avg:.3f}s, with P95 at {slowest_p95:.3f}s and "
+            f"{slowest_error:.2f}% errors."
+        ),
+    )
+
+    highest_error = max(summary, key=lambda row: _metric(row, "Error %"))
+    highest_error_pct = _metric(highest_error, "Error %")
+    if highest_error_pct > 0:
+        add(
+            92 if highest_error_pct >= 5 else 75,
+            "danger" if highest_error_pct >= 5 else "warning",
+            "Critical findings" if highest_error_pct >= 5 else "Supporting findings",
+            f"Error hotspot: {highest_error.get('Transaction')}",
+            (
+                f"{highest_error.get('Transaction')} recorded the highest error rate at "
+                f"{highest_error_pct:.2f}% across {int(_metric(highest_error, '#Samples'))} samples."
+            ),
+        )
+
+    failure_rows = []
+    for row in summary:
+        samples = int(_metric(row, "#Samples"))
+        estimated_failures = samples * _metric(row, "Error %") / 100.0
+        if estimated_failures > 0:
+            failure_rows.append((estimated_failures, row))
+    failure_rows.sort(key=lambda item: item[0], reverse=True)
+    if failed_samples > 0 and len(failure_rows) >= 2:
+        top_two_failures = failure_rows[0][0] + failure_rows[1][0]
+        concentration = 100.0 * top_two_failures / failed_samples
+        if concentration >= 45:
+            names = (
+                f"{failure_rows[0][1].get('Transaction')} and "
+                f"{failure_rows[1][1].get('Transaction')}"
+            )
+            add(
+                84,
+                "warning",
+                "Supporting findings",
+                "Failures are concentrated",
+                (
+                    f"Approximately {concentration:.0f}% of all failures are concentrated in "
+                    f"{names}. Investigation should prioritise these transactions first."
+                ),
+            )
+
+    tail_candidates = []
+    for row in summary:
+        avg = _metric(row, "Avg (s)")
+        p95 = _metric(row, "95th % (s)")
+        if avg > 0 and p95 > 0:
+            tail_candidates.append((p95 / avg, row))
+    if tail_candidates:
+        tail_ratio, tail_row = max(tail_candidates, key=lambda item: item[0])
+        if tail_ratio >= 1.5:
+            add(
+                76 if tail_ratio >= 2.0 else 68,
+                "warning",
+                "Supporting findings",
+                f"Elevated tail latency: {tail_row.get('Transaction')}",
+                (
+                    f"P95 is {tail_ratio:.2f}× the average for {tail_row.get('Transaction')} "
+                    f"({_metric(tail_row, 'Avg (s)'):.3f}s average vs "
+                    f"{_metric(tail_row, '95th % (s)'):.3f}s P95), indicating a meaningful "
+                    f"slow-response tail."
+                ),
+            )
+
+    green_rows = [
+        row for row in summary
+        if row.get("RAG") == "GREEN"
+    ]
+    if green_rows:
+        healthiest = min(
+            green_rows,
+            key=lambda row: (
+                _metric(row, "Error %"),
+                _metric(row, "95th % (s)"),
+            ),
+        )
+        add(
+            35,
+            "success",
+            "Healthy behaviour",
+            f"Healthy transaction: {healthiest.get('Transaction')}",
+            (
+                f"{healthiest.get('Transaction')} remained comparatively healthy at "
+                f"{_metric(healthiest, 'Avg (s)'):.3f}s average, "
+                f"{_metric(healthiest, '95th % (s)'):.3f}s P95 and "
+                f"{_metric(healthiest, 'Error %'):.2f}% errors."
+            ),
+        )
+
+    avg_series = chart_data.get("series_avg_by_txn") or {}
+    error_series = chart_data.get("series_error_rate_by_txn") or {}
+    throughput_series = chart_data.get("series_throughput_over_time") or []
+
+    degradation_candidates = []
+    recovery_candidates = []
+    spike_candidates = []
+
+    for txn, values in avg_series.items():
+        first_third, last_third = _series_first_last_third(values)
+        if first_third and last_third:
+            change_pct = 100.0 * (last_third - first_third) / first_third
+            if change_pct >= 20.0:
+                degradation_candidates.append((change_pct, txn, first_third, last_third))
+            elif change_pct <= -20.0:
+                recovery_candidates.append((abs(change_pct), txn, first_third, last_third))
+
+        cleaned = [
+            float(value) for value in values
+            if value is not None
+        ]
+        if len(cleaned) >= 4:
+            median = float(np.median(cleaned))
+            peak = max(cleaned)
+            if median > 0 and peak / median >= 1.5:
+                peak_index = cleaned.index(peak)
+                spike_candidates.append((peak / median, txn, peak, median, peak_index))
+
+    degradation_candidates.sort(reverse=True)
+    if degradation_candidates:
+        change_pct, txn, first_value, last_value = degradation_candidates[0]
+        add(
+            88 if change_pct >= 35 else 78,
+            "danger" if change_pct >= 35 else "warning",
+            "Time-series findings",
+            f"Progressive degradation detected: {txn}",
+            (
+                f"Average response time increased by {change_pct:.0f}% from the first third "
+                f"to the final third of steady state "
+                f"({first_value/1000.0:.3f}s to {last_value/1000.0:.3f}s)."
+            ),
+        )
+
+    if spike_candidates:
+        spike_candidates.sort(reverse=True)
+        ratio, txn, peak, median, peak_index = spike_candidates[0]
+        labels = chart_data.get("chart_time_labels") or []
+        when = (
+            f" around {labels[peak_index]}"
+            if peak_index < len(labels)
+            else ""
+        )
+        add(
+            72,
+            "warning",
+            "Time-series findings",
+            f"Latency spike detected: {txn}",
+            (
+                f"{txn} peaked at {peak/1000.0:.3f}s{when}, approximately "
+                f"{ratio:.2f}× its median over-time response level "
+                f"({median/1000.0:.3f}s)."
+            ),
+        )
+
+    if recovery_candidates and not degradation_candidates:
+        recovery_candidates.sort(reverse=True)
+        change_pct, txn, first_value, last_value = recovery_candidates[0]
+        add(
+            45,
+            "success",
+            "Healthy behaviour",
+            f"Latency recovery observed: {txn}",
+            (
+                f"Average response time improved by {change_pct:.0f}% from the first third "
+                f"to the final third of steady state "
+                f"({first_value/1000.0:.3f}s to {last_value/1000.0:.3f}s)."
+            ),
+        )
+
+    correlation_candidates = []
+    for txn, latency_values in avg_series.items():
+        correlation = _series_correlation(
+            latency_values,
+            error_series.get(txn) or [],
+        )
+        if correlation is not None and correlation >= 0.65:
+            max_error = max([
+                float(value) for value in (error_series.get(txn) or [])
+                if value is not None
+            ] or [0.0])
+            if max_error > 0:
+                correlation_candidates.append((correlation, txn, max_error))
+    if correlation_candidates:
+        correlation_candidates.sort(reverse=True)
+        correlation, txn, max_error = correlation_candidates[0]
+        add(
+            74,
+            "warning",
+            "Time-series findings",
+            f"Latency and errors move together: {txn}",
+            (
+                f"Response-time and error-rate movements show a positive correlation "
+                f"(r={correlation:.2f}) for {txn}; peak bucket error rate reached "
+                f"{max_error:.2f}%. This is correlation, not proof of a shared root cause."
+            ),
+        )
+
+    throughput_cv = _coefficient_of_variation(throughput_series)
+    if throughput_cv is not None:
+        if throughput_cv <= 0.10:
+            if degradation_candidates:
+                add(
+                    80,
+                    "warning",
+                    "Capacity behaviour",
+                    "Throughput remained stable while latency increased",
+                    (
+                        f"Aggregate throughput varied by only about {throughput_cv*100:.1f}% "
+                        f"(coefficient of variation) while response time degraded. "
+                        f"The slowdown therefore occurred without an obvious reduction in offered throughput."
+                    ),
+                )
+            else:
+                add(
+                    38,
+                    "success",
+                    "Healthy behaviour",
+                    "Throughput remained stable",
+                    (
+                        f"Aggregate throughput was stable throughout steady state "
+                        f"(coefficient of variation {throughput_cv*100:.1f}%)."
+                    ),
+                )
+        elif throughput_cv >= 0.25:
+            add(
+                66,
+                "warning",
+                "Capacity behaviour",
+                "Throughput was unstable",
+                (
+                    f"Aggregate throughput varied materially during steady state "
+                    f"(coefficient of variation {throughput_cv*100:.1f}%). "
+                    f"Check whether load generation, pacing, errors or application capacity changed over time."
+                ),
+            )
+
+    if green_sla is not None:
+        near_sla = []
+        try:
+            green_value = float(green_sla)
+        except (TypeError, ValueError):
+            green_value = None
+        if green_value and green_value > 0:
+            for row in summary:
+                avg = _metric(row, "Avg (s)")
+                if row.get("RAG") == "GREEN" and 0.85 * green_value <= avg < green_value:
+                    near_sla.append(row)
+        if near_sla:
+            row = max(near_sla, key=lambda item: _metric(item, "Avg (s)"))
+            add(
+                58,
+                "warning",
+                "Supporting findings",
+                f"Approaching SLA threshold: {row.get('Transaction')}",
+                (
+                    f"Average response time is {_metric(row, 'Avg (s)'):.3f}s, within 15% "
+                    f"of the configured green threshold ({green_value:.3f}s)."
+                ),
+            )
+
+    # Keep one executive verdict, then the most actionable unique findings.
+    findings.sort(key=lambda observation: observation["priority"], reverse=True)
+    selected = []
+    seen_titles = set()
+    for observation in findings:
+        if observation["title"] in seen_titles:
+            continue
+        selected.append(observation)
+        seen_titles.add(observation["title"])
+        if len(selected) >= max_observations:
+            break
+
+    return selected
 
 def bounded_query_int(name, default, minimum=1, maximum=50):
     try:
