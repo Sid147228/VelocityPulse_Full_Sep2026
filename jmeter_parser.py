@@ -9,6 +9,41 @@ import os
 JMETER_STATISTIC_WINDOW = max(1, int(os.getenv("JMETER_REPORT_STATISTIC_WINDOW", "20000")))
 JMETER_REPORT_GRANULARITY_MS = max(1, int(os.getenv("JMETER_REPORT_GRANULARITY_MS", "60000")))
 
+REQUIRED_JMETER_COLUMNS = {"timeStamp", "elapsed", "label", "success"}
+
+
+def load_jmeter_result_frame(file_path):
+    """Load and validate the core JMeter CSV/JTL schema used by VelocityPulse."""
+    try:
+        df = pd.read_csv(file_path)
+    except Exception as exc:
+        raise ValueError(f"Unable to read CSV/JTL content: {exc}") from exc
+
+    # Tolerate UTF-8 BOMs and accidental whitespace in header names.
+    df.columns = [str(column).lstrip("\ufeff").strip() for column in df.columns]
+
+    missing = sorted(REQUIRED_JMETER_COLUMNS - set(df.columns))
+    if missing:
+        raise ValueError(
+            "Missing required JMeter column(s): " + ", ".join(missing)
+        )
+
+    df["timeStamp"] = pd.to_numeric(df["timeStamp"], errors="coerce")
+    df["elapsed"] = pd.to_numeric(df["elapsed"], errors="coerce")
+    df["label"] = df["label"].astype(str).str.strip()
+    df["success"] = df["success"].astype(str).str.strip().str.lower()
+
+    df = df.dropna(subset=["timeStamp", "elapsed"]).copy()
+    df = df[df["label"].ne("") & df["label"].ne("nan")].copy()
+
+    if df.empty:
+        raise ValueError(
+            "No valid JMeter samples were found after validating timeStamp, elapsed and label values."
+        )
+
+    df["timeStamp"] = df["timeStamp"].astype("int64")
+    return df
+
 
 def jmeter_percentile(values, percentile, window_size=None):
     """Match Apache Commons Math Percentile.EstimationType.LEGACY used by JMeter HTML reports.
@@ -67,28 +102,12 @@ def jmeter_percentile(values, percentile, window_size=None):
 
 def detect_test_window(file_path):
     """Return the first and last valid JMeter timestamps in epoch milliseconds."""
-    df = pd.read_csv(file_path)
-    if "timeStamp" not in df.columns:
-        raise ValueError("JMeter result file does not contain a timeStamp column")
-
-    timestamps = pd.to_numeric(df["timeStamp"], errors="coerce").dropna()
-    if timestamps.empty:
-        raise ValueError("JMeter result file does not contain valid timestamps")
-
-    return int(timestamps.min()), int(timestamps.max())
+    df = load_jmeter_result_frame(file_path)
+    return int(df["timeStamp"].min()), int(df["timeStamp"].max())
 
 
 def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None, end_time=None, error_sla=2.0):
-    df = pd.read_csv(file_path)
-
-    # Normalize fields
-    df['timeStamp'] = pd.to_numeric(df['timeStamp'], errors='coerce').astype('Int64')
-    df['elapsed'] = pd.to_numeric(df['elapsed'], errors='coerce')
-    df['success'] = df['success'].astype(str).str.strip().str.lower()
-    df['label'] = df['label'].astype(str).str.strip()
-
-    # Remove rows with missing core fields
-    df = df.dropna(subset=['timeStamp', 'elapsed', 'label'])
+    df = load_jmeter_result_frame(file_path)
 
     # Filter by steady-state window if provided.
     if start_time is not None and end_time is not None:
