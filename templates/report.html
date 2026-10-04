@@ -89,6 +89,11 @@
   .observation--success { border-left-color:#2c9a55; background:#f0faf3; }
   .observation--warning { border-left-color:#d39a1f; background:#fff9e9; }
   .observation--danger { border-left-color:#d64747; background:#fff1f1; }
+  .observation-category {
+    display:inline-block; margin-bottom:5px; padding:3px 7px; border-radius:999px;
+    background:#e9f0f7; color:#536b82; font-size:.68rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:.04em;
+  }
   .observation-title { font-weight:800; color:#173d68; margin-bottom:3px; }
   .observation-text { color:#526980; line-height:1.4; }
   .report-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
@@ -276,6 +281,7 @@
     <div class="observations">
       {% for observation in observations|default([]) %}
         <div class="observation observation--{{ observation.type|default('info') }}">
+          {% if observation.category %}<div class="observation-category">{{ observation.category }}</div>{% endif %}
           <div class="observation-title">{{ observation.title }}</div>
           <div class="observation-text">{{ observation.text }}</div>
         </div>
