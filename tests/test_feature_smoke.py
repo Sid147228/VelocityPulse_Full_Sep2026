@@ -52,6 +52,35 @@ class FailedProcess:
         return 1
 
 
+class RunningProcess:
+    returncode = None
+
+    def poll(self):
+        return None
+
+
+class StoppableProcess:
+    returncode = None
+
+    def __init__(self):
+        self.terminated = False
+        self.killed = False
+        self.wait_calls = 0
+
+    def poll(self):
+        return None if not self.terminated and not self.killed else 0
+
+    def terminate(self):
+        self.terminated = True
+
+    def kill(self):
+        self.killed = True
+
+    def wait(self, timeout=None):
+        self.wait_calls += 1
+        return 0
+
+
 class FeatureSmokeTests(unittest.TestCase):
     def setUp(self):
         velocity_app.app.config.update(TESTING=True)
@@ -61,6 +90,8 @@ class FeatureSmokeTests(unittest.TestCase):
         velocity_app.test_running = False
         velocity_app.current_process = None
         velocity_app.current_run_dir = None
+        velocity_app.last_test_summary = None
+        velocity_app.live_progress_points.clear()
         velocity_app.monitoring_active = False
         velocity_app.monitoring_threads = []
         velocity_app.monitoring_latest = {}
@@ -163,6 +194,143 @@ class FeatureSmokeTests(unittest.TestCase):
                 selected = velocity_app._latest_run_dir()
 
             self.assertEqual(selected, newer)
+
+    def test_run_test_page_idle_shows_upload_form(self):
+        response = self.client.get("/run_test")
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn('id="runForm"', html)
+        self.assertIn('name="jmx_file"', html)
+        self.assertIn('name="data_files"', html)
+        self.assertIn("if (!status || !form) return;", html)
+
+    def test_run_test_page_active_shows_progress_and_stop_without_upload_form(self):
+        velocity_app.test_running = True
+        velocity_app.current_process = RunningProcess()
+
+        response = self.client.get("/run_test")
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+
+        self.assertIn("Test in progress", html)
+        self.assertIn("View live progress", html)
+        self.assertIn("Stop Test", html)
+        self.assertNotIn('id="runForm"', html)
+
+    def test_successful_run_test_start_redirects_to_live_progress(self):
+        with tempfile.TemporaryDirectory() as run_dir:
+            running = RunningProcess()
+            fake_thread = unittest.mock.MagicMock()
+            with (
+                patch.object(velocity_app, "make_run_dir", return_value=run_dir),
+                patch.object(velocity_app, "start_jmeter", return_value=running),
+                patch.object(velocity_app.threading, "Thread", return_value=fake_thread) as thread_mock,
+                patch.object(velocity_app.socketio, "emit"),
+            ):
+                response = self.client.post(
+                    "/run_test",
+                    data={
+                        "jmx_file": (io.BytesIO(b"<jmeterTestPlan/>"), "load.jmx"),
+                        "data_files": (io.BytesIO(b"id\n1\n"), "users.csv"),
+                    },
+                    content_type="multipart/form-data",
+                )
+
+            self.assertEqual(response.status_code, 302)
+            self.assertIn("/live_progress", response.headers["Location"])
+            self.assertTrue(velocity_app.test_running)
+            self.assertIs(velocity_app.current_process, running)
+            self.assertEqual(velocity_app.current_run_dir, run_dir)
+            self.assertTrue(os.path.exists(os.path.join(run_dir, "load.jmx")))
+            self.assertTrue(os.path.exists(os.path.join(run_dir, "users.csv")))
+            self.assertEqual(thread_mock.call_count, 2)
+            self.assertEqual(fake_thread.start.call_count, 2)
+
+    def test_live_progress_page_contains_refresh_restore_controls(self):
+        response = self.client.get("/live_progress")
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn('id="responseChart"', html)
+        self.assertIn('id="errorChart"', html)
+        self.assertIn('id="logPanel"', html)
+        self.assertIn('id="generateReportButton"', html)
+        self.assertIn("setProgressSnapshot(snapshot.progress)", html)
+        self.assertIn("renderCompletionSummary(snapshot.summary", html)
+        self.assertIn("MAX_LIVE_POINTS = 500", html)
+
+    def test_live_status_restores_completed_summary_progress_logs_and_report_availability(self):
+        with tempfile.TemporaryDirectory() as run_dir:
+            velocity_app.current_run_dir = run_dir
+            result_file = os.path.join(run_dir, "results.jtl")
+            with open(result_file, "w", encoding="utf-8") as handle:
+                handle.write("timeStamp,elapsed,label,success\n1,100,Login,true\n")
+            with open(os.path.join(run_dir, "jmeter.log"), "w", encoding="utf-8") as handle:
+                handle.write("line one\nline two\n")
+
+            velocity_app.transaction_stats["Login"] = [(100.0, True), (200.0, False)]
+            velocity_app.live_progress_points.extend([
+                {"timestamp": "1000", "response_time": 100.0, "error_rate": 0.0},
+                {"timestamp": "1200", "response_time": 200.0, "error_rate": 50.0},
+            ])
+            velocity_app.last_test_summary = {
+                "duration": "2.0 sec",
+                "start": "10:00:00",
+                "end": "10:00:02",
+                "users": 7,
+                "metrics": velocity_app.compute_summary(),
+            }
+
+            response = self.client.get("/live_status")
+            payload = response.get_json()
+
+            self.assertFalse(payload["running"])
+            self.assertTrue(payload["completed"])
+            self.assertTrue(payload["results_available"])
+            self.assertEqual(payload["summary"]["users"], 7)
+            self.assertEqual(len(payload["progress"]), 2)
+            self.assertEqual(payload["logs"], ["line one", "line two"])
+            self.assertEqual(payload["metrics"][0]["samples"], 2)
+
+    def test_live_generate_report_uses_current_completed_run(self):
+        source_fixture = os.path.join(
+            os.path.dirname(__file__),
+            "fixtures",
+            "apache_jmeter",
+            "HTMLReportTestFile.csv",
+        )
+        with tempfile.TemporaryDirectory() as run_dir:
+            target = os.path.join(run_dir, "results.jtl")
+            with open(source_fixture, "rb") as source, open(target, "wb") as output:
+                output.write(source.read())
+
+            velocity_app.current_run_dir = run_dir
+            captured = {}
+
+            with (
+                patch.object(velocity_app, "save_report", side_effect=lambda data: captured.update(data)),
+                patch.object(velocity_app, "generate_report_graph_assets", return_value={}),
+            ):
+                response = self.client.get("/generate_report")
+
+            self.assertEqual(response.status_code, 302)
+            self.assertIn("/report/latest", response.headers["Location"])
+            self.assertTrue(captured["summary"])
+            self.assertEqual(captured["file_name"], "results.jtl")
+            self.assertEqual(captured["steady_state"], "Full test period")
+
+    def test_stop_test_terminates_process_and_clears_running_state(self):
+        process = StoppableProcess()
+        velocity_app.test_running = True
+        velocity_app.current_process = process
+
+        with patch.object(velocity_app.socketio, "emit"):
+            response = self.client.post("/stop_test")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(process.terminated)
+        self.assertGreaterEqual(process.wait_calls, 1)
+        self.assertFalse(velocity_app.test_running)
+        self.assertIsNone(velocity_app.current_process)
 
     def test_immediate_jmeter_failure_resets_running_state_and_sanitizes_filename(self):
         with tempfile.TemporaryDirectory() as run_dir:
