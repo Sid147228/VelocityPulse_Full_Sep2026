@@ -484,6 +484,41 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertTrue(payload["monitoring"]["active"])
         self.assertEqual(payload["monitoring"]["servers"], 1)
 
+    def test_valid_jmeter_upload_round_trip_shows_detected_window_without_error(self):
+        fixture = os.path.join(
+            os.path.dirname(__file__),
+            "fixtures",
+            "apache_jmeter",
+            "HTMLReportTestFile.csv",
+        )
+
+        with tempfile.TemporaryDirectory() as upload_dir:
+            with open(fixture, "rb") as source:
+                payload = source.read()
+
+            with patch.object(velocity_app, "UPLOAD_FOLDER", upload_dir):
+                response = self.client.post(
+                    "/upload",
+                    data={
+                        "file": (io.BytesIO(payload), "valid-results.csv"),
+                    },
+                    content_type="multipart/form-data",
+                    follow_redirects=True,
+                )
+
+            self.assertEqual(response.status_code, 200)
+            html = response.get_data(as_text=True)
+            self.assertIn("valid-results.csv uploaded successfully", html)
+            self.assertIn("Detected test window", html)
+            self.assertIn("Report configuration", html)
+            self.assertNotIn("Unable to read the uploaded JMeter result file", html)
+
+    def test_timestamp_helpers_round_trip_millisecond_precision(self):
+        original = 1788256800123
+        formatted = velocity_app._format_test_timestamp(original)
+        restored = velocity_app._parse_datetime_local(formatted["input"])
+        self.assertEqual(restored, original)
+
     def test_upload_page_always_uses_upload_csv_jtl_wording(self):
         response = self.client.get("/upload")
         self.assertEqual(response.status_code, 200)
