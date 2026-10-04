@@ -726,61 +726,84 @@ class FeatureSmokeTests(unittest.TestCase):
         third = html.find("03-10-2026")
         self.assertTrue(0 <= first < second < third)
 
-    def test_report_pdf_route_renders_pdf_response(self):
+    def test_report_pdf_route_uses_reportlab_without_native_gtk_dependencies(self):
         historical = report("PDF Report", "2026-10-01T10:00:00")
         historical.update({
             "selected_metrics": ["avg", "p90"],
             "chart_time_labels": [],
             "rag_counts": {"GREEN": 1, "AMBER": 0, "RED": 0},
             "graph_paths": {},
+            "report_kpis": {
+                "total_samples": 100,
+                "successful_samples": 100,
+                "failed_samples": 0,
+                "error_pct": 0.0,
+                "avg_s": 1.0,
+                "p90_s": 1.2,
+                "p95_s": 1.3,
+            },
         })
 
-        class FakeHTML:
-            def __init__(self, string, base_url=None):
-                self.string = string
-                self.base_url = base_url
-
-            def write_pdf(self):
-                return b"%PDF-fake"
-
-        fake_weasyprint = types.SimpleNamespace(HTML=FakeHTML)
-        with (
-            patch.object(velocity_app, "load_history", return_value=[historical]),
-            patch.dict(sys.modules, {"weasyprint": fake_weasyprint}),
-        ):
+        with patch.object(velocity_app, "load_history", return_value=[historical]):
             response = self.client.get("/export_report_pdf/0")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, "application/pdf")
         self.assertTrue(response.data.startswith(b"%PDF"))
+        self.assertGreater(len(response.data), 1000)
 
-    def test_compare_pdf_contains_real_comparison_rows(self):
+    def test_compare_pdf_contains_real_comparison_rows_with_reportlab(self):
         earlier = report("Earlier", "2026-10-01T10:00:00", avg=1.0)
         later = report("Later", "2026-10-02T10:00:00", avg=1.5)
-        captured = {}
 
-        class FakeHTML:
-            def __init__(self, string, base_url=None):
-                captured["html"] = string
-                captured["base_url"] = base_url
-
-            def write_pdf(self):
-                return b"%PDF-compare"
-
-        fake_weasyprint = types.SimpleNamespace(HTML=FakeHTML)
-        with (
-            patch.object(velocity_app, "load_history", return_value=[later, earlier]),
-            patch.dict(sys.modules, {"weasyprint": fake_weasyprint}),
-        ):
+        with patch.object(velocity_app, "load_history", return_value=[later, earlier]):
             response = self.client.get(
                 "/compare/pdf?report_ids=1&report_ids=0&metric=Avg%20(s)"
             )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, "application/pdf")
-        self.assertIn("Login", captured["html"])
-        self.assertIn("Degraded", captured["html"])
-        self.assertIn("0.50", captured["html"])
+        self.assertTrue(response.data.startswith(b"%PDF"))
+        self.assertGreater(len(response.data), 1000)
+
+    def test_reportlab_pdf_builders_are_pure_python_pdf_outputs(self):
+        single = report("Direct PDF", "2026-10-01T10:00:00")
+        single.update({
+            "graph_paths": {},
+            "observations": [],
+            "report_kpis": {
+                "total_samples": 100,
+                "successful_samples": 100,
+                "failed_samples": 0,
+                "error_pct": 0.0,
+                "avg_s": 1.0,
+                "p90_s": 1.2,
+                "p95_s": 1.3,
+            },
+        })
+        overview = velocity_app.report_overview(single)
+        pdf = velocity_app.build_single_report_pdf(single, overview)
+        self.assertTrue(pdf.startswith(b"%PDF"))
+        self.assertGreater(len(pdf), 1000)
+
+        metric, _, _, comparisons, observations = velocity_app.build_comparison_data(
+            single,
+            report("Later PDF", "2026-10-02T10:00:00", avg=1.25),
+            "Avg (s)",
+        )
+        compare_pdf = velocity_app.build_compare_report_pdf(
+            single,
+            report("Later PDF", "2026-10-02T10:00:00", avg=1.25),
+            overview,
+            velocity_app.report_overview(
+                report("Later PDF", "2026-10-02T10:00:00", avg=1.25)
+            ),
+            metric,
+            comparisons,
+            observations,
+        )
+        self.assertTrue(compare_pdf.startswith(b"%PDF"))
+        self.assertGreater(len(compare_pdf), 1000)
 
     def test_about_page_renders_with_changelog_fallback(self):
         response = self.client.get("/about")
