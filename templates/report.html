@@ -67,6 +67,7 @@
 {% set chart_time_labels = chart_time_labels or [] %}
 {% set series_avg_by_txn = series_avg_by_txn or {} %}
 {% set series_p90_by_txn = series_p90_by_txn or {} %}
+{% set series_response_percentiles_over_time = series_response_percentiles_over_time or {} %}
 {% set series_error_rate_by_txn = series_error_rate_by_txn or {} %}
 {% set series_throughput_over_time = series_throughput_over_time or [] %}
 {% set series_tps_by_txn = series_tps_by_txn or {} %}
@@ -219,6 +220,7 @@
   const timeLabels = {{ chart_time_labels|tojson }};
   const avgSeries = {{ series_avg_by_txn|tojson }};
   const p90Series = {{ series_p90_by_txn|tojson }};
+  const responsePercentiles = {{ series_response_percentiles_over_time|tojson }};
   const errorSeries = {{ series_error_rate_by_txn|tojson }};
   const throughput = {{ series_throughput_over_time|tojson }};
   const tpsSeries = {{ series_tps_by_txn|tojson }};
@@ -227,19 +229,22 @@
     new Chart(document.getElementById('avgByTxnChart'), {
       type: 'line',
       data: { labels: timeLabels, datasets: lineDatasetsFromSeries(avgSeries) },
-      options: { plugins: { title: { display: true, text: 'Average response time (s) by transaction' } } }
+      options: { plugins: { title: { display: true, text: 'Average response time over time (JMeter-compatible)' } } }
     });
 
+    const percentileSeries = Object.keys(responsePercentiles).length > 0
+      ? responsePercentiles
+      : p90Series;
     new Chart(document.getElementById('p90ByTxnChart'), {
       type: 'line',
-      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(p90Series) },
-      options: { plugins: { title: { display: true, text: 'P90 response time (s) by transaction' } } }
+      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(percentileSeries) },
+      options: { plugins: { title: { display: true, text: 'Response time percentiles over time (JMeter-compatible)' } } }
     });
 
     new Chart(document.getElementById('errorRateChart'), {
       type: 'line',
       data: { labels: timeLabels, datasets: lineDatasetsFromSeries(errorSeries) },
-      options: { plugins: { title: { display: true, text: 'Error rate (%) by transaction' } } }
+      options: { plugins: { title: { display: true, text: 'VelocityPulse supplemental: error rate (%) by transaction' } } }
     });
 
     const tpsDatasets = lineDatasetsFromSeries(tpsSeries);
