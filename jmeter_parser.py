@@ -5,9 +5,16 @@ import matplotlib.pyplot as plt
 import os
 
 def detect_test_window(file_path):
+    """Return the first and last valid JMeter timestamps in epoch milliseconds."""
     df = pd.read_csv(file_path)
-    timestamps = df['timeStamp'].dropna().astype(int)
-    return timestamps.min(), timestamps.max()
+    if "timeStamp" not in df.columns:
+        raise ValueError("JMeter result file does not contain a timeStamp column")
+
+    timestamps = pd.to_numeric(df["timeStamp"], errors="coerce").dropna()
+    if timestamps.empty:
+        raise ValueError("JMeter result file does not contain valid timestamps")
+
+    return int(timestamps.min()), int(timestamps.max())
 
 def parse_jmeter_csv(file_path, green_sla, amber_sla, rag_basis, start_time=None, end_time=None, error_sla=2.0):
     df = pd.read_csv(file_path)
