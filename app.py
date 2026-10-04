@@ -124,6 +124,50 @@ def save_report(report_data):
         json.dump(history, f, indent=2)
 
 
+def overall_rag(summary):
+    if any(row.get("RAG") == "RED" for row in summary):
+        return "RED"
+    if any(row.get("RAG") == "AMBER" for row in summary):
+        return "AMBER"
+    return "GREEN" if summary else "UNKNOWN"
+
+
+def generate_report_graph_assets(df, summary, green_sla, amber_sla):
+    report_graph_id = uuid.uuid4().hex[:12]
+    relative_dir = f"reports/graphs/{report_graph_id}"
+    absolute_dir = os.path.join("static", relative_dir)
+    os.makedirs(absolute_dir, exist_ok=True)
+
+    generate_graphs(
+        df,
+        green_sla=green_sla,
+        amber_sla=amber_sla,
+        graph_dir=absolute_dir,
+    )
+    generate_transaction_progress(
+        df,
+        out_file=os.path.join(absolute_dir, "transaction_progress.png"),
+    )
+    generate_rag_pie(
+        summary,
+        out_file=os.path.join(absolute_dir, "rag_pie.png"),
+    )
+
+    filenames = {
+        "response_distribution": "response_distribution.png",
+        "error_trend": "error_trend.png",
+        "sla_heatmap": "sla_heatmap.png",
+        "threads_over_time": "threads_over_time.png",
+        "transaction_progress": "transaction_progress.png",
+        "rag_pie": "rag_pie.png",
+    }
+    return {
+        key: f"{relative_dir}/{filename}"
+        for key, filename in filenames.items()
+        if os.path.exists(os.path.join(absolute_dir, filename))
+    }
+
+
 def _metric(row, key):
     try:
         return float(row.get(key, 0) or 0)
@@ -545,7 +589,7 @@ def analyze():
 
     report_name = request.form["report_name"]
     transactions = request.form.getlist("transactions")
-    metrics = request.form.getlist("metrics")
+    metrics = request.form.getlist("metrics") or ["avg", "p90", "p95", "error", "samples"]
     rag_basis = request.form["rag_basis"]
     include_error = "include_error" in request.form
     error_threshold = float(request.form.get("error_threshold", 0))
@@ -593,6 +637,7 @@ def analyze():
 
     summary, test_rag = evaluate_sla(summary, green, amber, rag_basis, include_error, error_threshold)
     filtered = [row for row in summary if row.get("Transaction") in transactions] if transactions else summary
+    test_rag = overall_rag(filtered)
 
     df = pd.read_csv(file_path)
     df['timeStamp'] = pd.to_numeric(df['timeStamp'], errors='coerce').fillna(0).astype(int)
@@ -622,6 +667,9 @@ def analyze():
             & (df["timeStamp"] <= steady_end_ms)
         ].copy()
 
+    if transactions and "label" in df.columns:
+        df = df[df["label"].astype(str).isin(transactions)].copy()
+
     concurrent_users = (
         int(df["allThreads"].max())
         if "allThreads" in df.columns and not df.empty
@@ -638,6 +686,11 @@ def analyze():
                     row[key] = None
 
     chart_data = build_report_chart_data(df, filtered)
+    try:
+        graph_paths = generate_report_graph_assets(df, filtered, green, amber)
+    except Exception as exc:
+        print("Graph generation failed:", exc)
+        graph_paths = {}
 
     report_data = {
         "report_name": report_name,
@@ -650,18 +703,18 @@ def analyze():
         "total_duration": total_duration,
         "concurrent_users": concurrent_users,
         "steady_state": steady_state,
+        "selected_metrics": metrics,
+        "green": green,
+        "amber": amber,
+        "rag_basis": rag_basis,
+        "include_error": include_error,
+        "error_threshold": error_threshold if include_error else None,
+        "graph_paths": graph_paths,
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
 
     save_report(report_data)
-
-    try:
-        generate_graphs(df, green_sla=green, amber_sla=amber)
-        generate_transaction_progress(df, out_file="static/reports/graphs/transaction_progress.png")
-        generate_rag_pie(filtered, out_file="static/reports/graphs/rag_pie.png")
-    except Exception as e:
-        print("Graph generation failed:", e)
 
     reports = load_history()
     new_index = 0
@@ -1224,6 +1277,11 @@ def generate_report():
         steady_state = "Not Available"
 
     chart_data = build_report_chart_data(df, summary)
+    try:
+        graph_paths = generate_report_graph_assets(df, summary, green, amber)
+    except Exception as exc:
+        print("Graph generation failed:", exc)
+        graph_paths = {}
 
     report_data = {
         "report_name": f"Live Test {latest_run}",
@@ -1236,18 +1294,18 @@ def generate_report():
         "total_duration": total_duration,
         "concurrent_users": concurrent_users,
         "steady_state": steady_state,
+        "selected_metrics": ["avg", "p90", "p95", "error", "samples"],
+        "green": green,
+        "amber": amber,
+        "rag_basis": rag_basis,
+        "include_error": False,
+        "error_threshold": None,
+        "graph_paths": graph_paths,
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
 
     save_report(report_data)
-
-    try:
-        generate_graphs(df, green_sla=green, amber_sla=amber)
-        generate_transaction_progress(df, out_file="static/reports/graphs/transaction_progress.png")
-        generate_rag_pie(summary, out_file="static/reports/graphs/rag_pie.png")
-    except Exception as e:
-        print("Graph generation failed:", e)
 
     return redirect(url_for("report_latest"))
 
