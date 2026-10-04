@@ -298,12 +298,15 @@ def _resolve_report_pair(reports, ids):
 
 @app.route("/about")
 def about():
-    try:
-        with open("CHANGELOG.md", "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        recent_changes = "".join(lines[-20:])
-    except Exception:
-        recent_changes = "No changelog available."
+    recent_changes = "No changelog available."
+    for changelog_path in ("CHANGELOG.md", "Changelog.md"):
+        try:
+            with open(changelog_path, "r", encoding="utf-8") as handle:
+                lines = handle.readlines()
+            recent_changes = "".join(lines[-20:])
+            break
+        except OSError:
+            continue
     return render_template("about.html",
                            version=__version__,
                            build=__build__,
