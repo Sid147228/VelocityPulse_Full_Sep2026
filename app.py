@@ -665,7 +665,17 @@ def upload():
             test_start_ms, test_end_ms = detect_test_window(file_path)
             test_start_ms, test_end_ms = int(test_start_ms), int(test_end_ms)
             if test_end_ms < test_start_ms:
-                raise ValueError("Invalid test window")
+                raise ValueError("Invalid JMeter test window.")
+        except ValueError as exc:
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass
+            session.pop("uploaded_file", None)
+            session.pop("uploaded_file_path", None)
+            session.pop("test_window", None)
+            flash(f"Unable to use this JMeter result file: {exc}", "error")
+            return redirect(url_for("upload"))
         except Exception:
             try:
                 os.remove(file_path)
@@ -674,11 +684,7 @@ def upload():
             session.pop("uploaded_file", None)
             session.pop("uploaded_file_path", None)
             session.pop("test_window", None)
-            flash(
-                "The file was uploaded, but VelocityPulse could not detect a valid JMeter test window. "
-                "Make sure the file contains a valid timeStamp column.",
-                "error",
-            )
+            flash("Unable to read the uploaded JMeter result file.", "error")
             return redirect(url_for("upload"))
 
         session["uploaded_file"] = filename
@@ -729,6 +735,8 @@ def upload():
                     "start_input": start_fmt["input"],
                     "end_input": end_fmt["input"],
                 }
+            except ValueError as exc:
+                flash(f"Unable to read the uploaded JMeter result file: {exc}", "error")
             except Exception:
                 flash("Unable to read the uploaded JMeter result file.", "error")
 
