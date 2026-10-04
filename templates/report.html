@@ -82,9 +82,10 @@
       <thead>
         <tr>
           <th>Transaction</th>
-          <th>Avg (s)</th>
-          <th>P90 (s)</th>
-          <th>P95 (s)</th>
+          <th>Samples</th>
+          <th>Avg (ms)</th>
+          <th>P90 (ms)</th>
+          <th>P95 (ms)</th>
           <th>Error %</th>
           <th>RAG</th>
         </tr>
@@ -93,24 +94,25 @@
         {% for row in summary %}
         <tr>
           <td>{{ row.get("Transaction") }}</td>
+          <td>{{ row.get("#Samples", 0) }}</td>
           <td>
             {% if row.get("Avg (s)") is not none %}
-              {{ "%.4f"|format(row.get("Avg (s)")|float) }}
+              {{ "%.2f"|format((row.get("Avg (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("90th % (s)") is not none %}
-              {{ "%.4f"|format(row.get("90th % (s)")|float) }}
+              {{ "%.2f"|format((row.get("90th % (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("95th % (s)") is not none %}
-              {{ "%.4f"|format(row.get("95th % (s)")|float) }}
+              {{ "%.2f"|format((row.get("95th % (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("Error %") is not none %}
-              {{ "%.4f"|format(row.get("Error %")|float) }}
+              {{ "%.2f"|format(row.get("Error %")|float) }}
             {% else %}—{% endif %}
           </td>
           <td>
@@ -229,7 +231,7 @@
     new Chart(document.getElementById('avgByTxnChart'), {
       type: 'line',
       data: { labels: timeLabels, datasets: lineDatasetsFromSeries(avgSeries) },
-      options: { plugins: { title: { display: true, text: 'Average response time over time (JMeter-compatible)' } } }
+      options: { plugins: { title: { display: true, text: 'Average response time over time (ms, JMeter-compatible)' } } }
     });
 
     const percentileSeries = Object.keys(responsePercentiles).length > 0
@@ -238,7 +240,7 @@
     new Chart(document.getElementById('p90ByTxnChart'), {
       type: 'line',
       data: { labels: timeLabels, datasets: lineDatasetsFromSeries(percentileSeries) },
-      options: { plugins: { title: { display: true, text: 'Response time percentiles over time (JMeter-compatible)' } } }
+      options: { plugins: { title: { display: true, text: 'Response time percentiles over time (ms, JMeter-compatible)' } } }
     });
 
     new Chart(document.getElementById('errorRateChart'), {
