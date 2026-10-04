@@ -736,8 +736,22 @@ def upload():
                     "end_input": end_fmt["input"],
                 }
             except ValueError as exc:
+                session.pop("uploaded_file", None)
+                session.pop("uploaded_file_path", None)
+                session.pop("test_window", None)
+                session.pop("summary", None)
+                uploaded_file = None
+                transactions = []
+                test_window = None
                 flash(f"Unable to read the uploaded JMeter result file: {exc}", "error")
             except Exception:
+                session.pop("uploaded_file", None)
+                session.pop("uploaded_file_path", None)
+                session.pop("test_window", None)
+                session.pop("summary", None)
+                uploaded_file = None
+                transactions = []
+                test_window = None
                 flash("Unable to read the uploaded JMeter result file.", "error")
 
     return render_template(
