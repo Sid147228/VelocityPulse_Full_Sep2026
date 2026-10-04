@@ -231,6 +231,14 @@ def build_report_observations(summary, rag_result):
     return observations
 
 
+def bounded_query_int(name, default, minimum=1, maximum=50):
+    try:
+        value = int(request.args.get(name, default))
+    except (TypeError, ValueError):
+        value = default
+    return min(max(value, minimum), maximum)
+
+
 def build_trend_observations(txn_trends):
     """Summarise oldest-to-newest transaction movement in concise bullets."""
     movements = []
@@ -238,7 +246,7 @@ def build_trend_observations(txn_trends):
         valid = [p for p in points if p.get("avg", 0) > 0]
         if len(valid) < 2:
             continue
-        oldest, latest = valid[-1], valid[0]  # reports are newest first
+        oldest, latest = valid[0], valid[-1]  # trend points are oldest to newest
         baseline = oldest["avg"]
         change = ((latest["avg"] - baseline) / baseline * 100) if baseline else 0
         movements.append((txn, change, baseline, latest["avg"], len(valid)))
@@ -859,18 +867,18 @@ def inject_test_state():
 
 @app.route("/trend")
 def trend():
-    n = int(request.args.get("n", 10))
+    n = bounded_query_int("n", 10)
     reports = load_history()
     if not reports:
         flash("No reports available for trend analysis.")
         return redirect(url_for("history"))
 
-    selected_reports = reports[:n]
+    selected_reports = list(reversed(reports[:n]))  # oldest to newest for charting
     txn_trends = {}
     all_txns = set()
 
     for r in selected_reports:
-        test_label = r.get("test_date") or r.get("timestamp")[:10]
+        test_label = r.get("test_date") or str(r.get("timestamp") or "Unknown")[:10]
         for row in r.get("summary", []):
             txn = row.get("Transaction")
             if not txn:
@@ -918,7 +926,7 @@ def trend():
     )
 @app.route("/baseline")
 def baseline():
-    n = int(request.args.get("n", 7))
+    n = bounded_query_int("n", 7)
     reports = load_history()
     if not reports:
         flash("No reports available for baseline calculation.")
