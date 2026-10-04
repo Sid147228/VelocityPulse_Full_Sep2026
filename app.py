@@ -774,7 +774,7 @@ def export_report_pdf(report_index):
                                    is_pdf=True,
                                    **report_data)
         from weasyprint import HTML
-        pdf = HTML(string=rendered).write_pdf()
+        pdf = HTML(string=rendered, base_url=request.url_root).write_pdf()
         response = make_response(pdf)
         response.headers["Content-Type"] = "application/pdf"
         response.headers["Content-Disposition"] = f"inline; filename=report_{report_index}.pdf"
