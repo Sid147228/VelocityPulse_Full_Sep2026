@@ -1451,6 +1451,7 @@ def analyze():
             green_sla=green,
             amber_sla=amber,
         ),
+        "observation_engine_version": 2,
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
@@ -1479,17 +1480,16 @@ def report(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
-        report_data.setdefault(
-            "observations",
-            build_report_observations(
+        if int(report_data.get("observation_engine_version") or 0) < 2:
+            report_data["observations"] = build_report_observations(
                 report_data.get("summary", []),
                 report_data.get("rag_result"),
                 chart_data=report_data,
                 report_kpis=report_overview(report_data),
                 green_sla=report_data.get("green"),
                 amber_sla=report_data.get("amber"),
-            ),
-        )
+            )
+            report_data["observation_engine_version"] = 2
         return render_template(
             "report.html",
             report_index=report_index,
@@ -1531,17 +1531,16 @@ def export_report_pdf(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
-        report_data.setdefault(
-            "observations",
-            build_report_observations(
+        if int(report_data.get("observation_engine_version") or 0) < 2:
+            report_data["observations"] = build_report_observations(
                 report_data.get("summary", []),
                 report_data.get("rag_result"),
                 chart_data=report_data,
                 report_kpis=report_overview(report_data),
                 green_sla=report_data.get("green"),
                 amber_sla=report_data.get("amber"),
-            ),
-        )
+            )
+            report_data["observation_engine_version"] = 2
         overview = report_overview(report_data)
         pdf = build_single_report_pdf(
             report_data,
@@ -2243,6 +2242,7 @@ def generate_report():
             green_sla=green,
             amber_sla=amber,
         ),
+        "observation_engine_version": 2,
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
