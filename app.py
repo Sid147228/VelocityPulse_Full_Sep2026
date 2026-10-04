@@ -701,50 +701,7 @@ def analyze():
                 except (ValueError, TypeError):
                     row[key] = None
 
-    rag_counts = {
-        "GREEN": sum(1 for r in filtered if r.get("RAG") == "GREEN"),
-        "AMBER": sum(1 for r in filtered if r.get("RAG") == "AMBER"),
-        "RED":   sum(1 for r in filtered if r.get("RAG") == "RED"),
-    }
-
-    df.columns = [c.strip().lower() for c in df.columns]
-    if "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", errors="coerce")
-    if "elapsed" in df.columns:
-        df["elapsed"] = pd.to_numeric(df["elapsed"], errors="coerce")
-    if "success" in df.columns:
-        df["success"] = df["success"].astype(str).str.lower().isin(["true", "1"])
-    else:
-        df["success"] = True
-    if "label" not in df.columns:
-        print("⚠️ No 'label' column found in CSV, charts may be empty")
-
-    df = df.dropna(subset=["timestamp"]).sort_values("timestamp")
-
-    time_index = df["timestamp"].dt.floor("min")
-    time_labels = sorted(time_index.dropna().unique())
-    labels_fmt = [ts.strftime("%H:%M") for ts in time_labels]
-
-    series_avg_by_txn, series_p90_by_txn, series_error_rate_by_txn = {}, {}, {}
-    for txn, g in df.groupby("label"):
-        gb = g.groupby(g["timestamp"].dt.floor("min"))
-        avg_ms = gb["elapsed"].mean()
-        p90_ms = gb["elapsed"].quantile(0.90)
-        err_pct = gb.apply(lambda x: 100.0 * ((~x["success"]).sum() / len(x)))
-        series_avg_by_txn[txn] = [round(avg_ms.get(t, None)/1000.0, 3) if pd.notnull(avg_ms.get(t, None)) else None for t in time_labels]
-        series_p90_by_txn[txn] = [round(p90_ms.get(t, None)/1000.0, 3) if pd.notnull(p90_ms.get(t, None)) else None for t in time_labels]
-        series_error_rate_by_txn[txn] = [round(err_pct.get(t, None), 3) if pd.notnull(err_pct.get(t, None)) else None for t in time_labels]
-
-    throughput_over_time = df.groupby(df["timestamp"].dt.floor("min")).size()
-    series_throughput_over_time = [int(throughput_over_time.get(t, 0)) for t in time_labels]
-
-    chart_labels = [row["Transaction"] for row in filtered]
-    avg_values = [row["Avg (s)"] for row in filtered]
-    p90_values = [row["90th % (s)"] for row in filtered]
-    p95_values = [row["95th % (s)"] for row in filtered]
-    error_values = [row["Error %"] for row in filtered]
-
-    report_data = {
+    chart_data = build_report_chart_data(df, filtered)\n\n    report_data = {
         "report_name": report_name,
         "file_name": os.path.basename(file_path),
         "summary": filtered,
@@ -755,17 +712,7 @@ def analyze():
         "total_duration": total_duration,
         "concurrent_users": concurrent_users,
         "steady_state": steady_state,
-        "rag_counts": rag_counts,
-        "chart_time_labels": labels_fmt,
-        "series_avg_by_txn": series_avg_by_txn,
-        "series_p90_by_txn": series_p90_by_txn,
-        "series_error_rate_by_txn": series_error_rate_by_txn,
-        "series_throughput_over_time": series_throughput_over_time,
-        "labels": chart_labels,
-        "avg_values": avg_values,
-        "p90_values": p90_values,
-        "p95_values": p95_values,
-        "error_values": error_values,
+        **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
 
