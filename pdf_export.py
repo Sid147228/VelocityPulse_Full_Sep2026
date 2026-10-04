@@ -252,6 +252,26 @@ def _transaction_table(report, styles):
     return table
 
 
+def _chart_card(title, image, styles):
+    card = Table(
+        [
+            [Paragraph(title, styles["small"])],
+            [image],
+        ],
+        colWidths=[128 * mm],
+    )
+    card.setStyle(TableStyle([
+        ("BOX", (0, 0), (-1, -1), 0.35, BORDER),
+        ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BLUE),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    return card
+
+
 def _line_chart_image(title, labels, series, y_label, divide_by=1.0):
     """Render a report data series to an in-memory PNG for ReportLab."""
     valid_series = {
@@ -326,11 +346,11 @@ def _primary_chart_flowables(report, styles):
     )
     if avg_image:
         charts.append(
-            KeepTogether([
-                Paragraph("Average Response Time Over Time (seconds, JMeter-compatible)", styles["small"]),
-                Spacer(1, 1.5 * mm),
+            _chart_card(
+                "Average Response Time Over Time (seconds, JMeter-compatible)",
                 avg_image,
-            ])
+                styles,
+            )
         )
 
     percentile_series = report.get("series_response_percentiles_over_time") or {}
@@ -346,11 +366,11 @@ def _primary_chart_flowables(report, styles):
     )
     if percentile_image:
         charts.append(
-            KeepTogether([
-                Paragraph("Response Time Percentiles Over Time (seconds, JMeter-compatible)", styles["small"]),
-                Spacer(1, 1.5 * mm),
+            _chart_card(
+                "Response Time Percentiles Over Time (seconds, JMeter-compatible)",
                 percentile_image,
-            ])
+                styles,
+            )
         )
 
     tps_series = report.get("series_tps_by_txn") or {}
@@ -367,11 +387,11 @@ def _primary_chart_flowables(report, styles):
     )
     if tps_image:
         charts.append(
-            KeepTogether([
-                Paragraph("Transactions Per Second (JMeter-compatible)", styles["small"]),
-                Spacer(1, 1.5 * mm),
+            _chart_card(
+                "Transactions Per Second (JMeter-compatible)",
                 tps_image,
-            ])
+                styles,
+            )
         )
 
     error_image = _line_chart_image(
@@ -382,11 +402,11 @@ def _primary_chart_flowables(report, styles):
     )
     if error_image:
         charts.append(
-            KeepTogether([
-                Paragraph("Error Rate Over Time (%)", styles["small"]),
-                Spacer(1, 1.5 * mm),
+            _chart_card(
+                "Error Rate Over Time (%)",
                 error_image,
-            ])
+                styles,
+            )
         )
 
     return charts
@@ -412,12 +432,7 @@ def _graph_flowables(report, static_root, styles):
         try:
             image = Image(absolute)
             image._restrictSize(125 * mm, 65 * mm)
-            items.append(KeepTogether([
-                Paragraph(title, styles["small"]),
-                Spacer(1, 2 * mm),
-                image,
-                Spacer(1, 3 * mm),
-            ]))
+            items.append(_chart_card(title, image, styles))
         except Exception:
             continue
     return items
