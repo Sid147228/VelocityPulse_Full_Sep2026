@@ -6,8 +6,11 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
+JMETER_STATISTIC_WINDOW = max(1, int(os.getenv("JMETER_REPORT_STATISTIC_WINDOW", "20000")))
+JMETER_REPORT_GRANULARITY_MS = max(1, int(os.getenv("JMETER_REPORT_GRANULARITY_MS", "60000")))
 
-def jmeter_percentile(values, percentile):
+
+def jmeter_percentile(values, percentile, window_size=None):
     """Match Apache Commons Math Percentile.EstimationType.LEGACY used by JMeter HTML reports.
 
     JMeter's report generator uses Apache Commons Math's LEGACY estimator:
@@ -28,6 +31,13 @@ def jmeter_percentile(values, percentile):
 
     if not cleaned:
         return None
+
+    # JMeter's PercentileAggregator uses DescriptiveStatistics with a sliding
+    # statistics window (20,000 samples by default). Preserve insertion order
+    # while applying that window, then sort for percentile estimation.
+    effective_window = JMETER_STATISTIC_WINDOW if window_size is None else int(window_size)
+    if effective_window > 0 and len(cleaned) > effective_window:
+        cleaned = cleaned[-effective_window:]
 
     cleaned.sort()
     n = len(cleaned)
