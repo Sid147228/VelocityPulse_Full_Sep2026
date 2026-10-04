@@ -9,5 +9,12 @@
     <a href="{{ url_for('live_progress') }}">📡 Live Progress</a>
     <a href="{{ url_for('about') }}">ℹ️ About Me</a>
   </nav>
-  <div class="vp-account"><span>Logged in as {{ session.get('user', 'Guest') }}</span><a class="vp-logout" href="{{ url_for('logout') }}">Logout</a></div>
+  {% set profile = session.get('user_profile', {}) %}
+  <div class="vp-account">
+    <span>
+      Signed in as {{ profile.get('name') or session.get('user', 'Microsoft user') }}
+      {% if profile.get('email') %}<small style="display:block; opacity:.8;">{{ profile.get('email') }}</small>{% endif %}
+    </span>
+    <a class="vp-logout" href="{{ url_for('logout') }}">Sign out</a>
+  </div>
 </header>
