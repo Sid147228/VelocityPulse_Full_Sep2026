@@ -74,7 +74,7 @@
 <div class="monitoring-summary" id="monitoringSummary">No monitoring data received yet.</div>
 <div class="monitoring-table-wrap">
   <table class="metrics-table" id="monitoringTable">
-    <thead><tr><th>Server</th><th>CPU %</th><th>Memory</th><th>Last update</th></tr></thead>
+    <thead><tr><th>Server</th><th>CPU %</th><th>Memory %</th><th>Last update</th></tr></thead>
     <tbody><tr><td colspan="4">No monitoring data yet</td></tr></tbody>
   </table>
 </div>
@@ -85,6 +85,7 @@
 
 <style>
   .monitoring-summary { margin: 8px 0 14px; padding: 12px 14px; border-radius: 8px; background:#edf4ff; color:#244771; }
+  .log-panel { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .monitoring-table-wrap { overflow-x:auto; margin-bottom:20px; }
 </style>
 
@@ -119,23 +120,31 @@
   const responseChart = new Chart(responseCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Response Time (ms)', data: [] }] } });
   const errorChart = new Chart(errorCtx, { type: 'line', data: { labels: [], datasets: [{ label: 'Error %', data: [] }] } });
 
+  function renderMetricRows(tbody, rows) {
+    tbody.innerHTML = '';
+    (rows || []).forEach(row => {
+      const tr = document.createElement('tr');
+      [row.label, row.samples, row.avg, row.p90, row.p95, row.error_pct + '%'].forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    if (!(rows || []).length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 6;
+      td.textContent = 'No data yet';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    }
+  }
+
   // Transaction table updates
   socket.on('metrics_update', function(data) {
     document.getElementById('statusBanner').innerText = "📊 Receiving live metrics...";
-    const tbody = document.querySelector('#metricsTable tbody');
-    tbody.innerHTML = '';
-    data.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${row.label}</td>
-        <td>${row.samples}</td>
-        <td>${row.avg}</td>
-        <td>${row.p90}</td>
-        <td>${row.p95}</td>
-        <td>${row.error_pct}%</td>
-      `;
-      tbody.appendChild(tr);
-    });
+    renderMetricRows(document.querySelector('#metricsTable tbody'), data);
   });
 
   // Progress chart updates
@@ -156,7 +165,7 @@
   socket.on('log_update', function(data) {
     document.getElementById('statusBanner').innerText = "📝 Streaming JMeter logs...";
     const logPanel = document.getElementById('logPanel');
-    logPanel.innerHTML += data.line + "<br>";
+    logPanel.textContent += data.line + "\n";
     logPanel.scrollTop = logPanel.scrollHeight;
   });
 
@@ -175,20 +184,7 @@
     document.getElementById('endTime').innerText = summary.end;
     document.getElementById('users').innerText = summary.users;
 
-    const tbody = document.querySelector('#finalMetricsTable tbody');
-    tbody.innerHTML = '';
-    summary.metrics.forEach(row => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${row.label}</td>
-        <td>${row.samples}</td>
-        <td>${row.avg}</td>
-        <td>${row.p90}</td>
-        <td>${row.p95}</td>
-        <td>${row.error_pct}%</td>
-      `;
-      tbody.appendChild(tr);
-    });
+    renderMetricRows(document.querySelector('#finalMetricsTable tbody'), summary.metrics || []);
   });
 
   socket.on('test_stopped', function(summary) {
@@ -268,7 +264,6 @@
 
   // FIXED: listen for server_metrics without broadcast flag issues
   socket.on('server_metrics', function(data) {
-    console.log("Received metrics:", data); // debug log
     renderMonitoringRow(data);
     const timestamp = new Date().toLocaleTimeString();
     if (!cpuChart.data.labels.includes(timestamp)) {
@@ -282,6 +277,12 @@
     memDs.data.push(data.mem);
     cpuChart.update();
     memChart.update();
+  });
+
+  socket.on('server_metrics_error', function(data) {
+    if (!data || !data.server) return;
+    document.getElementById('monitoringSummary').textContent =
+      data.server + ': monitoring error - ' + (data.error || 'unknown error');
   });
 
   function applyMonitoringSnapshot(rows) {
