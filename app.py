@@ -610,14 +610,21 @@ def report_latest():
 @app.route("/history")
 def history():
     reports = load_history()
-    page = int(request.args.get("page", 1))
     per_page = 5
-    total_pages = (len(reports) + per_page - 1) // per_page
+    total_pages = max(1, (len(reports) + per_page - 1) // per_page)
+    try:
+        requested_page = int(request.args.get("page", 1))
+    except (TypeError, ValueError):
+        requested_page = 1
+    page = min(max(requested_page, 1), total_pages)
     start, end = (page - 1) * per_page, page * per_page
-    return render_template("history.html",
-                           reports=reports[start:end],
-                           page=page,
-                           total_pages=total_pages)
+    return render_template(
+        "history.html",
+        reports=reports[start:end],
+        page=page,
+        total_pages=total_pages,
+        start_index=start,
+    )
 
 @app.route("/export_report_pdf/<int:report_index>")
 def export_report_pdf(report_index):
@@ -875,6 +882,20 @@ def baseline():
                            labels=labels)
 test_running = False
 current_process = None  # track JMeter process globally
+current_run_dir = None
+
+def _latest_run_dir():
+    candidates = []
+    if not os.path.isdir(UPLOAD_FOLDER):
+        return None
+    for name in os.listdir(UPLOAD_FOLDER):
+        path = os.path.join(UPLOAD_FOLDER, name)
+        if not name.startswith("run_") or not os.path.isdir(path):
+            continue
+        results_path = os.path.join(path, "results.jtl")
+        sort_path = results_path if os.path.exists(results_path) else path
+        candidates.append((os.path.getmtime(sort_path), path))
+    return max(candidates, default=(None, None), key=lambda item: item[0])[1]
 
 def make_run_dir():
     run_id = uuid.uuid4().hex[:8]
@@ -884,7 +905,7 @@ def make_run_dir():
 
 @app.route("/run_test", methods=["GET", "POST"])
 def run_test():
-    global test_running, current_process
+    global test_running, current_process, current_run_dir
     if request.method == "POST":
         if test_running and current_process and current_process.poll() is None:
             flash("A JMeter test is already running. Open Live Progress to monitor it.", "warning")
@@ -893,21 +914,31 @@ def run_test():
         transaction_stats.clear()  # reset metrics
         socketio.emit("run_reset", {"status": "new test"})
         run_dir = make_run_dir()
+        current_run_dir = run_dir
 
         jmx_file = request.files.get("jmx_file")
         if not jmx_file or jmx_file.filename == "":
             test_running = False
             flash("❌ Please select a JMX test plan.", "error")
             return redirect(url_for("run_test"))
-        jmx_path = os.path.join(run_dir, jmx_file.filename)
+        jmx_name = secure_filename(jmx_file.filename)
+        if not jmx_name.lower().endswith(".jmx"):
+            test_running = False
+            flash("Please upload a valid .jmx test plan.", "error")
+            return redirect(url_for("run_test"))
+
+        jmx_path = os.path.join(run_dir, jmx_name)
         jmx_file.save(jmx_path)
 
         data_files = request.files.getlist("data_files")
         saved_data = []
-        for f in data_files:
-            if f and f.filename:
-                dest = os.path.join(run_dir, f.filename)
-                f.save(dest)
+        for data_file in data_files:
+            if data_file and data_file.filename:
+                data_name = secure_filename(data_file.filename)
+                if not data_name:
+                    continue
+                dest = os.path.join(run_dir, data_name)
+                data_file.save(dest)
                 saved_data.append(dest)
 
         results_file = os.path.join(run_dir, "results.jtl")
@@ -935,7 +966,10 @@ def run_test():
     return render_template("run_test.html")
 
 def start_jmeter(jmx_path, data_files, results_file, jmeter_log):
-    jmeter_exe = r"C:\apache-jmeter-5.6.3\apache-jmeter-5.6.3\bin\jmeter.bat"  # full path to JMeter batch file
+    jmeter_exe = os.getenv(
+        "JMETER_EXECUTABLE",
+        r"C:\apache-jmeter-5.6.3\apache-jmeter-5.6.3\bin\jmeter.bat",
+    )
     cmd = [jmeter_exe, "-n", "-t", jmx_path, "-l", results_file, "-j", jmeter_log]
     for idx, df in enumerate(data_files, start=1):
         cmd.extend(["-J" + f"datafile{idx}", df])
@@ -1092,13 +1126,13 @@ def tail_logs(log_file):
 
 @app.route("/generate_report")
 def generate_report():
-    runs = [d for d in os.listdir("uploads") if d.startswith("run_")]
-    if not runs:
+    global current_run_dir
+    run_dir = current_run_dir if current_run_dir and os.path.isdir(current_run_dir) else _latest_run_dir()
+    if not run_dir:
         flash("No test run found to generate report.", "error")
         return redirect(url_for("live_progress"))
 
-    latest_run = sorted(runs)[-1]
-    run_dir = os.path.join("uploads", latest_run)
+    latest_run = os.path.basename(run_dir)
     results_file = os.path.join(run_dir, "results.jtl")
 
     if not os.path.exists(results_file):
@@ -1119,11 +1153,11 @@ def generate_report():
         test_period = f"{start_dt.strftime('%d-%m-%Y %H:%M:%S')} to {end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
         total_duration = str(end_dt - start_dt)
         concurrent_users = int(df["allThreads"].max()) if "allThreads" in df.columns else None
-        steady_state = "Yes" if len(df) > 100 else "No"
+        steady_state = "Full test period"
     else:
         test_date = test_period = total_duration = "Not Available"
         concurrent_users = None
-        steady_state = "Unknown"
+        steady_state = "Not Available"
 
     chart_data = build_report_chart_data(df, summary)
 
@@ -1180,20 +1214,34 @@ monitoring_latest = {}
 
 def collect_linux_metrics(host, user, password, name, socketio):
     ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(host, username=user, password=password)
-    while monitoring_active:
-        stdin, stdout, stderr = ssh.exec_command("vmstat 1 2 | tail -1")
-        fields = stdout.read().decode().split()
-        if len(fields) >= 15:
-            cpu = 100 - int(fields[14])   # idle column
-            mem = int(fields[3])          # free memory (KB)
-            sample = {"server": name, "cpu": cpu, "mem": mem}
-            monitoring_latest[name] = sample
-            socketio.emit("server_metrics", sample,
-    			  namespace="/")
-                          
-        time.sleep(5)
+    try:
+        ssh.connect(host, username=user, password=password, timeout=5)
+        while monitoring_active:
+            _, cpu_out, _ = ssh.exec_command("vmstat 1 2 | tail -1")
+            cpu_fields = cpu_out.read().decode().split()
+
+            _, mem_out, _ = ssh.exec_command(
+                "free | awk '/Mem:/ { if ($2 > 0) printf \"%.2f\", ($3/$2)*100; else print 0 }'"
+            )
+            mem_text = mem_out.read().decode().strip()
+
+            if len(cpu_fields) >= 15:
+                cpu = 100.0 - float(cpu_fields[14])
+                mem = float(mem_text) if mem_text else 0.0
+                sample = {"server": name, "cpu": round(cpu, 2), "mem": round(mem, 2)}
+                monitoring_latest[name] = sample
+                socketio.emit("server_metrics", sample, namespace="/")
+            time.sleep(5)
+    except Exception as exc:
+        socketio.emit(
+            "server_metrics_error",
+            {"server": name, "error": str(exc)},
+            namespace="/",
+        )
+    finally:
+        ssh.close()
 
 def collect_windows_metrics(host, name, socketio):
     while monitoring_active:
@@ -1213,56 +1261,77 @@ def monitor():
 @app.route("/start_monitoring", methods=["POST"])
 def start_monitoring():
     global monitoring_active, monitoring_threads, monitoring_latest
-    monitoring_active = True
-    monitoring_threads = []
-    monitoring_latest = {}
 
     data = request.get_json(silent=True) or {}
     servers = data.get("servers", [])
-
     if not servers:
-        print("⚠️ No servers provided in start_monitoring request")
-        return jsonify({"status": "no servers provided"}), 400
+        monitoring_active = False
+        monitoring_threads = []
+        monitoring_latest = {}
+        return jsonify({"status": "no servers provided", "servers": 0}), 400
 
-    print(f"✅ Starting monitoring for {len(servers)} server(s)")
+    monitoring_active = True
+    monitoring_threads = []
+    monitoring_latest = {}
+    errors = []
 
-    for srv in servers:
+    for server in servers:
+        host = str(server.get("host") or "").strip()
+        name = str(server.get("name") or host or "Unnamed server").strip()
+        os_type = str(server.get("os") or "").strip().lower()
+
+        if not host:
+            errors.append(f"{name}: host is required")
+            continue
+
         try:
-            os_type = srv.get("os")
-            # localhost is always collected from this machine. Do not try to
-            # SSH to localhost merely because the user selected Linux.
-            if srv.get("host", "").lower() in ["localhost", "127.0.0.1"]:
-                t = threading.Thread(
+            if host.lower() in {"localhost", "127.0.0.1", "::1"}:
+                thread = threading.Thread(
                     target=collect_windows_metrics,
-                    args=(srv.get("host"), srv.get("name"), socketio),
-                    daemon=True
+                    args=(host, name, socketio),
+                    daemon=True,
                 )
             elif os_type == "linux":
-                t = threading.Thread(
+                thread = threading.Thread(
                     target=collect_linux_metrics,
-                    args=(srv.get("host"), srv.get("user"), srv.get("password"), srv.get("name"), socketio),
-                    daemon=True
+                    args=(
+                        host,
+                        server.get("user"),
+                        server.get("password"),
+                        name,
+                        socketio,
+                    ),
+                    daemon=True,
                 )
             elif os_type == "windows":
-                t = threading.Thread(
-                    target=collect_windows_metrics,
-                    args=(srv.get("host"), srv.get("name"), socketio),
-                    daemon=True
+                # psutil can only inspect the machine on which VelocityPulse runs.
+                # Do not label local metrics as a remote Windows host.
+                errors.append(
+                    f"{name}: remote Windows monitoring is not configured; "
+                    "use localhost or configure a remote metrics transport."
                 )
+                continue
             else:
-                print(f"⚠️ Unknown OS type for server {srv}")
+                errors.append(f"{name}: unsupported OS type '{os_type or 'missing'}'")
                 continue
 
-            t.start()
-            monitoring_threads.append(t)
-            print(f"➡️ Monitoring thread started for {srv.get('name')} ({srv.get('host')})")
+            thread.start()
+            monitoring_threads.append(thread)
+        except Exception as exc:
+            errors.append(f"{name}: {exc}")
 
-        except Exception as e:
-            print(f"❌ Failed to start monitoring for {srv.get('name')}: {e}")
+    if not monitoring_threads:
+        monitoring_active = False
+        return jsonify({
+            "status": "monitoring not started",
+            "servers": 0,
+            "errors": errors,
+        }), 400
 
     return jsonify({
         "status": "monitoring started",
-        "servers": len(monitoring_threads)
+        "servers": len(monitoring_threads),
+        "errors": errors,
     })
 
 @app.route("/stop_monitoring", methods=["POST"])
@@ -1287,11 +1356,11 @@ def stop_monitoring():
 
 @app.route("/monitor_status", methods=["GET"])
 def monitor_status():
-    # Allow frontend to check if monitoring is active
+    live_threads = [thread for thread in monitoring_threads if thread.is_alive()]
     return jsonify({
-        "active": monitoring_active,
-        "servers": len(monitoring_threads),
-        "latest": list(monitoring_latest.values())
+        "active": bool(monitoring_active and live_threads),
+        "servers": len(live_threads),
+        "latest": list(monitoring_latest.values()),
     })
 
 
@@ -1315,9 +1384,12 @@ def test_connection():
             ssh.close()
             return jsonify({"status": f"✅ Connected to {host}"})
         elif os_type == "windows":
-            # For Windows, just check psutil locally
-            cpu = psutil.cpu_percent(interval=1)
-            return jsonify({"status": f"✅ Windows host {host} reachable, CPU={cpu}%"})
+            return jsonify({
+                "status": (
+                    "Remote Windows monitoring is not configured. "
+                    "VelocityPulse cannot validate a remote Windows host using local psutil."
+                )
+            }), 501
         else:
             return jsonify({"status": "⚠️ Unknown OS type"})
     except Exception as e:
