@@ -2,6 +2,8 @@ import io
 import os
 import tempfile
 import time
+import types
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -324,6 +326,84 @@ class FeatureSmokeTests(unittest.TestCase):
             "/static/reports/graphs/report123/response_distribution.png",
             html,
         )
+
+    def test_trend_chart_orders_oldest_to_newest(self):
+        reports = [
+            report("Newest", "2026-10-03T10:00:00", avg=3.0),
+            report("Middle", "2026-10-02T10:00:00", avg=2.0),
+            report("Oldest", "2026-10-01T10:00:00", avg=1.0),
+        ]
+        for item, date in zip(
+            reports,
+            ["03-10-2026", "02-10-2026", "01-10-2026"],
+        ):
+            item["test_date"] = date
+
+        with patch.object(velocity_app, "load_history", return_value=reports):
+            response = self.client.get("/trend?n=3")
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        first = html.find("01-10-2026")
+        second = html.find("02-10-2026")
+        third = html.find("03-10-2026")
+        self.assertTrue(0 <= first < second < third)
+
+    def test_report_pdf_route_renders_pdf_response(self):
+        historical = report("PDF Report", "2026-10-01T10:00:00")
+        historical.update({
+            "selected_metrics": ["avg", "p90"],
+            "chart_time_labels": [],
+            "rag_counts": {"GREEN": 1, "AMBER": 0, "RED": 0},
+            "graph_paths": {},
+        })
+
+        class FakeHTML:
+            def __init__(self, string, base_url=None):
+                self.string = string
+                self.base_url = base_url
+
+            def write_pdf(self):
+                return b"%PDF-fake"
+
+        fake_weasyprint = types.SimpleNamespace(HTML=FakeHTML)
+        with (
+            patch.object(velocity_app, "load_history", return_value=[historical]),
+            patch.dict(sys.modules, {"weasyprint": fake_weasyprint}),
+        ):
+            response = self.client.get("/export_report_pdf/0")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/pdf")
+        self.assertTrue(response.data.startswith(b"%PDF"))
+
+    def test_compare_pdf_contains_real_comparison_rows(self):
+        earlier = report("Earlier", "2026-10-01T10:00:00", avg=1.0)
+        later = report("Later", "2026-10-02T10:00:00", avg=1.5)
+        captured = {}
+
+        class FakeHTML:
+            def __init__(self, string, base_url=None):
+                captured["html"] = string
+                captured["base_url"] = base_url
+
+            def write_pdf(self):
+                return b"%PDF-compare"
+
+        fake_weasyprint = types.SimpleNamespace(HTML=FakeHTML)
+        with (
+            patch.object(velocity_app, "load_history", return_value=[later, earlier]),
+            patch.dict(sys.modules, {"weasyprint": fake_weasyprint}),
+        ):
+            response = self.client.get(
+                "/compare/pdf?report_ids=1&report_ids=0&metric=Avg%20(s)"
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/pdf")
+        self.assertIn("Login", captured["html"])
+        self.assertIn("Degraded", captured["html"])
+        self.assertIn("0.50", captured["html"])
 
     def test_about_page_renders_with_changelog_fallback(self):
         response = self.client.get("/about")
