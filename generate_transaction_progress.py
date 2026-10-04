@@ -16,24 +16,51 @@ def generate_transaction_progress(df, out_file="static/reports/graphs/transactio
             print("⚠ Could not convert df to DataFrame:", e)
             return
 
-    # ✅ Normalize column names
-    df.columns = [c.strip().lower() for c in df.columns]
+    # Normalize columns and reproduce JMeter Transactions Per Second semantics.
+    frame = df.copy()
+    frame.columns = [str(col).strip().lower() for col in frame.columns]
 
-    if "timestamp" in df.columns and "label" in df.columns:
-        if not pd.api.types.is_datetime64_any_dtype(df["timestamp"]):
-            df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    required = {"timestamp", "elapsed", "label"}
+    if not required.issubset(frame.columns):
+        print("Skipping transaction TPS graph: required columns missing")
+        return
 
-        plt.figure(figsize=(8,4))
-        grouped = df.groupby([df["timestamp"].dt.floor("min"), df["label"]]).size().unstack(fill_value=0)
-        if not grouped.empty:
-            grouped.plot(ax=plt.gca())
-            plt.title("Transaction Progress Over Time")
-            plt.xlabel("Time")
-            plt.ylabel("Count")
-            plt.tight_layout()
-            plt.savefig(out_file)
-            plt.close()
-        else:
-            print("⚠ Skipping transaction progress: no grouped data")
+    frame["timestamp"] = pd.to_numeric(frame["timestamp"], errors="coerce")
+    frame["elapsed"] = pd.to_numeric(frame["elapsed"], errors="coerce")
+    frame["label"] = frame["label"].astype(str).str.strip()
+    if "success" in frame.columns:
+        frame["success"] = frame["success"].astype(str).str.strip().str.lower().isin(["true", "1"])
     else:
-        print("⚠ Skipping transaction progress: required columns missing")
+        frame["success"] = True
+
+    frame = frame.dropna(subset=["timestamp", "elapsed", "label"]).copy()
+    if frame.empty:
+        return
+
+    frame["end_timestamp"] = pd.to_datetime(
+        frame["timestamp"] + frame["elapsed"], unit="ms", errors="coerce"
+    )
+    frame = frame.dropna(subset=["end_timestamp"])
+    frame["time_bucket"] = frame["end_timestamp"].dt.floor("min")
+    frame["status"] = frame["success"].map({True: "success", False: "failure"})
+    frame["series"] = frame["label"] + "-" + frame["status"]
+
+    grouped = (
+        frame.groupby(["time_bucket", "series"])
+        .size()
+        .div(60.0)
+        .unstack(fill_value=0.0)
+        .sort_index()
+    )
+
+    if grouped.empty:
+        return
+
+    plt.figure(figsize=(10, 5))
+    grouped.plot(ax=plt.gca())
+    plt.title("Transactions Per Second")
+    plt.xlabel("Time")
+    plt.ylabel("Transactions / second")
+    plt.tight_layout()
+    plt.savefig(out_file)
+    plt.close()
