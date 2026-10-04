@@ -96,6 +96,7 @@ class FeatureSmokeTests(unittest.TestCase):
         velocity_app.monitoring_active = False
         velocity_app.monitoring_threads = []
         velocity_app.monitoring_latest = {}
+        velocity_app._clear_test_monitoring_history()
         velocity_app.transaction_stats.clear()
 
     def authenticate(self):
@@ -445,6 +446,144 @@ class FeatureSmokeTests(unittest.TestCase):
             self.assertEqual(summary["metrics"][0]["error_pct"], 50.0)
             self.assertFalse(velocity_app.test_running)
             self.assertIsNone(velocity_app.current_process)
+
+    def test_monitoring_history_summarises_cpu_memory_and_status(self):
+        samples = [
+            {"server": "App01", "host": "10.0.0.1", "os": "linux", "cpu": 72.0, "mem": 68.0, "timestamp_ms": 1000},
+            {"server": "App01", "host": "10.0.0.1", "os": "linux", "cpu": 88.0, "mem": 82.0, "timestamp_ms": 6000},
+            {"server": "App01", "host": "10.0.0.1", "os": "linux", "cpu": 94.0, "mem": 87.0, "timestamp_ms": 11000},
+            {"server": "App01", "host": "10.0.0.1", "os": "linux", "cpu": 91.0, "mem": 89.0, "timestamp_ms": 16000},
+            {"server": "App01", "host": "10.0.0.1", "os": "linux", "cpu": 93.0, "mem": 91.0, "timestamp_ms": 21000},
+        ]
+        with velocity_app.monitoring_history_lock:
+            velocity_app.monitoring_history["App01"].extend(samples)
+
+        summary = velocity_app.summarize_monitoring_history()
+        self.assertEqual(len(summary), 1)
+        row = summary[0]
+        self.assertEqual(row["server"], "App01")
+        self.assertEqual(row["samples"], 5)
+        self.assertEqual(row["duration_seconds"], 20.0)
+        self.assertEqual(row["status"], "RED")
+        self.assertGreater(row["avg_cpu"], 80.0)
+        self.assertGreaterEqual(row["cpu_high_pct"], 80.0)
+        self.assertGreaterEqual(row["mem_high_pct"], 60.0)
+
+    def test_observation_engine_adds_infrastructure_monitoring_findings(self):
+        summary = [
+            {
+                "Transaction": "Login",
+                "#Samples": 100,
+                "Avg (s)": 0.8,
+                "90th % (s)": 1.0,
+                "95th % (s)": 1.1,
+                "Error %": 0.0,
+                "RAG": "GREEN",
+            }
+        ]
+        monitoring_stats = [{
+            "server": "App01",
+            "host": "10.0.0.1",
+            "os": "linux",
+            "samples": 20,
+            "duration_seconds": 95.0,
+            "avg_cpu": 88.0,
+            "p95_cpu": 96.0,
+            "max_cpu": 99.0,
+            "cpu_high_pct": 55.0,
+            "avg_mem": 74.0,
+            "p95_mem": 82.0,
+            "max_mem": 84.0,
+            "mem_high_pct": 0.0,
+            "status": "RED",
+        }]
+
+        observations = velocity_app.build_report_observations(
+            summary,
+            "GREEN",
+            chart_data={},
+            report_kpis={
+                "total_samples": 100,
+                "successful_samples": 100,
+                "failed_samples": 0,
+                "error_pct": 0.0,
+                "avg_s": 0.8,
+                "p95_s": 1.1,
+            },
+            green_sla=1.5,
+            amber_sla=3.5,
+            monitoring_stats=monitoring_stats,
+        )
+        infra = [
+            item for item in observations
+            if item.get("category") == "Infrastructure monitoring"
+        ]
+        self.assertTrue(infra)
+        self.assertTrue(any("Resource pressure detected: App01" == item["title"] for item in infra))
+        self.assertTrue(any("CPU averaged 88.0%" in item["text"] for item in infra))
+
+    def test_report_html_renders_monitoring_statistics(self):
+        current = report("Monitored Report", "2026-10-04T10:00:00")
+        current.update({
+            "selected_metrics": ["avg", "p90", "p95", "error", "samples"],
+            "chart_time_labels": [],
+            "graph_paths": {},
+            "monitoring_stats": [{
+                "server": "App01",
+                "host": "10.0.0.1",
+                "os": "linux",
+                "samples": 12,
+                "duration_seconds": 55.0,
+                "avg_cpu": 65.2,
+                "p95_cpu": 78.4,
+                "max_cpu": 82.0,
+                "cpu_high_pct": 0.0,
+                "avg_mem": 70.5,
+                "p95_mem": 76.3,
+                "max_mem": 79.0,
+                "mem_high_pct": 0.0,
+                "status": "GREEN",
+            }],
+        })
+        with patch.object(velocity_app, "load_history", return_value=[current]):
+            response = self.client.get("/report/0")
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Infrastructure Monitoring", html)
+        self.assertIn("App01", html)
+        self.assertIn("65.2%", html)
+        self.assertIn("70.5%", html)
+        self.assertIn("Samples ≥85%", html)
+
+    def test_report_pdf_includes_monitoring_table(self):
+        current = report("Monitored PDF", "2026-10-04T10:00:00")
+        current.update({
+            "graph_paths": {},
+            "observations": [],
+            "monitoring_stats": [{
+                "server": "App01",
+                "host": "10.0.0.1",
+                "os": "linux",
+                "samples": 12,
+                "duration_seconds": 55.0,
+                "avg_cpu": 65.2,
+                "p95_cpu": 78.4,
+                "max_cpu": 82.0,
+                "cpu_high_pct": 0.0,
+                "avg_mem": 70.5,
+                "p95_mem": 76.3,
+                "max_mem": 79.0,
+                "mem_high_pct": 0.0,
+                "status": "GREEN",
+            }],
+        })
+        pdf = velocity_app.build_single_report_pdf(
+            current,
+            velocity_app.report_overview(current),
+        )
+        self.assertTrue(pdf.startswith(b"%PDF"))
+        self.assertGreater(len(pdf), 1000)
 
     def test_start_monitoring_without_servers_stays_inactive(self):
         response = self.client.post("/start_monitoring", json={"servers": []})
