@@ -305,6 +305,134 @@ def overall_rag(summary):
     return "GREEN" if summary else "UNKNOWN"
 
 
+def enrich_summary_and_kpis(df, summary):
+    """Add dashboard details while preserving JMeter-compatible response-time calculations."""
+    frame = df.copy()
+    frame.columns = [str(column).strip().lower() for column in frame.columns]
+
+    required = {"timestamp", "elapsed", "label"}
+    if not required.issubset(frame.columns):
+        return summary, {
+            "total_samples": sum(int(_metric(row, "#Samples")) for row in summary),
+            "successful_samples": None,
+            "failed_samples": None,
+            "error_pct": None,
+            "avg_s": None,
+            "p90_s": None,
+            "p95_s": None,
+            "throughput_tps": None,
+        }
+
+    frame["timestamp"] = pd.to_numeric(frame["timestamp"], errors="coerce")
+    frame["elapsed"] = pd.to_numeric(frame["elapsed"], errors="coerce")
+    frame["label"] = frame["label"].astype(str).str.strip()
+    if "success" in frame.columns:
+        frame["success"] = (
+            frame["success"].astype(str).str.strip().str.lower().isin(["true", "1"])
+        )
+    else:
+        frame["success"] = True
+
+    frame = frame.dropna(subset=["timestamp", "elapsed"]).copy()
+    frame = frame[frame["label"].ne("") & frame["label"].ne("nan")].copy()
+    if frame.empty:
+        return summary, {
+            "total_samples": 0,
+            "successful_samples": 0,
+            "failed_samples": 0,
+            "error_pct": 0.0,
+            "avg_s": None,
+            "p90_s": None,
+            "p95_s": None,
+            "throughput_tps": None,
+        }
+
+    frame["end_timestamp"] = frame["timestamp"] + frame["elapsed"]
+
+    by_label = {label: group for label, group in frame.groupby("label")}
+    for row in summary:
+        label = str(row.get("Transaction") or "")
+        group = by_label.get(label)
+        if group is None or group.empty:
+            row.setdefault("Min (s)", None)
+            row.setdefault("Max (s)", None)
+            row.setdefault("Throughput (TPS)", None)
+            continue
+
+        row["Min (s)"] = float(group["elapsed"].min()) / 1000.0
+        row["Max (s)"] = float(group["elapsed"].max()) / 1000.0
+        duration_ms = float(group["end_timestamp"].max() - group["timestamp"].min())
+        row["Throughput (TPS)"] = (
+            float(len(group)) * 1000.0 / duration_ms
+            if duration_ms > 0
+            else 0.0
+        )
+
+    total_samples = int(len(frame))
+    successful_samples = int(frame["success"].sum())
+    failed_samples = total_samples - successful_samples
+    elapsed_values = frame["elapsed"].tolist()
+    total_duration_ms = float(frame["end_timestamp"].max() - frame["timestamp"].min())
+
+    kpis = {
+        "total_samples": total_samples,
+        "successful_samples": successful_samples,
+        "failed_samples": failed_samples,
+        "error_pct": (100.0 * failed_samples / total_samples) if total_samples else 0.0,
+        "avg_s": float(frame["elapsed"].mean()) / 1000.0,
+        "p90_s": jmeter_percentile(elapsed_values, 0.90) / 1000.0,
+        "p95_s": jmeter_percentile(elapsed_values, 0.95) / 1000.0,
+        "throughput_tps": (
+            total_samples * 1000.0 / total_duration_ms
+            if total_duration_ms > 0
+            else 0.0
+        ),
+    }
+    return summary, kpis
+
+
+def report_overview(report):
+    """Return comparison-friendly KPIs, with safe fallbacks for older saved reports."""
+    kpis = dict(report.get("report_kpis") or {})
+    summary = report.get("summary") or []
+
+    if kpis.get("total_samples") is None:
+        kpis["total_samples"] = sum(int(_metric(row, "#Samples")) for row in summary)
+
+    if kpis.get("avg_s") is None and kpis["total_samples"]:
+        weighted = sum(
+            _metric(row, "Avg (s)") * int(_metric(row, "#Samples"))
+            for row in summary
+        )
+        kpis["avg_s"] = weighted / kpis["total_samples"]
+
+    if kpis.get("failed_samples") is None:
+        estimated_failed = sum(
+            round(
+                int(_metric(row, "#Samples"))
+                * _metric(row, "Error %")
+                / 100.0
+            )
+            for row in summary
+        )
+        kpis["failed_samples"] = int(estimated_failed)
+
+    if kpis.get("successful_samples") is None:
+        kpis["successful_samples"] = max(
+            0,
+            int(kpis.get("total_samples") or 0) - int(kpis.get("failed_samples") or 0),
+        )
+
+    if kpis.get("error_pct") is None and kpis.get("total_samples"):
+        kpis["error_pct"] = (
+            100.0
+            * int(kpis.get("failed_samples") or 0)
+            / int(kpis["total_samples"])
+        )
+
+    return kpis
+
+
 def generate_report_graph_assets(df, summary, green_sla, amber_sla):
     report_graph_id = uuid.uuid4().hex[:12]
     relative_dir = f"reports/graphs/{report_graph_id}"
@@ -896,6 +1024,7 @@ def analyze():
                 except (ValueError, TypeError):
                     row[key] = None
 
+    filtered, report_kpis = enrich_summary_and_kpis(df, filtered)
     chart_data = build_report_chart_data(df, filtered)
     try:
         graph_paths = generate_report_graph_assets(df, filtered, green, amber)
@@ -921,6 +1050,7 @@ def analyze():
         "include_error": include_error,
         "error_threshold": error_threshold if include_error else None,
         "graph_paths": graph_paths,
+        "report_kpis": report_kpis,
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -1019,6 +1149,8 @@ def export_compare_pdf():
         selected_txns=selected_txns,
         comparisons=comparisons,
         observations=observations,
+        overview1=report_overview(earlier),
+        overview2=report_overview(later),
         compare_progress=None,
         is_pdf=True,
     )
@@ -1061,6 +1193,8 @@ def compare():
         observations=observations,
         all_txns=all_txns,
         selected_txns=txn_filter,
+        overview1=report_overview(earlier),
+        overview2=report_overview(later),
     )
 
 @app.context_processor
@@ -1662,6 +1796,7 @@ def generate_report():
         concurrent_users = None
         steady_state = "Not Available"
 
+    summary, report_kpis = enrich_summary_and_kpis(df, summary)
     chart_data = build_report_chart_data(df, summary)
     try:
         graph_paths = generate_report_graph_assets(df, summary, green, amber)
@@ -1687,6 +1822,7 @@ def generate_report():
         "include_error": False,
         "error_threshold": None,
         "graph_paths": graph_paths,
+        "report_kpis": report_kpis,
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
