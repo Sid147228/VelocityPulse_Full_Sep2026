@@ -1245,7 +1245,12 @@ def tail_results(results_file):
     start_time = time.time()
     wait_until = time.time() + 30
     while not os.path.exists(results_file) and time.time() < wait_until:
-        time.sleep(1)
+        if current_process and current_process.poll() is not None:
+            time.sleep(0.5)
+            break
+        if current_process is None and not test_running:
+            break
+        time.sleep(0.5)
 
     if not os.path.exists(results_file):
         test_running = False
@@ -1264,6 +1269,8 @@ def tail_results(results_file):
     last_emit = 0.0
     header_map = None
     max_users = 0
+    first_sample_ms = None
+    last_sample_end_ms = None
 
     with open(results_file, "r", encoding="utf-8", errors="replace", newline="") as handle:
         while True:
@@ -1307,6 +1314,18 @@ def tail_results(results_file):
                         str(parts[header_map["success"]]).strip().lower() == "true"
                     )
                     timestamp = parts[header_map["timeStamp"]]
+                    sample_start_ms = float(timestamp)
+                    sample_end_ms = sample_start_ms + response_time
+                    first_sample_ms = (
+                        sample_start_ms
+                        if first_sample_ms is None
+                        else min(first_sample_ms, sample_start_ms)
+                    )
+                    last_sample_end_ms = (
+                        sample_end_ms
+                        if last_sample_end_ms is None
+                        else max(last_sample_end_ms, sample_end_ms)
+                    )
 
                     if "allThreads" in header_map:
                         try:
@@ -1360,11 +1379,21 @@ def tail_results(results_file):
             else:
                 time.sleep(0.25)
 
-    duration = round(time.time() - start_time, 2)
+    if first_sample_ms is not None and last_sample_end_ms is not None:
+        actual_start = datetime.fromtimestamp(first_sample_ms / 1000.0)
+        actual_end = datetime.fromtimestamp(last_sample_end_ms / 1000.0)
+        duration_seconds = max(0.0, (last_sample_end_ms - first_sample_ms) / 1000.0)
+        summary_start = actual_start.strftime("%H:%M:%S")
+        summary_end = actual_end.strftime("%H:%M:%S")
+    else:
+        duration_seconds = max(0.0, time.time() - start_time)
+        summary_start = time.strftime("%H:%M:%S", time.localtime(start_time))
+        summary_end = time.strftime("%H:%M:%S", time.localtime(time.time()))
+
     summary = {
-        "duration": f"{duration} sec",
-        "start": time.strftime("%H:%M:%S", time.localtime(start_time)),
-        "end": time.strftime("%H:%M:%S", time.localtime(time.time())),
+        "duration": f"{duration_seconds:.2f} sec",
+        "start": summary_start,
+        "end": summary_end,
         "users": max_users if max_users else "N/A",
         "metrics": compute_summary(),
     }
@@ -1377,7 +1406,12 @@ def tail_results(results_file):
 def tail_logs(log_file):
     wait_until = time.time() + 30
     while not os.path.exists(log_file) and time.time() < wait_until:
-        time.sleep(1)
+        if current_process and current_process.poll() is not None:
+            time.sleep(0.5)
+            break
+        if current_process is None and not test_running:
+            break
+        time.sleep(0.5)
     if not os.path.exists(log_file):
         return
     with open(log_file, "r", encoding="utf-8", errors="replace") as f:
