@@ -11,6 +11,10 @@ venv/
 !.env.example
 
 # Runtime artifacts
+instance/
+*.db
+*.db-shm
+*.db-wal
 uploads/
 *.log
 
