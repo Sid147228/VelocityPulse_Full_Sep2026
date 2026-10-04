@@ -484,6 +484,38 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertTrue(payload["monitoring"]["active"])
         self.assertEqual(payload["monitoring"]["servers"], 1)
 
+    def test_upload_page_always_uses_upload_csv_jtl_wording(self):
+        response = self.client.get("/upload")
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Upload CSV/JTL", html)
+        self.assertNotIn("Replace file", html)
+
+    def test_unreadable_loaded_file_clears_stale_session_state(self):
+        with tempfile.TemporaryDirectory() as upload_dir:
+            bad_file = os.path.join(upload_dir, "bad.csv")
+            with open(bad_file, "w", encoding="utf-8") as handle:
+                handle.write("timeStamp,elapsed,label,success\n")
+                handle.write("invalid,not-a-number,Login,true\n")
+
+            with self.client.session_transaction() as session:
+                session["uploaded_file"] = "bad.csv"
+                session["uploaded_file_path"] = bad_file
+                session["test_window"] = {"start_ms": 1, "end_ms": 2}
+                session["summary"] = [{"Transaction": "stale"}]
+
+            response = self.client.get("/upload")
+            self.assertEqual(response.status_code, 200)
+            html = response.get_data(as_text=True)
+            self.assertNotIn("JMeter result loaded", html)
+            self.assertNotIn("Replace file", html)
+
+            with self.client.session_transaction() as session:
+                self.assertNotIn("uploaded_file", session)
+                self.assertNotIn("uploaded_file_path", session)
+                self.assertNotIn("test_window", session)
+                self.assertNotIn("summary", session)
+
     def test_upload_rejects_partial_jmeter_schema_without_success_banner(self):
         with tempfile.TemporaryDirectory() as upload_dir:
             partial_csv = (
