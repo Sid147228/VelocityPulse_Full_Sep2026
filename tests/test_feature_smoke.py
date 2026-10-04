@@ -225,6 +225,71 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertTrue(payload["monitoring"]["active"])
         self.assertEqual(payload["monitoring"]["servers"], 1)
 
+    def test_analyze_filters_charts_and_rag_to_selected_transactions_and_metrics(self):
+        fixture = (
+            os.path.dirname(__file__)
+            + "/fixtures/apache_jmeter/HTMLReportTestFile.csv"
+        )
+        with self.client.session_transaction() as session:
+            session["uploaded_file"] = "HTMLReportTestFile.csv"
+            session["uploaded_file_path"] = fixture
+            session["test_window"] = {}
+
+        captured = {}
+
+        def capture_report(report_data):
+            captured.update(report_data)
+
+        with (
+            patch.object(velocity_app, "save_report", side_effect=capture_report),
+            patch.object(velocity_app, "generate_report_graph_assets", return_value={}),
+        ):
+            response = self.client.post(
+                "/analyze",
+                data={
+                    "report_name": "Selected transaction report",
+                    "transactions": ["JR-OK"],
+                    "metrics": ["avg"],
+                    "rag_basis": "avg",
+                    "green": "1.5",
+                    "amber": "3.5",
+                },
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(captured["selected_metrics"], ["avg"])
+        self.assertEqual(
+            [row["Transaction"] for row in captured["summary"]],
+            ["JR-OK"],
+        )
+        self.assertEqual(set(captured["series_avg_by_txn"]), {"JR-OK"})
+        self.assertEqual(captured["rag_result"], "GREEN")
+
+    def test_report_template_honors_metric_selection_and_historical_graph_paths(self):
+        historical = report("Historical", "2026-10-01T10:00:00")
+        historical.update({
+            "selected_metrics": ["avg"],
+            "chart_time_labels": [],
+            "rag_counts": {"GREEN": 1, "AMBER": 0, "RED": 0},
+            "graph_paths": {
+                "response_distribution": "reports/graphs/report123/response_distribution.png",
+                "rag_pie": "reports/graphs/report123/rag_pie.png",
+            },
+        })
+
+        with patch.object(velocity_app, "load_history", return_value=[historical]):
+            response = self.client.get("/report/0")
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Avg (ms)", html)
+        self.assertNotIn("<th>P90 (ms)</th>", html)
+        self.assertNotIn("<th>Samples</th>", html)
+        self.assertIn(
+            "/static/reports/graphs/report123/response_distribution.png",
+            html,
+        )
+
     def test_about_page_renders_with_changelog_fallback(self):
         response = self.client.get("/about")
         self.assertEqual(response.status_code, 200)
