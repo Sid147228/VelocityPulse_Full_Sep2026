@@ -24,7 +24,7 @@ jobs:
       - name: Install regression test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install Flask Flask-SocketIO python-dotenv pandas numpy matplotlib seaborn psutil paramiko
+          python -m pip install Flask Flask-SocketIO python-dotenv pandas numpy matplotlib seaborn psutil paramiko reportlab
 
       - name: Run regression tests
         run: |
