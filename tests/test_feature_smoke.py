@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 import app as velocity_app
+import pdf_export
 
 
 def report(name, timestamp, avg=1.0, p90=1.2, error=0.0):
@@ -765,6 +766,42 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertEqual(response.mimetype, "application/pdf")
         self.assertTrue(response.data.startswith(b"%PDF"))
         self.assertGreater(len(response.data), 1000)
+
+    def test_pdf_export_rebuilds_all_primary_browser_graphs_from_report_series(self):
+        current = report("Graph PDF", "2026-10-04T10:00:00", avg=1.0, p90=1.4)
+        current.update({
+            "chart_time_labels": ["10:00", "10:01", "10:02"],
+            "series_avg_by_txn": {
+                "Login": [800.0, 900.0, 1000.0],
+                "Search": [1200.0, 1400.0, 1500.0],
+            },
+            "series_response_percentiles_over_time": {
+                "Median": [700.0, 800.0, 900.0],
+                "90th percentile": [1200.0, 1300.0, 1450.0],
+                "95th percentile": [1350.0, 1500.0, 1650.0],
+                "99th percentile": [1600.0, 1800.0, 2000.0],
+            },
+            "series_tps_by_txn": {
+                "Login-success": [1.0, 1.1, 1.0],
+                "Login-failure": [0.0, 0.0, 0.1],
+            },
+            "series_error_rate_by_txn": {
+                "Login": [0.0, 0.0, 5.0],
+                "Search": [2.0, 3.0, 4.0],
+            },
+            "graph_paths": {},
+            "observations": [],
+        })
+
+        graphs = pdf_export._primary_chart_flowables(current, pdf_export._styles())
+        self.assertEqual(len(graphs), 4)
+
+        pdf = velocity_app.build_single_report_pdf(
+            current,
+            velocity_app.report_overview(current),
+        )
+        self.assertTrue(pdf.startswith(b"%PDF"))
+        self.assertGreater(len(pdf), 10000)
 
     def test_reportlab_pdf_builders_are_pure_python_pdf_outputs(self):
         single = report("Direct PDF", "2026-10-01T10:00:00")
