@@ -627,5 +627,151 @@ class FeatureSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class PinAuthenticationTests(unittest.TestCase):
+    def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.originals = {
+            "AUTH_DB_PATH": velocity_app.AUTH_DB_PATH,
+            "PIN_REGISTRATION_CODE": velocity_app.PIN_REGISTRATION_CODE,
+            "PIN_ALLOWED_EMAIL_DOMAINS": velocity_app.PIN_ALLOWED_EMAIL_DOMAINS,
+            "PIN_PEPPER": velocity_app.PIN_PEPPER,
+            "PIN_MAX_FAILED_ATTEMPTS": velocity_app.PIN_MAX_FAILED_ATTEMPTS,
+            "PIN_LOCKOUT_MINUTES": velocity_app.PIN_LOCKOUT_MINUTES,
+            "PIN_SESSION_MINUTES": velocity_app.PIN_SESSION_MINUTES,
+        }
+
+        velocity_app.AUTH_DB_PATH = os.path.join(self.tempdir.name, "auth.db")
+        velocity_app.PIN_REGISTRATION_CODE = "ORG-ACCESS-2026"
+        velocity_app.PIN_ALLOWED_EMAIL_DOMAINS = {"company.test"}
+        velocity_app.PIN_PEPPER = "test-pepper"
+        velocity_app.PIN_MAX_FAILED_ATTEMPTS = 3
+        velocity_app.PIN_LOCKOUT_MINUTES = 15
+        velocity_app.PIN_SESSION_MINUTES = 60
+        velocity_app.init_auth_db()
+
+        velocity_app.app.config.update(TESTING=True)
+        self.client = velocity_app.app.test_client()
+
+    def tearDown(self):
+        for name, value in self.originals.items():
+            setattr(velocity_app, name, value)
+        self.tempdir.cleanup()
+
+    def register_user(self, email="user@company.test", pin="482731", name="Test User"):
+        return self.client.post(
+            "/register",
+            data={
+                "display_name": name,
+                "email": email,
+                "registration_code": "ORG-ACCESS-2026",
+                "pin": pin,
+                "confirm_pin": pin,
+            },
+        )
+
+    def test_login_page_uses_pin_authentication_not_microsoft(self):
+        response = self.client.get("/login")
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("6-digit PIN", html)
+        self.assertIn("Register your PIN", html)
+        self.assertNotIn("Microsoft", html)
+
+    def test_first_time_registration_hashes_pin_and_signs_user_in(self):
+        response = self.register_user()
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/upload", response.headers["Location"])
+
+        with velocity_app._auth_db_connection() as connection:
+            row = connection.execute(
+                "SELECT email, display_name, pin_hash FROM users WHERE email = ?",
+                ("user@company.test",),
+            ).fetchone()
+
+        self.assertIsNotNone(row)
+        self.assertEqual(row["display_name"], "Test User")
+        self.assertNotEqual(row["pin_hash"], "482731")
+        self.assertTrue(velocity_app._pin_matches(row["pin_hash"], "482731"))
+
+        with self.client.session_transaction() as session:
+            self.assertEqual(session["user_profile"]["email"], "user@company.test")
+            self.assertEqual(session["user_profile"]["auth_type"], "pin")
+
+    def test_registration_rejects_unapproved_email_domain(self):
+        response = self.register_user(email="user@outside.test")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn(
+            "approved organization email",
+            response.get_data(as_text=True),
+        )
+
+    def test_registration_requires_correct_organization_code(self):
+        response = self.client.post(
+            "/register",
+            data={
+                "display_name": "Test User",
+                "email": "user@company.test",
+                "registration_code": "WRONG",
+                "pin": "482731",
+                "confirm_pin": "482731",
+            },
+        )
+        self.assertEqual(response.status_code, 403)
+        html = response.get_data(as_text=True)
+        self.assertIn("registration code is invalid", html)
+        self.assertIn("Organization registration code", html)
+
+    def test_registration_rejects_predictable_pin(self):
+        response = self.register_user(pin="123456")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("less predictable PIN", response.get_data(as_text=True))
+
+    def test_registered_user_can_logout_and_login_with_pin(self):
+        self.assertEqual(self.register_user().status_code, 302)
+        self.client.get("/logout")
+
+        response = self.client.post(
+            "/login",
+            data={"email": "user@company.test", "pin": "482731"},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/upload", response.headers["Location"])
+
+        with self.client.session_transaction() as session:
+            self.assertEqual(session["user_profile"]["email"], "user@company.test")
+
+    def test_wrong_pin_attempts_trigger_account_lockout(self):
+        self.assertEqual(self.register_user().status_code, 302)
+        self.client.get("/logout")
+
+        for expected_status in (401, 401, 429):
+            response = self.client.post(
+                "/login",
+                data={"email": "user@company.test", "pin": "111222"},
+            )
+            self.assertEqual(response.status_code, expected_status)
+
+        response = self.client.post(
+            "/login",
+            data={"email": "user@company.test", "pin": "482731"},
+        )
+        self.assertEqual(response.status_code, 429)
+        self.assertIn("Too many failed attempts", response.get_data(as_text=True))
+
+    def test_expired_pin_session_redirects_back_to_login(self):
+        self.assertEqual(self.register_user().status_code, 302)
+
+        with self.client.session_transaction() as session:
+            session["last_activity_at"] = int(time.time()) - (61 * 60)
+
+        response = self.client.get("/history")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login", response.headers["Location"])
+
+        with self.client.session_transaction() as session:
+            self.assertNotIn("user_profile", session)
+
+
+
 if __name__ == "__main__":
     unittest.main()
