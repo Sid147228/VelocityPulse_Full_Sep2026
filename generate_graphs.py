@@ -5,7 +5,7 @@ import os
 
 from jmeter_parser import JMETER_REPORT_GRANULARITY_MS
 
-def generate_graphs(df, green_sla=None, amber_sla=None):
+def generate_graphs(df, green_sla=None, amber_sla=None, graph_dir='static/reports/graphs'):
     # ✅ Defensive conversion: ensure DataFrame
     if not isinstance(df, pd.DataFrame):
         try:
@@ -49,7 +49,6 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
         df['success'] = True
 
     # Create graph directory
-    graph_dir = 'static/reports/graphs'
     os.makedirs(graph_dir, exist_ok=True)
 
     # 📈 Response Time Distribution with SLA lines
