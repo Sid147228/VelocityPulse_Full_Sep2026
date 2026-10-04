@@ -12,7 +12,7 @@ from version import __version__, __build__, __codename__
 load_dotenv()
 
 # Helpers
-from jmeter_parser import parse_jmeter_csv, detect_test_window
+from jmeter_parser import parse_jmeter_csv, detect_test_window, jmeter_percentile
 from generate_TestResult import evaluate_sla
 from generate_graphs import generate_graphs
 from generate_transaction_progress import generate_transaction_progress
@@ -120,30 +120,18 @@ def save_report(report_data):
 
 
 def build_report_chart_data(df, summary):
-    """Build the chart payload expected by the shared report.html template.
+    """Build JMeter-compatible report chart data.
 
-    Both uploaded CSV reports and live JMeter reports use the same report
-    template. Keeping this payload construction in one helper prevents live
-    reports from losing RAG distribution and time-series charts.
+    JMeter's HTML dashboard uses the sample END time for over-time graph
+    buckets. Its response-time percentile-over-time graph uses successful
+    samples only and Apache Commons Math's LEGACY percentile estimator.
+    Transactions-per-second is count / graph granularity (60 seconds by
+    JMeter default).
     """
     chart_df = df.copy()
-    chart_df.columns = [str(c).strip().lower() for c in chart_df.columns]
+    chart_df.columns = [str(col).strip().lower() for col in chart_df.columns]
 
-    if "timestamp" in chart_df.columns:
-        chart_df["timestamp"] = pd.to_datetime(
-            chart_df["timestamp"], unit="ms", errors="coerce"
-        )
-    elif "timestamp" not in chart_df.columns and "timestamp" in df.columns:
-        chart_df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-
-    if "elapsed" in chart_df.columns:
-        chart_df["elapsed"] = pd.to_numeric(chart_df["elapsed"], errors="coerce")
-    if "success" in chart_df.columns:
-        chart_df["success"] = chart_df["success"].astype(str).str.lower().isin(["true", "1"])
-    else:
-        chart_df["success"] = True
-
-    if "label" not in chart_df.columns or "timestamp" not in chart_df.columns:
+    if "timestamp" not in chart_df.columns or "elapsed" not in chart_df.columns or "label" not in chart_df.columns:
         return {
             "rag_counts": {
                 "GREEN": sum(1 for row in summary if row.get("RAG") == "GREEN"),
@@ -155,6 +143,7 @@ def build_report_chart_data(df, summary):
             "series_p90_by_txn": {},
             "series_error_rate_by_txn": {},
             "series_throughput_over_time": [],
+            "series_tps_by_txn": {},
             "labels": [row.get("Transaction") for row in summary],
             "avg_values": [row.get("Avg (s)") for row in summary],
             "p90_values": [row.get("90th % (s)") for row in summary],
@@ -162,32 +151,105 @@ def build_report_chart_data(df, summary):
             "error_values": [row.get("Error %") for row in summary],
         }
 
-    chart_df = chart_df.dropna(subset=["timestamp"]).sort_values("timestamp")
-    time_index = chart_df["timestamp"].dt.floor("min")
-    time_labels = sorted(time_index.dropna().unique())
-    labels_fmt = [ts.strftime("%H:%M") for ts in time_labels]
+    chart_df["timestamp"] = pd.to_numeric(chart_df["timestamp"], errors="coerce")
+    chart_df["elapsed"] = pd.to_numeric(chart_df["elapsed"], errors="coerce")
+    chart_df["label"] = chart_df["label"].astype(str).str.strip()
 
-    series_avg_by_txn, series_p90_by_txn, series_error_rate_by_txn = {}, {}, {}
-    if "elapsed" in chart_df.columns:
-        for txn, group in chart_df.groupby("label"):
-            grouped = group.groupby(group["timestamp"].dt.floor("min"))
-            avg_ms = grouped["elapsed"].mean()
-            p90_ms = grouped["elapsed"].quantile(0.90)
-            error_rate = grouped["success"].apply(lambda values: 100.0 * ((~values).sum() / len(values)))
-            series_avg_by_txn[txn] = [
-                round(avg_ms.get(t) / 1000.0, 3) if pd.notnull(avg_ms.get(t)) else None
-                for t in time_labels
-            ]
-            series_p90_by_txn[txn] = [
-                round(p90_ms.get(t) / 1000.0, 3) if pd.notnull(p90_ms.get(t)) else None
-                for t in time_labels
-            ]
-            series_error_rate_by_txn[txn] = [
-                round(error_rate.get(t), 3) if pd.notnull(error_rate.get(t)) else None
-                for t in time_labels
+    if "success" in chart_df.columns:
+        chart_df["success"] = (
+            chart_df["success"].astype(str).str.strip().str.lower().isin(["true", "1"])
+        )
+    else:
+        chart_df["success"] = True
+
+    chart_df = chart_df.dropna(subset=["timestamp", "elapsed", "label"]).copy()
+    if chart_df.empty:
+        return {
+            "rag_counts": {
+                "GREEN": sum(1 for row in summary if row.get("RAG") == "GREEN"),
+                "AMBER": sum(1 for row in summary if row.get("RAG") == "AMBER"),
+                "RED": sum(1 for row in summary if row.get("RAG") == "RED"),
+            },
+            "chart_time_labels": [],
+            "series_avg_by_txn": {},
+            "series_p90_by_txn": {},
+            "series_error_rate_by_txn": {},
+            "series_throughput_over_time": [],
+            "series_tps_by_txn": {},
+            "labels": [row.get("Transaction") for row in summary],
+            "avg_values": [row.get("Avg (s)") for row in summary],
+            "p90_values": [row.get("90th % (s)") for row in summary],
+            "p95_values": [row.get("95th % (s)") for row in summary],
+            "error_values": [row.get("Error %") for row in summary],
+        }
+
+    # JMeter over-time graphs bucket on sample END time, not sample start time.
+    chart_df["end_timestamp_ms"] = chart_df["timestamp"] + chart_df["elapsed"]
+    chart_df["end_timestamp"] = pd.to_datetime(
+        chart_df["end_timestamp_ms"], unit="ms", errors="coerce"
+    )
+    chart_df = chart_df.dropna(subset=["end_timestamp"]).sort_values("end_timestamp")
+    chart_df["time_bucket"] = chart_df["end_timestamp"].dt.floor("min")
+
+    time_labels = sorted(chart_df["time_bucket"].dropna().unique())
+    labels_fmt = [bucket.strftime("%H:%M") for bucket in time_labels]
+
+    series_avg_by_txn = {}
+    series_p90_by_txn = {}
+    series_error_rate_by_txn = {}
+    series_tps_by_txn = {}
+
+    for txn, group in chart_df.groupby("label"):
+        grouped = group.groupby("time_bucket")
+        avg_ms = grouped["elapsed"].mean()
+        error_rate = grouped["success"].apply(
+            lambda values: 100.0 * ((~values).sum() / len(values))
+        )
+
+        # JMeter's percentile-over-time graph only uses successful samples.
+        successful = group[group["success"]]
+        successful_grouped = successful.groupby("time_bucket")["elapsed"]
+
+        p90_by_bucket = {
+            bucket: jmeter_percentile(values.tolist(), 0.90)
+            for bucket, values in successful_grouped
+        }
+
+        series_avg_by_txn[txn] = [
+            round(float(avg_ms.get(bucket)) / 1000.0, 4)
+            if pd.notnull(avg_ms.get(bucket))
+            else None
+            for bucket in time_labels
+        ]
+        series_p90_by_txn[txn] = [
+            round(float(p90_by_bucket[bucket]) / 1000.0, 4)
+            if bucket in p90_by_bucket and p90_by_bucket[bucket] is not None
+            else None
+            for bucket in time_labels
+        ]
+        series_error_rate_by_txn[txn] = [
+            round(float(error_rate.get(bucket)), 4)
+            if pd.notnull(error_rate.get(bucket))
+            else None
+            for bucket in time_labels
+        ]
+
+        # Match JMeter TransactionsPerSecondGraphConsumer: one series per
+        # transaction and success/failure status, count / 60-second bucket.
+        for success_value, suffix in ((True, "success"), (False, "failure")):
+            status_group = group[group["success"] == success_value].groupby("time_bucket").size()
+            series_name = f"{txn}-{suffix}"
+            series_tps_by_txn[series_name] = [
+                round(float(status_group.get(bucket, 0)) / 60.0, 6)
+                for bucket in time_labels
             ]
 
-    throughput = chart_df.groupby(chart_df["timestamp"].dt.floor("min")).size()
+    total_counts = chart_df.groupby("time_bucket").size()
+    total_tps = [
+        round(float(total_counts.get(bucket, 0)) / 60.0, 6)
+        for bucket in time_labels
+    ]
+
     return {
         "rag_counts": {
             "GREEN": sum(1 for row in summary if row.get("RAG") == "GREEN"),
@@ -198,14 +260,14 @@ def build_report_chart_data(df, summary):
         "series_avg_by_txn": series_avg_by_txn,
         "series_p90_by_txn": series_p90_by_txn,
         "series_error_rate_by_txn": series_error_rate_by_txn,
-        "series_throughput_over_time": [int(throughput.get(t, 0)) for t in time_labels],
+        "series_throughput_over_time": total_tps,
+        "series_tps_by_txn": series_tps_by_txn,
         "labels": [row.get("Transaction") for row in summary],
         "avg_values": [row.get("Avg (s)") for row in summary],
         "p90_values": [row.get("90th % (s)") for row in summary],
         "p95_values": [row.get("95th % (s)") for row in summary],
         "error_values": [row.get("Error %") for row in summary],
     }
-
 
 def _metric(row, key):
     try:
