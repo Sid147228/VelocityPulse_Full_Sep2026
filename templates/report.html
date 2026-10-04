@@ -2,6 +2,8 @@
 
 {% block content %}
 {% set is_pdf = is_pdf|default(false) %}
+{% set selected_metrics = selected_metrics|default(['avg', 'p90', 'p95', 'error', 'samples']) %}
+{% set graph_paths = graph_paths|default({}) %}
 
 <style>
   .subtext { color: #555; margin-bottom: 10px; }
@@ -82,11 +84,11 @@
       <thead>
         <tr>
           <th>Transaction</th>
-          <th>Samples</th>
-          <th>Avg (ms)</th>
-          <th>P90 (ms)</th>
-          <th>P95 (ms)</th>
-          <th>Error %</th>
+          {% if 'samples' in selected_metrics %}<th>Samples</th>{% endif %}
+          {% if 'avg' in selected_metrics %}<th>Avg (ms)</th>{% endif %}
+          {% if 'p90' in selected_metrics %}<th>P90 (ms)</th>{% endif %}
+          {% if 'p95' in selected_metrics %}<th>P95 (ms)</th>{% endif %}
+          {% if 'error' in selected_metrics %}<th>Error %</th>{% endif %}
           <th>RAG</th>
         </tr>
       </thead>
@@ -94,27 +96,37 @@
         {% for row in summary %}
         <tr>
           <td>{{ row.get("Transaction") }}</td>
+          {% if 'samples' in selected_metrics %}
           <td>{{ row.get("#Samples", 0) }}</td>
+          {% endif %}
+          {% if 'avg' in selected_metrics %}
           <td>
             {% if row.get("Avg (s)") is not none %}
               {{ "%.2f"|format((row.get("Avg (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
+          {% endif %}
+          {% if 'p90' in selected_metrics %}
           <td>
             {% if row.get("90th % (s)") is not none %}
               {{ "%.2f"|format((row.get("90th % (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
+          {% endif %}
+          {% if 'p95' in selected_metrics %}
           <td>
             {% if row.get("95th % (s)") is not none %}
               {{ "%.2f"|format((row.get("95th % (s)")|float) * 1000) }}
             {% else %}—{% endif %}
           </td>
+          {% endif %}
+          {% if 'error' in selected_metrics %}
           <td>
             {% if row.get("Error %") is not none %}
               {{ "%.2f"|format(row.get("Error %")|float) }}
             {% else %}—{% endif %}
           </td>
+          {% endif %}
           <td>
             {% if row.get("RAG") == 'RED' %}
               <span class="rag rag-red">RED</span>
@@ -140,7 +152,7 @@
     <div class="alert">No RAG data available.</div>
   {% else %}
     {% if is_pdf %}
-      <img src="{{ url_for('static', filename='reports/graphs/rag_pie.png', _external=True) }}" 
+      <img src="{{ url_for('static', filename=graph_paths.get('rag_pie', 'reports/graphs/rag_pie.png'), _external=True) }}" 
            alt="RAG distribution">
     {% else %}
       <canvas id="ragPieChart" width="300" height="300" style="max-width:300px;max-height:300px;"></canvas>
@@ -178,18 +190,18 @@
     <div class="alert">
       <strong>Note:</strong> No time-series data available for graphs. Showing static fallbacks.
     </div>
-    <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png') }}" alt="Response Time Distribution">
-    <img src="{{ url_for('static', filename='reports/graphs/error_trend.png') }}" alt="Error Trend Over Time">
-    <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png') }}" alt="SLA Heatmap">
-    <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png') }}" alt="Threads Over Time">
-    <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png') }}" alt="Transaction Progress">
+    <img src="{{ url_for('static', filename=graph_paths.get('response_distribution', 'reports/graphs/response_distribution.png')) }}" alt="Response Time Distribution">
+    <img src="{{ url_for('static', filename=graph_paths.get('error_trend', 'reports/graphs/error_trend.png')) }}" alt="Error Trend Over Time">
+    <img src="{{ url_for('static', filename=graph_paths.get('sla_heatmap', 'reports/graphs/sla_heatmap.png')) }}" alt="SLA Heatmap">
+    <img src="{{ url_for('static', filename=graph_paths.get('threads_over_time', 'reports/graphs/threads_over_time.png')) }}" alt="Threads Over Time">
+    <img src="{{ url_for('static', filename=graph_paths.get('transaction_progress', 'reports/graphs/transaction_progress.png')) }}" alt="Transaction Progress">
   {% else %}
     {% if is_pdf %}
-      <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png', _external=True) }}" alt="Response Time Distribution">
-      <img src="{{ url_for('static', filename='reports/graphs/error_trend.png', _external=True) }}" alt="Error Trend Over Time">
-      <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png', _external=True) }}" alt="SLA Heatmap">
-      <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png', _external=True) }}" alt="Threads Over Time">
-      <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png', _external=True) }}" alt="Transaction Progress">
+      <img src="{{ url_for('static', filename=graph_paths.get('response_distribution', 'reports/graphs/response_distribution.png'), _external=True) }}" alt="Response Time Distribution">
+      <img src="{{ url_for('static', filename=graph_paths.get('error_trend', 'reports/graphs/error_trend.png'), _external=True) }}" alt="Error Trend Over Time">
+      <img src="{{ url_for('static', filename=graph_paths.get('sla_heatmap', 'reports/graphs/sla_heatmap.png'), _external=True) }}" alt="SLA Heatmap">
+      <img src="{{ url_for('static', filename=graph_paths.get('threads_over_time', 'reports/graphs/threads_over_time.png'), _external=True) }}" alt="Threads Over Time">
+      <img src="{{ url_for('static', filename=graph_paths.get('transaction_progress', 'reports/graphs/transaction_progress.png'), _external=True) }}" alt="Transaction Progress">
     {% else %}
       <canvas id="avgByTxnChart"></canvas>
       <canvas id="p90ByTxnChart"></canvas>
