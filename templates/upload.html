@@ -1,67 +1,224 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Upload JMeter CSV & Generate Report</h1>
-<p class="subtext">Upload your JMeter CSV file below to generate a custom performance report with RAG analysis.</p>
 
-<!-- File upload form -->
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}">
-  <label>CSV File:</label>
-  <input type="file" name="file" accept=".csv,.jtl" required />
-  <button type="submit">Upload</button>
-</form>
-
-{% if uploaded_file %}
-<!-- Report generation form -->
-<form method="POST" action="{{ url_for('analyze') }}">
-  <input type="hidden" name="file_path" value="{{ uploaded_file_path }}" />
-
-  <label>Report Name:</label>
-  <input type="text" name="report_name" required />
-
-  <label>Green SLA (s):</label>
-  <input type="number" step="0.01" min="0" name="green" value="1.5" required />
-
-  <label>Amber SLA (s):</label>
-  <input type="number" step="0.01" min="0" name="amber" value="3.5" required />
-
-  <label>RAG Based On:</label>
-  <div class="radio-group">
-    <label><input type="radio" name="rag_basis" value="avg" checked /> Avg</label>
-    <label><input type="radio" name="rag_basis" value="p90" /> 90th %</label>
+<section class="upload-page" aria-labelledby="upload-title">
+  <div class="upload-heading">
+    <h1 id="upload-title">JMeter Results Analysis</h1>
+    <p>Upload a JMeter CSV/JTL result file, confirm the detected test window, and choose the steady-state period to analyse.</p>
   </div>
 
-  <label><input type="checkbox" id="includeError" name="include_error" /> Include Error %</label>
+  <section class="vp-panel upload-panel" aria-labelledby="file-upload-title">
+    <div class="section-heading">
+      <div>
+        <span class="step-badge">1</span>
+        <h2 id="file-upload-title">Upload result file</h2>
+      </div>
+      {% if uploaded_file %}
+        <span class="status-pill status-pill--success">✓ JMeter result loaded</span>
+      {% endif %}
+    </div>
 
-  <div id="errorThresholdContainer" style="display:none;">
-    <label>Error % Threshold:</label>
-    <input type="range" name="error_threshold" id="errorThreshold" min="1" max="10" value="5" />
-    <span id="errorValue">5%</span>
-  </div>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload') }}" class="file-upload-form">
+      <div class="field-grow">
+        <label for="resultFile">JMeter CSV / JTL file</label>
+        <input id="resultFile" type="file" name="file" accept=".csv,.jtl" required>
+        <small>Upload a JMeter <strong>.csv</strong> or <strong>.jtl</strong> result file.</small>
+      </div>
+      <button type="submit" class="primary-button">Upload CSV/JTL</button>
+    </form>
+  </section>
 
-  <label>Select Metrics to Display:</label>
-  <div class="checkbox-group">
-    <label><input type="checkbox" name="metrics" value="avg" checked /> Avg</label>
-    <label><input type="checkbox" name="metrics" value="p90" /> 90th %</label>
-    <label><input type="checkbox" name="metrics" value="p95" /> 95th %</label>
-    <label><input type="checkbox" name="metrics" value="error" /> Error %</label>
-    <label><input type="checkbox" name="metrics" value="samples" /> # Samples</label>
-  </div>
+  {% if uploaded_file and test_window %}
+    <section class="upload-success" role="status" aria-live="polite">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <div>
+        <strong>{{ uploaded_file }} uploaded successfully</strong>
+        <p>VelocityPulse detected the complete test execution window from the JMeter timestamps.</p>
+      </div>
+    </section>
 
-  <label>Steady State Start Time (hh:mm:ss):</label>
-  <input type="text" name="start_time" placeholder="hh:mm:ss" />
+    <section class="vp-panel" aria-labelledby="test-window-title">
+      <div class="section-heading">
+        <div>
+          <span class="step-badge">2</span>
+          <h2 id="test-window-title">Detected test window</h2>
+        </div>
+      </div>
 
-  <label>Steady State End Time (hh:mm:ss):</label>
-  <input type="text" name="end_time" placeholder="hh:mm:ss" />
+      <div class="time-summary">
+        <div class="time-card">
+          <span class="time-label">Test start</span>
+          <strong>{{ test_window.start_display }}</strong>
+        </div>
+        <div class="time-arrow" aria-hidden="true">→</div>
+        <div class="time-card">
+          <span class="time-label">Test end</span>
+          <strong>{{ test_window.end_display }}</strong>
+        </div>
+      </div>
+    </section>
 
-  <label>Select Transactions:</label>
-  <select name="transactions" multiple size="6">
-    {% for t in transactions %}
-      <option value="{{ t }}">{{ t }}</option>
-    {% endfor %}
-  </select>
+    <form method="POST" action="{{ url_for('analyze') }}" class="vp-panel analysis-form" id="analysisForm">
+      <div class="section-heading">
+        <div>
+          <span class="step-badge">3</span>
+          <h2>Report configuration</h2>
+        </div>
+      </div>
 
-  <button type="submit">Generate Report</button>
-</form>
+      <div class="form-grid">
+        <div class="form-field form-field--wide">
+          <label for="reportName">Report name</label>
+          <input id="reportName" type="text" name="report_name" placeholder="e.g. Checkout Load Test - Build 2026.10.04" required>
+        </div>
+
+        <div class="form-field">
+          <label for="greenSla">Green SLA (seconds)</label>
+          <input id="greenSla" type="number" step="0.01" min="0" name="green" value="1.5" required>
+        </div>
+
+        <div class="form-field">
+          <label for="amberSla">Amber SLA (seconds)</label>
+          <input id="amberSla" type="number" step="0.01" min="0" name="amber" value="3.5" required>
+        </div>
+      </div>
+
+      <fieldset class="config-group">
+        <legend>RAG calculation</legend>
+        <div class="inline-options">
+          <label><input type="radio" name="rag_basis" value="avg" checked> Average response time</label>
+          <label><input type="radio" name="rag_basis" value="p90"> 90th percentile</label>
+          <label><input type="checkbox" id="includeError" name="include_error"> Include error rate</label>
+        </div>
+
+        <div id="errorThresholdContainer" class="threshold-control" hidden>
+          <label for="errorThreshold">Error threshold: <strong id="errorValue">5%</strong></label>
+          <input type="range" name="error_threshold" id="errorThreshold" min="1" max="10" value="5">
+        </div>
+      </fieldset>
+
+      <fieldset class="config-group steady-state-group">
+        <legend>Steady State Period</legend>
+        <p class="helper-text">
+          The full test ran from <strong>{{ test_window.start_display }}</strong> to
+          <strong>{{ test_window.end_display }}</strong>. Choose the stable period that should be used for performance analysis.
+        </p>
+
+        <div class="steady-grid">
+          <div class="form-field">
+            <label for="steadyStateStart">Steady state start</label>
+            <input
+              id="steadyStateStart"
+              type="datetime-local"
+              name="steady_state_start"
+              step="0.001"
+              min="{{ test_window.start_input }}"
+              max="{{ test_window.end_input }}"
+              value="{{ test_window.start_input }}"
+              required>
+          </div>
+
+          <div class="form-field">
+            <label for="steadyStateEnd">Steady state end</label>
+            <input
+              id="steadyStateEnd"
+              type="datetime-local"
+              name="steady_state_end"
+              step="0.001"
+              min="{{ test_window.start_input }}"
+              max="{{ test_window.end_input }}"
+              value="{{ test_window.end_input }}"
+              required>
+          </div>
+        </div>
+
+        <div class="steady-state-footer">
+          <span id="steadyStateValidation" class="validation-message" aria-live="polite"></span>
+          <button type="button" class="secondary-button" id="useFullWindow">Use full test window</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="config-group">
+        <legend>Metrics to display</legend>
+        <div class="inline-options">
+          <label><input type="checkbox" name="metrics" value="avg" checked> Avg</label>
+          <label><input type="checkbox" name="metrics" value="p90"> 90th %</label>
+          <label><input type="checkbox" name="metrics" value="p95"> 95th %</label>
+          <label><input type="checkbox" name="metrics" value="error"> Error %</label>
+          <label><input type="checkbox" name="metrics" value="samples"> # Samples</label>
+        </div>
+      </fieldset>
+
+      <div class="form-field">
+        <label for="transactions">Transactions</label>
+        <select id="transactions" name="transactions" multiple size="7">
+          {% for t in transactions %}
+            <option value="{{ t }}">{{ t }}</option>
+          {% endfor %}
+        </select>
+        <small>Leave all unselected to analyse every transaction.</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary-button" id="generateButton">Generate Report</button>
+      </div>
+    </form>
+  {% endif %}
+</section>
+
+<style>
+  .upload-page { max-width: 980px; margin: 36px auto 60px; padding: 0 20px; }
+  .upload-heading { text-align: center; margin-bottom: 28px; }
+  .upload-heading h1 { color: #21477f; margin: 0 0 8px; }
+  .upload-heading p { color: #64748b; margin: 0; line-height: 1.55; }
+  .vp-panel { background: #fff; border: 1px solid #dfe7f1; border-radius: 14px; padding: 24px; margin-bottom: 20px; box-shadow: 0 8px 22px rgba(31, 63, 112, .06); }
+  .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  .section-heading > div { display: flex; align-items: center; gap: 10px; }
+  .section-heading h2 { margin: 0; color: #294c7c; font-size: 1.2rem; }
+  .step-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #eaf2ff; color: #24569b; font-weight: 700; }
+  .status-pill { font-size: .8rem; font-weight: 700; border-radius: 999px; padding: 6px 10px; }
+  .status-pill--success { background: #e8f7ee; color: #1e6a3e; }
+  .file-upload-form { display: flex; align-items: end; gap: 16px; }
+  .field-grow { flex: 1; }
+  label, legend { color: #243b5a; font-weight: 650; }
+  input[type="file"], input[type="text"], input[type="number"], input[type="datetime-local"], select { box-sizing: border-box; width: 100%; margin-top: 8px; border: 1px solid #bdc9d8; border-radius: 8px; background: #fff; padding: 11px 12px; color: #1f344d; font: inherit; }
+  input:focus, select:focus { outline: 3px solid rgba(42, 82, 152, .15); border-color: #2a5298; }
+  small, .helper-text { color: #6b7d92; line-height: 1.45; }
+  small { display: block; margin-top: 6px; }
+  .primary-button, .secondary-button { border: 0; border-radius: 8px; padding: 11px 18px; font: inherit; font-weight: 650; cursor: pointer; }
+  .primary-button { background: #2a5298; color: #fff; }
+  .primary-button:hover { background: #1f427d; }
+  .secondary-button { background: #e8eef6; color: #27486f; }
+  .secondary-button:hover { background: #dce6f2; }
+  .upload-success { display: flex; gap: 14px; align-items: flex-start; background: #edf9f1; border: 1px solid #bce0c8; color: #245a38; border-radius: 12px; padding: 16px 18px; margin-bottom: 20px; }
+  .upload-success p { margin: 4px 0 0; color: #4f765e; }
+  .success-icon { flex: none; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #2e8b57; color: #fff; font-weight: 800; }
+  .time-summary { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; }
+  .time-card { border: 1px solid #dbe5f1; border-radius: 10px; background: #f8fbff; padding: 18px; text-align: center; }
+  .time-card strong { display: block; color: #213f69; font-size: 1.05rem; margin-top: 5px; }
+  .time-label { color: #718097; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+  .time-arrow { color: #8090a5; font-size: 1.5rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-field--wide { grid-column: 1 / -1; }
+  .config-group { border: 1px solid #dfe7f1; border-radius: 10px; padding: 18px; margin: 22px 0; }
+  .config-group legend { padding: 0 8px; }
+  .inline-options { display: flex; flex-wrap: wrap; gap: 16px 24px; }
+  .inline-options label { font-weight: 500; }
+  .threshold-control { margin-top: 18px; }
+  .threshold-control input { width: 100%; }
+  .steady-state-group { background: #f8fbff; border-color: #cdddf1; }
+  .steady-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+  .steady-state-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
+  .validation-message { color: #a12f36; font-size: .9rem; font-weight: 600; }
+  .form-actions { margin-top: 24px; display: flex; justify-content: flex-end; }
+  @media (max-width: 700px) {
+    .upload-page { padding: 0 12px; margin-top: 20px; }
+    .file-upload-form, .steady-state-footer { align-items: stretch; flex-direction: column; }
+    .form-grid, .steady-grid, .time-summary { grid-template-columns: 1fr; }
+    .time-arrow { transform: rotate(90deg); text-align: center; }
+    .primary-button, .secondary-button { width: 100%; }
+  }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -69,17 +226,67 @@ document.addEventListener('DOMContentLoaded', function () {
   const errorContainer = document.getElementById('errorThresholdContainer');
   const errorSlider = document.getElementById('errorThreshold');
   const errorValue = document.getElementById('errorValue');
+  const steadyStart = document.getElementById('steadyStateStart');
+  const steadyEnd = document.getElementById('steadyStateEnd');
+  const steadyValidation = document.getElementById('steadyStateValidation');
+  const useFullWindow = document.getElementById('useFullWindow');
+  const analysisForm = document.getElementById('analysisForm');
 
-  errorCheckbox.addEventListener('change', function () {
-    errorContainer.style.display = this.checked ? 'block' : 'none';
-  });
+  if (errorCheckbox && errorContainer && errorSlider && errorValue) {
+    const refreshErrorControls = () => {
+      errorContainer.hidden = !errorCheckbox.checked;
+      errorValue.textContent = errorSlider.value + '%';
+    };
+    errorCheckbox.addEventListener('change', refreshErrorControls);
+    errorSlider.addEventListener('input', refreshErrorControls);
+    refreshErrorControls();
+  }
 
-  errorSlider.addEventListener('input', function () {
-    errorValue.textContent = this.value + '%';
-  });
+  function validateSteadyState() {
+    if (!steadyStart || !steadyEnd) return true;
 
-  errorValue.textContent = errorSlider.value + '%';
+    steadyEnd.min = steadyStart.value || "{{ test_window.start_input if test_window else '' }}";
+
+    if (!steadyStart.value || !steadyEnd.value) {
+      steadyValidation.textContent = 'Select both steady-state start and end times.';
+      return false;
+    }
+
+    const start = new Date(steadyStart.value);
+    const end = new Date(steadyEnd.value);
+
+    if (end <= start) {
+      steadyValidation.textContent = 'Steady-state end must be later than the start.';
+      return false;
+    }
+
+    steadyValidation.textContent = '';
+    return true;
+  }
+
+  if (steadyStart && steadyEnd) {
+    steadyStart.addEventListener('change', validateSteadyState);
+    steadyEnd.addEventListener('change', validateSteadyState);
+    validateSteadyState();
+  }
+
+  if (useFullWindow && steadyStart && steadyEnd) {
+    useFullWindow.addEventListener('click', function () {
+      steadyStart.value = "{{ test_window.start_input if test_window else '' }}";
+      steadyEnd.value = "{{ test_window.end_input if test_window else '' }}";
+      validateSteadyState();
+    });
+  }
+
+  if (analysisForm) {
+    analysisForm.addEventListener('submit', function (event) {
+      if (!validateSteadyState()) {
+        event.preventDefault();
+        steadyStart.focus();
+      }
+    });
+  }
 });
 </script>
-{% endif %}
+
 {% endblock %}

@@ -24,7 +24,7 @@
                 {% if rag in ['GREEN', 'AMBER', 'RED'] %}<span class="history-rag history-rag-{{ rag|lower }}">{{ rag }}</span>
                 {% else %}<span class="history-rag history-rag-unknown">UNKNOWN</span>{% endif %}
               </td>
-              <td data-label="Actions"><a class="history-view-link" href="{{ url_for('report', report_index=loop.index0) }}">View</a></td>
+              <td data-label="Actions"><a class="history-view-link" href="{{ url_for('report', report_index=start_index + loop.index0) }}">View</a></td>
             </tr>
           {% endfor %}
         </tbody>

@@ -1,254 +1,441 @@
 {% extends "base.html" %}
-
 {% block content %}
 {% set is_pdf = is_pdf|default(false) %}
-
-<style>
-  .subtext { color: #555; margin-bottom: 10px; }
-  .report-meta p { margin: 4px 0; }
-  .rag { font-weight: bold; padding: 2px 6px; border-radius: 4px; color: #fff; }
-  .rag-green { background-color: #28a745; }
-  .rag-amber { background-color: #ffc107; color: #000; }
-  .rag-red { background-color: #dc3545; }
-  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-  th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-  .alert { margin: 10px 0; padding: 10px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; border-radius: 4px; }
-  .graph-section { margin-top: 30px; }
-  .graph-section canvas, .graph-section img { max-width: 100%; height: auto; margin: 12px 0; }
-  .section { margin-top: 24px; }
-  .observations-grid { display: grid; gap: 10px; margin-top: 12px; }
-  .observation { border-left: 5px solid #2a5298; background: #f5f8fc; border-radius: 6px; padding: 12px 14px; }
-  .observation-title { font-weight: 700; color: #1e3c72; margin-bottom: 4px; }
-  .observation-text { color: #334155; line-height: 1.45; }
-  .observation--success { border-left-color: #28a745; background: #effaf1; }
-  .observation--warning { border-left-color: #e0a800; background: #fff9e8; }
-  .observation--danger { border-left-color: #dc3545; background: #fff1f2; }
-</style>
-
-<h1>Test Report</h1>
-<h2>Report summary</h2>
-<p class="subtext">Customized performance report based on selected transactions and SLA thresholds.</p>
-
-<div class="report-meta">
-  <p><strong>Report name:</strong> {{ report_name if report_name else (file_name if file_name else 'Untitled Report') }}</p>
-  <p><strong>Overall RAG status:</strong>
-    {% if rag_result == 'RED' %}
-      <span class="rag rag-red">RED</span>
-    {% elif rag_result == 'AMBER' %}
-      <span class="rag rag-amber">AMBER</span>
-    {% elif rag_result == 'GREEN' %}
-      <span class="rag rag-green">GREEN</span>
-    {% else %}
-      <span class="rag">UNKNOWN</span>
-    {% endif %}
-  </p>
-  <p><strong>Test date:</strong> {{ test_date or 'Not available' }}</p>
-  <p><strong>Test period:</strong> {{ test_period or 'Not available' }}</p>
-  <p><strong>Total duration:</strong> {{ total_duration or 'Not available' }}</p>
-  <p><strong>Concurrent users:</strong> {{ concurrent_users if concurrent_users is not none else 'Not available' }}</p>
-  <p><strong>Steady state:</strong> {{ steady_state or 'Not available' }}</p>
-</div>
-
-<div class="section">
-  <h3>Performance observations</h3>
-  <div class="observations-grid">
-    {% for observation in observations|default([]) %}
-      <div class="observation observation--{{ observation.type|default('info') }}">
-        <div class="observation-title">{{ observation.title }}</div>
-        <div class="observation-text">{{ observation.text }}</div>
-      </div>
-    {% else %}
-      <div class="observation"><div class="observation-text">No observations are available for this report.</div></div>
-    {% endfor %}
-  </div>
-</div>
-
-{# Safe defaults for chart data #}
+{% set selected_metrics = selected_metrics|default(['avg', 'p90', 'p95', 'error', 'samples']) %}
+{% set graph_paths = graph_paths|default({}) %}
+{% set overview = overview|default({}) %}
 {% set chart_time_labels = chart_time_labels or [] %}
 {% set series_avg_by_txn = series_avg_by_txn or {} %}
 {% set series_p90_by_txn = series_p90_by_txn or {} %}
+{% set series_response_percentiles_over_time = series_response_percentiles_over_time or {} %}
 {% set series_error_rate_by_txn = series_error_rate_by_txn or {} %}
 {% set series_throughput_over_time = series_throughput_over_time or [] %}
-{% set rag_counts = rag_counts or {'GREEN': 0, 'AMBER': 0, 'RED': 0} %}
+{% set series_tps_by_txn = series_tps_by_txn or {} %}
+{% set monitoring_stats = monitoring_stats|default([]) %}
 
-<div class="section">
-  <h3>Transaction summary</h3>
-  {% if summary|length == 0 %}
-    <div class="alert"><strong>Heads up:</strong> No transaction summary data to display.</div>
-  {% else %}
-    <table>
-      <thead>
-        <tr>
-          <th>Transaction</th>
-          <th>Avg (s)</th>
-          <th>P90 (s)</th>
-          <th>P95 (s)</th>
-          <th>Error %</th>
-          <th>RAG</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in summary %}
-        <tr>
-          <td>{{ row.get("Transaction") }}</td>
-          <td>
-            {% if row.get("Avg (s)") is not none %}
-              {{ "%.2f"|format(row.get("Avg (s)")|float) }}
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            {% if row.get("90th % (s)") is not none %}
-              {{ "%.2f"|format(row.get("90th % (s)")|float) }}
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            {% if row.get("95th % (s)") is not none %}
-              {{ "%.2f"|format(row.get("95th % (s)")|float) }}
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            {% if row.get("Error %") is not none %}
-              {{ "%.2f"|format(row.get("Error %")|float) }}
-            {% else %}—{% endif %}
-          </td>
-          <td>
-            {% if row.get("RAG") == 'RED' %}
-              <span class="rag rag-red">RED</span>
-            {% elif row.get("RAG") == 'AMBER' %}
-              <span class="rag rag-amber">AMBER</span>
-            {% elif row.get("RAG") == 'GREEN' %}
-              <span class="rag rag-green">GREEN</span>
-            {% else %}
-              <span class="rag">—</span>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endif %}
-</div>
+<style>
+  {% if is_pdf %}.vp-header { display:none !important; } .content { max-width:none !important; padding:0 !important; }{% endif %}
+  .report-shell { max-width: 1440px; margin: 22px auto 60px; padding: 0 18px; color:#16324f; }
+  .report-hero {
+    display:grid; grid-template-columns:1.4fr 1fr .72fr; gap:20px; align-items:center;
+    background:linear-gradient(135deg,#082d58,#12467d); color:#fff; border-radius:14px;
+    padding:22px 26px; box-shadow:0 12px 30px rgba(13,51,91,.18);
+  }
+  .report-brand { display:flex; align-items:center; gap:14px; }
+  .report-brand-mark { font-size:2.2rem; line-height:1; color:#49a5ff; }
+  .report-brand h1 { margin:0; font-size:2rem; letter-spacing:.01em; }
+  .report-brand h1 span { color:#2f91f4; }
+  .report-brand p { margin:3px 0 0; opacity:.9; font-weight:600; }
+  .hero-meta { font-size:.88rem; line-height:1.55; opacity:.94; }
+  .hero-user { text-align:right; border-left:1px solid rgba(255,255,255,.22); padding-left:20px; font-size:.88rem; }
+  .hero-user strong { display:block; margin-bottom:3px; }
+  .status-strip {
+    margin-top:10px; display:grid; grid-template-columns:1fr 1.35fr 1.35fr; gap:0;
+    border:1px solid #d9e4ef; border-radius:12px; background:#f7fbff; overflow:hidden;
+  }
+  .status-block { padding:16px 20px; display:flex; gap:12px; align-items:flex-start; border-right:1px solid #d9e4ef; }
+  .status-block:last-child { border-right:0; }
+  .status-icon {
+    width:34px; height:34px; flex:none; border-radius:50%; display:grid; place-items:center;
+    background:#e8f3ff; color:#185aa5; font-weight:800;
+  }
+  .status-icon.ok { background:#e6f7ec; color:#1f8c4b; }
+  .status-title { font-weight:800; color:#173d68; margin-bottom:4px; }
+  .status-lines { color:#546b83; font-size:.86rem; line-height:1.5; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin:12px 0; }
+  .kpi {
+    border:1px solid #dbe5ef; border-radius:12px; padding:17px 16px; background:#fff;
+    box-shadow:0 5px 16px rgba(27,62,101,.06);
+  }
+  .kpi .value { font-size:1.55rem; font-weight:800; margin-bottom:4px; color:#173d68; }
+  .kpi .label { color:#60758b; font-size:.83rem; line-height:1.3; }
+  .kpi.good { background:#edf9f1; border-color:#cce9d6; }
+  .kpi.good .value { color:#1e7c41; }
+  .kpi.bad { background:#fff0f0; border-color:#f2cece; }
+  .kpi.bad .value { color:#c62f35; }
+  .kpi.accent { background:#f2efff; border-color:#ded8f7; }
+  .kpi.accent .value { color:#6841d9; }
+  .kpi.warn { background:#fff8e7; border-color:#f2e0ad; }
+  .kpi.warn .value { color:#a96a00; }
+  .report-panel {
+    background:#fff; border:1px solid #dbe5ef; border-radius:12px; margin-top:12px;
+    box-shadow:0 5px 16px rgba(27,62,101,.05); overflow:hidden;
+  }
+  .panel-title { margin:0; padding:14px 17px; color:#173d68; font-size:1.03rem; border-bottom:1px solid #e3ebf3; }
+  .table-wrap { overflow-x:auto; }
+  .report-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  .report-table th {
+    background:#f4f8fc; color:#244766; font-weight:800; padding:11px 10px;
+    border-bottom:1px solid #dbe5ef; text-align:center; white-space:nowrap;
+  }
+  .report-table td { padding:10px; border-bottom:1px solid #edf1f5; text-align:center; white-space:nowrap; }
+  .report-table td:first-child { text-align:left; font-weight:700; color:#203b58; }
+  .report-table tbody tr:hover { background:#f8fbfe; }
+  .error-cell { color:#cf3137; font-weight:800; }
+  .rag {
+    display:inline-flex; align-items:center; justify-content:center; min-width:58px;
+    padding:4px 9px; border-radius:999px; font-size:.76rem; font-weight:800;
+  }
+  .rag-green { background:#e4f6ea; color:#1d7b3e; }
+  .rag-amber { background:#fff4d7; color:#936000; }
+  .rag-red { background:#ffe5e5; color:#bd2d33; }
+  .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .chart-card { background:#fff; border:1px solid #dbe5ef; border-radius:12px; padding:14px; min-height:330px; }
+  .chart-card h3 { margin:0 0 10px; color:#173d68; font-size:1rem; }
+  .chart-card canvas { width:100% !important; height:285px !important; }
+  .static-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px; }
+  .static-grid img { width:100%; border:1px solid #e1e8ef; border-radius:8px; }
+  .monitoring-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px; padding:14px; }
+  .monitoring-card { border:1px solid #dbe5ef; border-radius:10px; padding:14px; background:#fbfdff; }
+  .monitoring-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:11px; }
+  .monitoring-name { font-weight:800; color:#173d68; }
+  .monitoring-meta { color:#72869a; font-size:.76rem; margin-top:2px; }
+  .monitoring-status { border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:800; }
+  .monitoring-status--green { background:#e4f6ea; color:#1d7b3e; }
+  .monitoring-status--amber { background:#fff4d7; color:#936000; }
+  .monitoring-status--red { background:#ffe5e5; color:#bd2d33; }
+  .monitoring-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .monitoring-metric { background:#fff; border:1px solid #e3eaf1; border-radius:8px; padding:9px; }
+  .monitoring-metric strong { display:block; color:#173d68; font-size:.96rem; }
+  .monitoring-metric span { display:block; color:#77899b; font-size:.7rem; margin-top:2px; }
+  .monitoring-divider { grid-column:1/-1; color:#526b83; font-size:.75rem; font-weight:800; margin-top:2px; }
+  .monitoring-empty { padding:14px 17px; color:#72869a; background:#f8fafc; }
+  .observations { display:grid; gap:9px; padding:14px; }
+  .observation { border-left:4px solid #2a6bb0; border-radius:8px; padding:11px 13px; background:#f6f9fc; }
+  .observation--success { border-left-color:#2c9a55; background:#f0faf3; }
+  .observation--warning { border-left-color:#d39a1f; background:#fff9e9; }
+  .observation--danger { border-left-color:#d64747; background:#fff1f1; }
+  .observation-category {
+    display:inline-block; margin-bottom:5px; padding:3px 7px; border-radius:999px;
+    background:#e9f0f7; color:#536b82; font-size:.68rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .observation-title { font-weight:800; color:#173d68; margin-bottom:3px; }
+  .observation-text { color:#526980; line-height:1.4; }
+  .report-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+  .report-actions a {
+    text-decoration:none; padding:9px 14px; border-radius:8px; font-weight:700;
+    background:#225fa1; color:#fff;
+  }
+  .muted { color:#789; }
+  @media (max-width:1100px) {
+    .kpi-grid { grid-template-columns:repeat(3,1fr); }
+    .report-hero { grid-template-columns:1fr; }
+    .hero-user { text-align:left; border-left:0; padding-left:0; }
+    .status-strip { grid-template-columns:1fr; }
+    .status-block { border-right:0; border-bottom:1px solid #d9e4ef; }
+    .status-block:last-child { border-bottom:0; }
+  }
+  @media (max-width:760px) {
+    .kpi-grid, .chart-grid { grid-template-columns:1fr; }
+    .static-grid { grid-template-columns:1fr; }
+  }
+  @media print {
+    .report-actions { display:none; }
+    .chart-card { break-inside:avoid; }
+    .report-panel { break-inside:avoid; }
+  }
+</style>
 
-<div class="section">
-  <h3>RAG distribution</h3>
-  {% set total_rag = (rag_counts['GREEN'] + rag_counts['AMBER'] + rag_counts['RED']) %}
-  {% if total_rag == 0 %}
-    <div class="alert">No RAG data available.</div>
-  {% else %}
-    {% if is_pdf %}
-      <img src="{{ url_for('static', filename='reports/graphs/rag_pie.png', _external=True) }}" 
-           alt="RAG distribution">
-    {% else %}
-      <canvas id="ragPieChart" width="300" height="300" style="max-width:300px;max-height:300px;"></canvas>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script>
-        (function() {
-          const ctx = document.getElementById('ragPieChart');
-          if (!ctx) return;
-          const data = {{ rag_counts|tojson }};
-          new Chart(ctx, {
-            type: 'pie',
-            data: {
-              labels: ['GREEN','AMBER','RED'],
-              datasets: [{
-                data: [data.GREEN || 0, data.AMBER || 0, data.RED || 0],
-                backgroundColor: ['#28a745','#ffc107','#dc3545']
-              }]
-            },
-            options: {
-              plugins: {
-                title: { display: true, text: 'RAG distribution' },
-                legend: { position: 'bottom' }
-              }
-            }
-          });
-        })();
-      </script>
-    {% endif %}
-  {% endif %}
-</div>
-
-<div class="graph-section">
-  <h3>Performance graphs</h3>
-  {% if chart_time_labels|length == 0 %}
-    <div class="alert">
-      <strong>Note:</strong> No time-series data available for graphs. Showing static fallbacks.
+<section class="report-shell">
+  <header class="report-hero">
+    <div class="report-brand">
+      <div class="report-brand-mark">〽</div>
+      <div>
+        <h1>Velocity<span>Pulse</span></h1>
+        <p>Performance Test Report</p>
+      </div>
     </div>
-    <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png') }}" alt="Response Time Distribution">
-    <img src="{{ url_for('static', filename='reports/graphs/error_trend.png') }}" alt="Error Trend Over Time">
-    <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png') }}" alt="SLA Heatmap">
-    <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png') }}" alt="Threads Over Time">
-    <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png') }}" alt="Transaction Progress">
-  {% else %}
-    {% if is_pdf %}
-      <img src="{{ url_for('static', filename='reports/graphs/response_distribution.png', _external=True) }}" alt="Response Time Distribution">
-      <img src="{{ url_for('static', filename='reports/graphs/error_trend.png', _external=True) }}" alt="Error Trend Over Time">
-      <img src="{{ url_for('static', filename='reports/graphs/sla_heatmap.png', _external=True) }}" alt="SLA Heatmap">
-      <img src="{{ url_for('static', filename='reports/graphs/threads_over_time.png', _external=True) }}" alt="Threads Over Time">
-      <img src="{{ url_for('static', filename='reports/graphs/transaction_progress.png', _external=True) }}" alt="Transaction Progress">
+    <div class="hero-meta">
+      <div><strong>Generated:</strong> {{ timestamp[:19].replace('T',' ') if timestamp else 'Not available' }}</div>
+      <div><strong>Report:</strong> {{ report_name or file_name or 'Untitled Report' }}</div>
+      <div><strong>File:</strong> {{ file_name or 'Not available' }}</div>
+    </div>
+    <div class="hero-user">
+      {% set profile = session.get('user_profile', {}) %}
+      <strong>Signed in as</strong>
+      {{ profile.get('email') or profile.get('name') or session.get('user','VelocityPulse user') }}
+    </div>
+  </header>
+
+  <div class="status-strip">
+    <div class="status-block">
+      <div class="status-icon ok">✓</div>
+      <div>
+        <div class="status-title">Result file analysed</div>
+        <div class="status-lines">{{ file_name or 'JMeter result file' }}</div>
+      </div>
+    </div>
+    <div class="status-block">
+      <div class="status-icon">▣</div>
+      <div>
+        <div class="status-title">Detected Test Window</div>
+        <div class="status-lines">{{ test_period or 'Not available' }}<br>Duration: {{ total_duration or 'Not available' }}</div>
+      </div>
+    </div>
+    <div class="status-block">
+      <div class="status-icon ok">◷</div>
+      <div>
+        <div class="status-title">Steady State Period Used</div>
+        <div class="status-lines">{{ steady_state or 'Not available' }}<br>Concurrent users: {{ concurrent_users if concurrent_users is not none else 'N/A' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="value">{{ overview.get('total_samples', '—') }}</div>
+      <div class="label">Total Samples</div>
+    </div>
+    <div class="kpi good">
+      <div class="value">{{ overview.get('successful_samples', '—') }}</div>
+      <div class="label">Successful Samples</div>
+    </div>
+    <div class="kpi bad">
+      <div class="value">{{ overview.get('failed_samples', '—') }}</div>
+      <div class="label">Failed Samples{% if overview.get('error_pct') is not none %}<br>({{ "%.2f"|format(overview.get('error_pct')|float) }}%){% endif %}</div>
+    </div>
+    <div class="kpi accent">
+      <div class="value">{% if overview.get('avg_s') is not none %}{{ "%.3f"|format(overview.get('avg_s')|float) }} s{% else %}—{% endif %}</div>
+      <div class="label">Average Response Time</div>
+    </div>
+    <div class="kpi warn">
+      <div class="value">{% if overview.get('p90_s') is not none %}{{ "%.3f"|format(overview.get('p90_s')|float) }} s{% else %}—{% endif %}</div>
+      <div class="label">P90 Response Time</div>
+    </div>
+    <div class="kpi bad">
+      <div class="value">{% if overview.get('p95_s') is not none %}{{ "%.3f"|format(overview.get('p95_s')|float) }} s{% else %}—{% endif %}</div>
+      <div class="label">P95 Response Time</div>
+    </div>
+  </div>
+
+  <section class="report-panel">
+    <h2 class="panel-title">Transaction Summary (Steady State Period)</h2>
+    <div class="table-wrap">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Transaction</th>
+            {% if 'samples' in selected_metrics %}<th>Samples</th>{% endif %}
+            {% if 'avg' in selected_metrics %}<th>Avg (s)</th>{% endif %}
+            <th>Min (s)</th>
+            <th>Max (s)</th>
+            {% if 'p90' in selected_metrics %}<th>P90 (s)</th>{% endif %}
+            {% if 'p95' in selected_metrics %}<th>P95 (s)</th>{% endif %}
+            {% if 'error' in selected_metrics %}<th>Error %</th>{% endif %}
+            <th>Throughput (TPS)</th>
+            <th>RAG</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in summary %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ row.get('Transaction') }}</td>
+            {% if 'samples' in selected_metrics %}<td>{{ row.get('#Samples', 0) }}</td>{% endif %}
+            {% if 'avg' in selected_metrics %}<td>{{ "%.3f"|format(row.get('Avg (s)')|float) if row.get('Avg (s)') is not none else '—' }}</td>{% endif %}
+            <td>{{ "%.3f"|format(row.get('Min (s)')|float) if row.get('Min (s)') is not none else '—' }}</td>
+            <td>{{ "%.3f"|format(row.get('Max (s)')|float) if row.get('Max (s)') is not none else '—' }}</td>
+            {% if 'p90' in selected_metrics %}<td>{{ "%.3f"|format(row.get('90th % (s)')|float) if row.get('90th % (s)') is not none else '—' }}</td>{% endif %}
+            {% if 'p95' in selected_metrics %}<td>{{ "%.3f"|format(row.get('95th % (s)')|float) if row.get('95th % (s)') is not none else '—' }}</td>{% endif %}
+            {% if 'error' in selected_metrics %}<td class="{{ 'error-cell' if (row.get('Error %')|float) > 0 else '' }}">{{ "%.2f"|format(row.get('Error %')|float) if row.get('Error %') is not none else '—' }}</td>{% endif %}
+            <td>{{ "%.2f"|format(row.get('Throughput (TPS)')|float) if row.get('Throughput (TPS)') is not none else '—' }}</td>
+            <td>
+              {% set rag = row.get('RAG') %}
+              <span class="rag {{ 'rag-green' if rag == 'GREEN' else ('rag-amber' if rag == 'AMBER' else 'rag-red') }}">{{ rag or '—' }}</span>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="11" class="muted">No transaction data available.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="report-panel">
+    <h2 class="panel-title">Infrastructure Monitoring</h2>
+    {% if monitoring_stats %}
+    <div class="monitoring-grid">
+      {% for monitor in monitoring_stats %}
+      <div class="monitoring-card">
+        <div class="monitoring-head">
+          <div>
+            <div class="monitoring-name">{{ monitor.server }}</div>
+            <div class="monitoring-meta">
+              {{ monitor.host or 'Local host' }} · {{ monitor.os or 'OS unavailable' }} ·
+              {{ monitor.samples }} samples · {{ "%.0f"|format(monitor.duration_seconds|float) }}s coverage
+            </div>
+          </div>
+          {% set monitor_status = monitor.status|default('GREEN') %}
+          <span class="monitoring-status monitoring-status--{{ monitor_status|lower }}">{{ monitor_status }}</span>
+        </div>
+        <div class="monitoring-metrics">
+          <div class="monitoring-divider">CPU</div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.avg_cpu|float) }}%</strong><span>Average</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.p95_cpu|float) }}%</strong><span>P95</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.max_cpu|float) }}%</strong><span>Peak</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.cpu_high_pct|float) }}%</strong><span>Samples ≥85%</span></div>
+          <div class="monitoring-divider">Memory</div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.avg_mem|float) }}%</strong><span>Average</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.p95_mem|float) }}%</strong><span>P95</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.max_mem|float) }}%</strong><span>Peak</span></div>
+          <div class="monitoring-metric"><strong>{{ "%.1f"|format(monitor.mem_high_pct|float) }}%</strong><span>Samples ≥85%</span></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
     {% else %}
-      <canvas id="avgByTxnChart"></canvas>
-      <canvas id="p90ByTxnChart"></canvas>
-      <canvas id="errorRateChart"></canvas>
-            <canvas id="throughputChart"></canvas>
+      <div class="monitoring-empty">Monitoring data was not captured for this report. Monitoring statistics are available for live runs when server monitoring is active during the test.</div>
     {% endif %}
+  </section>
+
+  {% if is_pdf or not chart_time_labels %}
+    <section class="report-panel">
+      <h2 class="panel-title">Performance Graphs</h2>
+      <div class="static-grid">
+        {% for key, label in [
+          ('response_distribution','Response Time Distribution'),
+          ('error_trend','Error Trend'),
+          ('sla_heatmap','Response Time Heatmap'),
+          ('threads_over_time','Threads Over Time'),
+          ('transaction_progress','Transactions Per Second')
+        ] %}
+          {% if graph_paths.get(key) %}
+            <div><img src="{{ url_for('static', filename=graph_paths.get(key), _external=is_pdf) }}" alt="{{ label }}"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <div class="chart-grid">
+      <section class="chart-card">
+        <h3>Average Response Time Over Time (seconds, JMeter-compatible)</h3>
+        <canvas id="avgByTxnChart"></canvas>
+      </section>
+      <section class="chart-card">
+        <h3>Response Time Percentiles Over Time (seconds, JMeter-compatible)</h3>
+        <canvas id="percentileChart"></canvas>
+      </section>
+      <section class="chart-card">
+        <h3>Transactions Per Second (JMeter-compatible)</h3>
+        <canvas id="throughputChart"></canvas>
+      </section>
+      <section class="chart-card">
+        <h3>Error Rate Over Time (%)</h3>
+        <canvas id="errorRateChart"></canvas>
+      </section>
+    </div>
   {% endif %}
-</div>
+
+  <section class="report-panel">
+    <h2 class="panel-title">Performance Observations</h2>
+    <div class="observations">
+      {% for observation in observations|default([]) %}
+        <div class="observation observation--{{ observation.type|default('info') }}">
+          {% if observation.category %}<div class="observation-category">{{ observation.category }}</div>{% endif %}
+          <div class="observation-title">{{ observation.title }}</div>
+          <div class="observation-text">{{ observation.text }}</div>
+        </div>
+      {% else %}
+        <div class="observation"><div class="observation-text">No observations are available for this report.</div></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if not is_pdf %}
+  <div class="report-actions">
+    <a href="{{ url_for('export_report_pdf', report_index=report_index) }}">Export PDF</a>
+    <a href="{{ url_for('history') }}">Report History</a>
+  </div>
+  {% endif %}
+</section>
 
 {% if not is_pdf %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const palette = ['#2a5298','#dc3545','#28a745','#ffc107','#17a2b8','#6f42c1','#fd7e14','#20c997','#6610f2','#e83e8c'];
+(function () {
+  const palette = ['#1d6fe8','#2fa65a','#f08a24','#d94a4a','#7a55d9','#8a4b22','#0f9da8','#bd4e9a'];
+  const timeLabels = {{ chart_time_labels|tojson }};
+  const rawAvg = {{ series_avg_by_txn|tojson }};
+  const rawPercentiles = {{ series_response_percentiles_over_time|tojson }};
+  const rawP90 = {{ series_p90_by_txn|tojson }};
+  const errorSeries = {{ series_error_rate_by_txn|tojson }};
+  const throughput = {{ series_throughput_over_time|tojson }};
+  const tpsSeries = {{ series_tps_by_txn|tojson }};
 
-  function lineDatasetsFromSeries(seriesObj) {
-    const txns = Object.keys(seriesObj);
-    return txns
-      .filter(txn => Array.isArray(seriesObj[txn]) && seriesObj[txn].some(v => v !== null))
-      .map((txn, idx) => ({
-        label: txn,
-        data: seriesObj[txn] || [],
-        borderColor: palette[idx % palette.length],
-        backgroundColor: palette[idx % palette.length],
-        tension: 0.2,
-        spanGaps: true,
-        fill: false
+  function responseSeriesInSeconds(seriesObj) {
+    const result = {};
+    Object.keys(seriesObj || {}).forEach(key => {
+      result[key] = (seriesObj[key] || []).map(value => value === null ? null : Number(value) / 1000);
+    });
+    return result;
+  }
+
+  function datasets(seriesObj) {
+    return Object.keys(seriesObj || {})
+      .filter(key => Array.isArray(seriesObj[key]) && seriesObj[key].some(value => value !== null))
+      .map((key, index) => ({
+        label:key,
+        data:seriesObj[key],
+        borderColor:palette[index % palette.length],
+        backgroundColor:palette[index % palette.length],
+        pointRadius:2,
+        borderWidth:2,
+        tension:.2,
+        spanGaps:true,
+        fill:false
       }));
   }
 
-  const timeLabels = {{ chart_time_labels|tojson }};
-  const avgSeries = {{ series_avg_by_txn|tojson }};
-  const p90Series = {{ series_p90_by_txn|tojson }};
-  const errorSeries = {{ series_error_rate_by_txn|tojson }};
-  const throughput = {{ series_throughput_over_time|tojson }};
-
-  if (timeLabels.length > 0) {
-    new Chart(document.getElementById('avgByTxnChart'), {
-      type: 'line',
-      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(avgSeries) },
-      options: { plugins: { title: { display: true, text: 'Average response time (s) by transaction' } } }
-    });
-
-    new Chart(document.getElementById('p90ByTxnChart'), {
-      type: 'line',
-      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(p90Series) },
-      options: { plugins: { title: { display: true, text: 'P90 response time (s) by transaction' } } }
-    });
-
-    new Chart(document.getElementById('errorRateChart'), {
-      type: 'line',
-      data: { labels: timeLabels, datasets: lineDatasetsFromSeries(errorSeries) },
-      options: { plugins: { title: { display: true, text: 'Error rate (%) by transaction' } } }
-    });
-
-    new Chart(document.getElementById('throughputChart'), {
-      type: 'line',
-      data: { labels: timeLabels, datasets: [
-        { label: 'Throughput (requests/min)', data: throughput, borderColor: '#2a5298', fill: true }
-      ]},
-      options: { plugins: { title: { display: true, text: 'Throughput over time' } } }
-    });
+  function options(yTitle) {
+    return {
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ position:'right', labels:{ boxWidth:12 } } },
+      scales:{
+        x:{ grid:{ color:'#eef2f6' } },
+        y:{ beginAtZero:true, title:{ display:true, text:yTitle }, grid:{ color:'#eef2f6' } }
+      }
+    };
   }
+
+  if (!timeLabels.length) return;
+
+  new Chart(document.getElementById('avgByTxnChart'), {
+    type:'line',
+    data:{ labels:timeLabels, datasets:datasets(responseSeriesInSeconds(rawAvg)) },
+    options:options('Response Time (seconds)')
+  });
+
+  const pctSource = Object.keys(rawPercentiles || {}).length ? rawPercentiles : rawP90;
+  new Chart(document.getElementById('percentileChart'), {
+    type:'line',
+    data:{ labels:timeLabels, datasets:datasets(responseSeriesInSeconds(pctSource)) },
+    options:options('Response Time (seconds)')
+  });
+
+  const tpsDatasets = datasets(tpsSeries);
+  new Chart(document.getElementById('throughputChart'), {
+    type:'line',
+    data:{
+      labels:timeLabels,
+      datasets:tpsDatasets.length ? tpsDatasets : [{
+        label:'Total TPS', data:throughput, borderColor:'#1d6fe8', backgroundColor:'#1d6fe8',
+        pointRadius:2, borderWidth:2, tension:.2, fill:false
+      }]
+    },
+    options:options('Transactions / second')
+  });
+
+  new Chart(document.getElementById('errorRateChart'), {
+    type:'line',
+    data:{ labels:timeLabels, datasets:datasets(errorSeries) },
+    options:options('Error %')
+  });
+})();
 </script>
 {% endif %}
 {% endblock %}
-
