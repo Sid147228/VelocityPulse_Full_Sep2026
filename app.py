@@ -1111,15 +1111,15 @@ def update_metrics(label, response_time, success):
 def compute_summary():
     summary = []
     for label, records in transaction_stats.items():
-        times = [r[0] for r in records]
-        successes = [r[1] for r in records]
+        times = [record[0] for record in records]
+        successes = [record[1] for record in records]
         samples = len(times)
         if samples == 0:
             continue
-        avg = round(sum(times) / samples, 2)
-        p90 = round(np.percentile(times, 90), 2)
-        p95 = round(np.percentile(times, 95), 2)
-        error_pct = round(100 * (1 - sum(successes)/samples), 2)
+        avg = round(sum(times) / samples, 4)
+        p90 = round(jmeter_percentile(times, 0.90), 4)
+        p95 = round(jmeter_percentile(times, 0.95), 4)
+        error_pct = round(100 * (1 - sum(successes) / samples), 4)
         summary.append({
             "label": label,
             "samples": samples,
