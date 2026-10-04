@@ -395,6 +395,7 @@ def auth_callback():
         or ""
     )
 
+    destination = session.pop("post_login_redirect", None)
     session.clear()
     session["user"] = display_name  # backward compatibility with existing templates
     session["user_profile"] = {
@@ -404,7 +405,6 @@ def auth_callback():
         "object_id": claims.get("oid") or claims.get("sub"),
     }
 
-    destination = session.pop("post_login_redirect", None)
     if not is_safe_local_redirect(destination):
         destination = url_for("upload")
     return redirect(destination)
