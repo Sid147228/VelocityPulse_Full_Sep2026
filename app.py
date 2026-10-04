@@ -1070,7 +1070,12 @@ def report(report_index):
             "observations",
             build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
         )
-        return render_template("report.html", report_index=report_index, **report_data)
+        return render_template(
+            "report.html",
+            report_index=report_index,
+            overview=report_overview(report_data),
+            **report_data,
+        )
     flash("Report not found")
     return redirect(url_for("history"))
 
@@ -1110,10 +1115,13 @@ def export_report_pdf(report_index):
             "observations",
             build_report_observations(report_data.get("summary", []), report_data.get("rag_result"))
         )
-        rendered = render_template("report.html",
-                                   report_index=report_index,
-                                   is_pdf=True,
-                                   **report_data)
+        rendered = render_template(
+            "report.html",
+            report_index=report_index,
+            is_pdf=True,
+            overview=report_overview(report_data),
+            **report_data,
+        )
         from weasyprint import HTML
         pdf = HTML(string=rendered, base_url=request.url_root).write_pdf()
         response = make_response(pdf)
