@@ -12,7 +12,7 @@
   {% set profile = session.get('user_profile', {}) %}
   <div class="vp-account">
     <span>
-      Signed in as {{ profile.get('name') or session.get('user', 'Microsoft user') }}
+      Signed in as {{ profile.get('name') or session.get('user', 'VelocityPulse user') }}
       {% if profile.get('email') %}<small style="display:block; opacity:.8;">{{ profile.get('email') }}</small>{% endif %}
     </span>
     <a class="vp-logout" href="{{ url_for('logout') }}">Sign out</a>
