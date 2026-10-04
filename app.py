@@ -546,7 +546,8 @@ def build_report_observations(
     report_kpis=None,
     green_sla=None,
     amber_sla=None,
-    max_observations=10,
+    monitoring_stats=None,
+    max_observations=12,
 ):
     """Create deterministic, evidence-based performance observations."""
     if not summary:
@@ -922,6 +923,105 @@ def build_report_observations(
                 ),
             )
 
+    monitoring_stats = monitoring_stats or []
+    if monitoring_stats:
+        worst_status = {"GREEN": 0, "AMBER": 1, "RED": 2}
+        worst_server = max(
+            monitoring_stats,
+            key=lambda item: worst_status.get(str(item.get("status") or "GREEN"), 0),
+        )
+        red_servers = [item for item in monitoring_stats if item.get("status") == "RED"]
+        amber_servers = [item for item in monitoring_stats if item.get("status") == "AMBER"]
+
+        if red_servers:
+            item = max(
+                red_servers,
+                key=lambda row: max(
+                    float(row.get("cpu_high_pct") or 0),
+                    float(row.get("mem_high_pct") or 0),
+                    float(row.get("p95_cpu") or 0),
+                    float(row.get("p95_mem") or 0),
+                ),
+            )
+            pressure = []
+            if (
+                float(item.get("avg_cpu") or 0) >= 85
+                or float(item.get("p95_cpu") or 0) >= 90
+                or float(item.get("cpu_high_pct") or 0) >= 20
+            ):
+                pressure.append(
+                    f"CPU averaged {float(item.get('avg_cpu') or 0):.1f}% "
+                    f"(P95 {float(item.get('p95_cpu') or 0):.1f}%, "
+                    f"peak {float(item.get('max_cpu') or 0):.1f}%)"
+                )
+            if (
+                float(item.get("avg_mem") or 0) >= 85
+                or float(item.get("p95_mem") or 0) >= 90
+                or float(item.get("mem_high_pct") or 0) >= 20
+            ):
+                pressure.append(
+                    f"memory averaged {float(item.get('avg_mem') or 0):.1f}% "
+                    f"(P95 {float(item.get('p95_mem') or 0):.1f}%, "
+                    f"peak {float(item.get('max_mem') or 0):.1f}%)"
+                )
+            add(
+                89,
+                "danger",
+                "Infrastructure monitoring",
+                f"Resource pressure detected: {item.get('server')}",
+                (
+                    "; ".join(pressure)
+                    + ". Review this server alongside the application latency/error timeline."
+                ),
+            )
+        elif amber_servers:
+            item = max(
+                amber_servers,
+                key=lambda row: max(
+                    float(row.get("max_cpu") or 0),
+                    float(row.get("max_mem") or 0),
+                ),
+            )
+            add(
+                67,
+                "warning",
+                "Infrastructure monitoring",
+                f"Resource utilisation requires attention: {item.get('server')}",
+                (
+                    f"CPU averaged {float(item.get('avg_cpu') or 0):.1f}% "
+                    f"(peak {float(item.get('max_cpu') or 0):.1f}%) and memory averaged "
+                    f"{float(item.get('avg_mem') or 0):.1f}% "
+                    f"(peak {float(item.get('max_mem') or 0):.1f}%). "
+                    f"Pressure was not sustained enough to classify as critical."
+                ),
+            )
+        else:
+            add(
+                44,
+                "success",
+                "Infrastructure monitoring",
+                "Monitored infrastructure remained within thresholds",
+                (
+                    f"{len(monitoring_stats)} monitored server(s) remained within the "
+                    f"configured CPU and memory pressure thresholds during the captured interval."
+                ),
+            )
+
+        peak_cpu = max(monitoring_stats, key=lambda row: float(row.get("max_cpu") or 0))
+        peak_mem = max(monitoring_stats, key=lambda row: float(row.get("max_mem") or 0))
+        add(
+            40,
+            "info",
+            "Infrastructure monitoring",
+            "Monitoring coverage summary",
+            (
+                f"Peak CPU was {float(peak_cpu.get('max_cpu') or 0):.1f}% on "
+                f"{peak_cpu.get('server')}; peak memory was "
+                f"{float(peak_mem.get('max_mem') or 0):.1f}% on {peak_mem.get('server')}. "
+                f"Monitoring statistics are based on captured samples during the test run."
+            ),
+        )
+
     # Keep one executive verdict, then the most actionable unique findings.
     findings.sort(key=lambda observation: observation["priority"], reverse=True)
     selected = []
@@ -933,6 +1033,22 @@ def build_report_observations(
         seen_titles.add(observation["title"])
         if len(selected) >= max_observations:
             break
+
+    if monitoring_stats and not any(
+        observation.get("category") == "Infrastructure monitoring"
+        for observation in selected
+    ):
+        monitoring_candidates = [
+            observation
+            for observation in findings
+            if observation.get("category") == "Infrastructure monitoring"
+        ]
+        if monitoring_candidates:
+            best_monitoring = monitoring_candidates[0]
+            if len(selected) >= max_observations:
+                selected[-1] = best_monitoring
+            else:
+                selected.append(best_monitoring)
 
     return selected
 
@@ -1451,7 +1567,7 @@ def analyze():
             green_sla=green,
             amber_sla=amber,
         ),
-        "observation_engine_version": 2,
+        "observation_engine_version": 3,
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
@@ -1465,6 +1581,7 @@ def analyze():
         "error_threshold": error_threshold if include_error else None,
         "graph_paths": graph_paths,
         "report_kpis": report_kpis,
+        "monitoring_stats": [],
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -1480,7 +1597,7 @@ def report(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
-        if int(report_data.get("observation_engine_version") or 0) < 2:
+        if int(report_data.get("observation_engine_version") or 0) < 3:
             report_data["observations"] = build_report_observations(
                 report_data.get("summary", []),
                 report_data.get("rag_result"),
@@ -1488,8 +1605,9 @@ def report(report_index):
                 report_kpis=report_overview(report_data),
                 green_sla=report_data.get("green"),
                 amber_sla=report_data.get("amber"),
+                monitoring_stats=report_data.get("monitoring_stats") or [],
             )
-            report_data["observation_engine_version"] = 2
+            report_data["observation_engine_version"] = 3
         return render_template(
             "report.html",
             report_index=report_index,
@@ -1531,7 +1649,7 @@ def export_report_pdf(report_index):
     reports = load_history()
     if 0 <= report_index < len(reports):
         report_data = reports[report_index]
-        if int(report_data.get("observation_engine_version") or 0) < 2:
+        if int(report_data.get("observation_engine_version") or 0) < 3:
             report_data["observations"] = build_report_observations(
                 report_data.get("summary", []),
                 report_data.get("rag_result"),
@@ -1539,8 +1657,9 @@ def export_report_pdf(report_index):
                 report_kpis=report_overview(report_data),
                 green_sla=report_data.get("green"),
                 amber_sla=report_data.get("amber"),
+                monitoring_stats=report_data.get("monitoring_stats") or [],
             )
-            report_data["observation_engine_version"] = 2
+            report_data["observation_engine_version"] = 3
         overview = report_overview(report_data)
         pdf = build_single_report_pdf(
             report_data,
@@ -1865,6 +1984,7 @@ def run_test():
         last_test_summary = None
         transaction_stats.clear()
         live_progress_points.clear()
+        _clear_test_monitoring_history()
         socketio.emit("run_reset", {"status": "new test"})
         run_dir = make_run_dir()
         current_run_dir = run_dir
@@ -2223,6 +2343,7 @@ def generate_report():
 
     summary, report_kpis = enrich_summary_and_kpis(df, summary)
     chart_data = build_report_chart_data(df, summary)
+    monitoring_stats = summarize_monitoring_history()
     try:
         graph_paths = generate_report_graph_assets(df, summary, green, amber)
     except Exception as exc:
@@ -2241,8 +2362,9 @@ def generate_report():
             report_kpis=report_kpis,
             green_sla=green,
             amber_sla=amber,
+            monitoring_stats=monitoring_stats,
         ),
-        "observation_engine_version": 2,
+        "observation_engine_version": 3,
         "test_date": test_date,
         "test_period": test_period,
         "total_duration": total_duration,
@@ -2256,6 +2378,7 @@ def generate_report():
         "error_threshold": None,
         "graph_paths": graph_paths,
         "report_kpis": report_kpis,
+        "monitoring_stats": monitoring_stats,
         **chart_data,
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -2294,6 +2417,111 @@ from flask import request, jsonify, render_template
 monitoring_active = False
 monitoring_threads = []
 monitoring_latest = {}
+monitoring_history = defaultdict(lambda: deque(maxlen=5000))
+monitoring_history_lock = threading.Lock()
+
+
+def _record_monitoring_sample(sample):
+    enriched = dict(sample)
+    enriched["timestamp_ms"] = int(time.time() * 1000)
+    server_name = str(enriched.get("server") or "Unnamed server")
+    with monitoring_history_lock:
+        monitoring_history[server_name].append(enriched)
+    return enriched
+
+
+def _clear_test_monitoring_history():
+    with monitoring_history_lock:
+        monitoring_history.clear()
+
+
+def summarize_monitoring_history():
+    """Return per-server monitoring statistics captured during the current test."""
+    with monitoring_history_lock:
+        snapshot = {
+            server: list(samples)
+            for server, samples in monitoring_history.items()
+            if samples
+        }
+
+    summaries = []
+    for server, samples in sorted(snapshot.items()):
+        cpu_values = [
+            float(sample["cpu"])
+            for sample in samples
+            if sample.get("cpu") is not None
+        ]
+        mem_values = [
+            float(sample["mem"])
+            for sample in samples
+            if sample.get("mem") is not None
+        ]
+        if not cpu_values and not mem_values:
+            continue
+
+        cpu_high_pct = (
+            100.0 * sum(value >= 85.0 for value in cpu_values) / len(cpu_values)
+            if cpu_values else 0.0
+        )
+        mem_high_pct = (
+            100.0 * sum(value >= 85.0 for value in mem_values) / len(mem_values)
+            if mem_values else 0.0
+        )
+
+        avg_cpu = float(np.mean(cpu_values)) if cpu_values else None
+        p95_cpu = float(np.percentile(cpu_values, 95)) if cpu_values else None
+        max_cpu = max(cpu_values) if cpu_values else None
+        avg_mem = float(np.mean(mem_values)) if mem_values else None
+        p95_mem = float(np.percentile(mem_values, 95)) if mem_values else None
+        max_mem = max(mem_values) if mem_values else None
+
+        red = (
+            (avg_cpu is not None and avg_cpu >= 85)
+            or (p95_cpu is not None and p95_cpu >= 90)
+            or cpu_high_pct >= 20
+            or (avg_mem is not None and avg_mem >= 85)
+            or (p95_mem is not None and p95_mem >= 90)
+            or mem_high_pct >= 20
+        )
+        amber = (
+            (avg_cpu is not None and avg_cpu >= 70)
+            or (p95_cpu is not None and p95_cpu >= 80)
+            or (max_cpu is not None and max_cpu >= 90)
+            or (avg_mem is not None and avg_mem >= 75)
+            or (p95_mem is not None and p95_mem >= 85)
+            or (max_mem is not None and max_mem >= 90)
+        )
+
+        timestamps = [
+            int(sample.get("timestamp_ms"))
+            for sample in samples
+            if sample.get("timestamp_ms") is not None
+        ]
+        duration_seconds = (
+            max(0.0, (max(timestamps) - min(timestamps)) / 1000.0)
+            if len(timestamps) >= 2
+            else 0.0
+        )
+
+        sample0 = samples[0]
+        summaries.append({
+            "server": server,
+            "host": sample0.get("host"),
+            "os": sample0.get("os"),
+            "samples": max(len(cpu_values), len(mem_values)),
+            "duration_seconds": round(duration_seconds, 2),
+            "avg_cpu": round(avg_cpu, 2) if avg_cpu is not None else None,
+            "p95_cpu": round(p95_cpu, 2) if p95_cpu is not None else None,
+            "max_cpu": round(max_cpu, 2) if max_cpu is not None else None,
+            "cpu_high_pct": round(cpu_high_pct, 2),
+            "avg_mem": round(avg_mem, 2) if avg_mem is not None else None,
+            "p95_mem": round(p95_mem, 2) if p95_mem is not None else None,
+            "max_mem": round(max_mem, 2) if max_mem is not None else None,
+            "mem_high_pct": round(mem_high_pct, 2),
+            "status": "RED" if red else ("AMBER" if amber else "GREEN"),
+        })
+
+    return summaries
 
 def collect_linux_metrics(host, user, password, name, socketio):
     ssh = paramiko.SSHClient()
@@ -2313,7 +2541,13 @@ def collect_linux_metrics(host, user, password, name, socketio):
             if len(cpu_fields) >= 15:
                 cpu = 100.0 - float(cpu_fields[14])
                 mem = float(mem_text) if mem_text else 0.0
-                sample = {"server": name, "cpu": round(cpu, 2), "mem": round(mem, 2)}
+                sample = _record_monitoring_sample({
+                    "server": name,
+                    "host": host,
+                    "os": "linux",
+                    "cpu": round(cpu, 2),
+                    "mem": round(mem, 2),
+                })
                 monitoring_latest[name] = sample
                 socketio.emit("server_metrics", sample, namespace="/")
             time.sleep(5)
@@ -2330,7 +2564,13 @@ def collect_windows_metrics(host, name, socketio):
     while monitoring_active:
         cpu = psutil.cpu_percent(interval=1)
         mem = psutil.virtual_memory().percent
-        sample = {"server": name, "cpu": cpu, "mem": mem}
+        sample = _record_monitoring_sample({
+            "server": name,
+            "host": host,
+            "os": "local",
+            "cpu": round(float(cpu), 2),
+            "mem": round(float(mem), 2),
+        })
         monitoring_latest[name] = sample
         socketio.emit("server_metrics", sample,
     			  namespace="/")
