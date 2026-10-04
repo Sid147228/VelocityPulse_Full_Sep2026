@@ -1,170 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Comparison Report</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <style>
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #2a5298;
-        }
-        form.filters {
-            margin: 20px 0;
-            padding: 10px;
-            background: #f4f6f9;
-            border-radius: 6px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            text-align: center;
-        }
-        .status {
-            font-weight: bold;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .red { background-color: #e74c3c; }
-        .green { background-color: #2ecc71; }
-        .grey { background-color: #95a5a6; }
-        .observations {
-            margin-top: 30px;
-        }
-        canvas {
-            margin-top: 40px;
-        }
-        .rag-charts {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 40px;
-        }
-        .rag-criteria {
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-        .rag-criteria ul {
-            padding-left: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>VelocityPulse Comparison Report</title>
+  <style>
+    @page { size:A4 landscape; margin:12mm; }
+    body { font-family:"Segoe UI",Arial,sans-serif; margin:0; color:#16324f; background:#fff; font-size:10pt; }
+    .hero {
+      background:#0c3b6c; color:#fff; border-radius:10px; padding:17px 20px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .hero h1 { margin:0 0 3px; font-size:20pt; }
+    .hero p { margin:0; opacity:.9; }
+    .metric { border:1px solid rgba(255,255,255,.35); border-radius:18px; padding:6px 11px; font-weight:700; }
+    .pair { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .card { border:1px solid #d9e4ef; border-radius:9px; padding:12px; }
+    .card h2 { margin:0 0 3px; font-size:12pt; color:#173d68; }
+    .date { color:#6c8094; font-size:8.5pt; margin-bottom:9px; }
+    .mini { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+    .mini div { background:#f5f8fb; border:1px solid #e3eaf1; border-radius:7px; padding:7px; }
+    .mini strong { display:block; color:#173d68; }
+    .mini span { color:#708296; font-size:7.5pt; }
+    .counts { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:9px; }
+    .count { border-radius:8px; padding:9px 11px; border:1px solid #dbe5ef; }
+    .count strong { font-size:15pt; display:block; }
+    .good { background:#edf9f1; color:#1f7d43; border-color:#cce9d6; }
+    .bad { background:#fff0f0; color:#c62f35; border-color:#f2cece; }
+    .neutral { background:#f3f5f7; color:#596b7d; }
+    .panel { border:1px solid #dbe5ef; border-radius:9px; margin-top:9px; overflow:hidden; }
+    .panel h3 { margin:0; padding:9px 11px; background:#f5f8fb; color:#173d68; font-size:10.5pt; }
+    table { width:100%; border-collapse:collapse; font-size:8.3pt; }
+    th { background:#eef4f9; color:#244766; padding:7px 6px; border-bottom:1px solid #dbe5ef; }
+    td { padding:7px 6px; border-bottom:1px solid #edf1f5; text-align:center; }
+    td:first-child { text-align:left; font-weight:700; }
+    .up { color:#c62f35; font-weight:800; }
+    .down { color:#208247; font-weight:800; }
+    .flat { color:#6d8195; font-weight:800; }
+    .pill { border-radius:999px; padding:3px 7px; font-weight:800; font-size:7.5pt; }
+    .Improved { background:#e6f6eb; color:#208247; }
+    .Degraded { background:#ffe6e6; color:#c62f35; }
+    .No-Change { background:#eef2f5; color:#657789; }
+    .rag { border-radius:999px; padding:3px 7px; font-weight:800; font-size:7pt; }
+    .rag-green { background:#e4f6ea; color:#1d7b3e; }
+    .rag-amber { background:#fff4d7; color:#936000; }
+    .rag-red { background:#ffe5e5; color:#bd2d33; }
+    ul { margin:8px 12px 11px 28px; padding:0; color:#526980; }
+    li { margin:4px 0; }
+  </style>
 </head>
 <body>
-{% if not is_pdf|default(false) %}{% include "_header.html" %}{% endif %}
-<div class="container">
-    <h2>Comparison Report</h2>
-    <p>Comparing <strong>{{ r1.report_name or r1.file_name or 'Report 1' }}</strong> vs <strong>{{ r2.report_name or r2.file_name or 'Report 2' }}</strong></p>
+{% set metric_unit = '%' if metric == 'Error %' else 's' %}
+{% set ns = namespace(improved=0, degraded=0, stable=0) %}
+{% for row in comparisons %}
+  {% if row.status == 'Improved' %}{% set ns.improved = ns.improved + 1 %}
+  {% elif row.status == 'Degraded' %}{% set ns.degraded = ns.degraded + 1 %}
+  {% else %}{% set ns.stable = ns.stable + 1 %}{% endif %}
+{% endfor %}
 
-    {% if not is_pdf|default(false) %}
-    <!-- Filters -->
-    <form method="get" action="{{ url_for('compare') }}" class="filters">
-        <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[0] }}">
-        <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[1] }}">
+<header class="hero">
+  <div>
+    <h1>VelocityPulse Comparison Report</h1>
+    <p>{{ r1.report_name or r1.file_name or 'Report 1' }} vs {{ r2.report_name or r2.file_name or 'Report 2' }}</p>
+  </div>
+  <div class="metric">{{ metric }}{% if metric != 'Error %' %} · seconds{% endif %}</div>
+</header>
 
-        <label><strong>Metric:</strong>
-            <select name="metric" onchange="this.form.submit()">
-                <option value="Avg (s)" {% if metric == "Avg (s)" %}selected{% endif %}>Avg (s)</option>
-                <option value="90th % (s)" {% if metric == "90th % (s)" %}selected{% endif %}>90th % (s)</option>
-            </select>
-        </label>
-
-        <fieldset style="margin-top:15px;">
-            <legend><strong>Transactions:</strong></legend>
-            {% for txn in all_txns %}
-                <label style="margin-right:10px;">
-                    <input type="checkbox" name="transactions" value="{{ txn }}"
-                           {% if txn in selected_txns %}checked{% endif %}
-                           onchange="this.form.submit()">
-                    {{ txn }}
-                </label>
-            {% endfor %}
-        </fieldset>
-    </form>
-    {% endif %}
-
-    <!-- Comparison Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Transaction</th>
-                <th>{{ r1.report_name or r1.file_name or 'Report 1' }} ({{ metric }})</th>
-                <th>{{ r2.report_name or r2.file_name or 'Report 2' }} ({{ metric }})</th>
-                <th>Difference ({{ metric }})</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in comparisons %}
-            <tr>
-                <td>{{ c.transaction }}</td>
-                <td>{{ "%.2f"|format(c.v1) }}</td>
-                <td>{{ "%.2f"|format(c.v2) }}</td>
-                <td>{{ "%.2f"|format(c.diff) }}</td>
-                <td><span class="status {{ c.color }}">{{ c.status }}</span></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Observations -->
-    <div class="observations">
-        <h3>Observations</h3>
-        <ul>
-            {% for obs in observations %}
-                <li>{{ obs }}</li>
-            {% endfor %}
-        </ul>
+<div class="pair">
+  {% for report, overview, label in [(r1, overview1, 'Earlier Test'), (r2, overview2, 'Later Test')] %}
+  <section class="card">
+    <h2>{{ label }} — {{ report.report_name or report.file_name or 'Report' }}</h2>
+    <div class="date">{{ report.test_date or 'Date unavailable' }} · {{ report.total_duration or 'Duration unavailable' }}</div>
+    <div class="mini">
+      <div><strong>{{ overview.get('total_samples','—') }}</strong><span>Samples</span></div>
+      <div><strong>{% if overview.get('avg_s') is not none %}{{ "%.3f"|format(overview.get('avg_s')|float) }} s{% else %}—{% endif %}</strong><span>Average</span></div>
+      <div><strong>{% if overview.get('p95_s') is not none %}{{ "%.3f"|format(overview.get('p95_s')|float) }} s{% else %}—{% endif %}</strong><span>P95</span></div>
+      <div><strong><span class="rag {{ 'rag-green' if report.rag_result == 'GREEN' else ('rag-amber' if report.rag_result == 'AMBER' else 'rag-red') }}">{{ report.rag_result or 'N/A' }}</span></strong><span>Overall RAG</span></div>
     </div>
-
-    {% if not is_pdf|default(false) %}
-    <!-- Comparison Bar Chart -->
-    <canvas id="compareChart" width="900" height="400"></canvas>
-    <script>
-        const labels = {{ comparisons|map(attribute='transaction')|list|tojson }};
-        const data1 = {{ comparisons|map(attribute='v1')|list|tojson }};
-        const data2 = {{ comparisons|map(attribute='v2')|list|tojson }};
-        new Chart(document.getElementById('compareChart'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: "{{ r1.report_name or r1.file_name or 'Report 1' }} ({{ metric }})", data: data1, backgroundColor: '#2a5298' },
-                    { label: "{{ r2.report_name or r2.file_name or 'Report 2' }} ({{ metric }})", data: data2, backgroundColor: '#f39c12' }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: { display: true, text: 'Comparison Chart' },
-                    legend: { position: 'bottom' }
-                },
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-    </script>
-    {% endif %}
-
-    <!-- Overlay Line Chart for Transaction Progress -->
-    {% if compare_progress %}
-    <h3>Transaction Progress Over Time</h3>
-    <img src="{{ url_for('static', filename='reports/graphs/compare_progress.png') }}"
-         alt="Transaction Progress Comparison"
-         style="margin-top: 30px; max-width: 100%;">
-    {% endif %}
+  </section>
+  {% endfor %}
 </div>
+
+<div class="counts">
+  <div class="count good"><strong>{{ ns.improved }}</strong>Improved transactions</div>
+  <div class="count bad"><strong>{{ ns.degraded }}</strong>Degraded transactions</div>
+  <div class="count neutral"><strong>{{ ns.stable }}</strong>No material change</div>
+</div>
+
+<section class="panel">
+  <h3>Transaction Comparison — {{ metric }}{% if metric != 'Error %' %} in seconds{% endif %}</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Transaction</th>
+        <th>{{ r1.report_name or 'Earlier' }} ({{ metric_unit }})</th>
+        <th>{{ r2.report_name or 'Later' }} ({{ metric_unit }})</th>
+        <th>Absolute Δ ({{ metric_unit }})</th>
+        <th>Change %</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in comparisons %}
+      <tr>
+        <td>{{ row.transaction }}</td>
+        <td>{{ "%.3f"|format(row.v1) if metric != 'Error %' else "%.2f"|format(row.v1) }}</td>
+        <td>{{ "%.3f"|format(row.v2) if metric != 'Error %' else "%.2f"|format(row.v2) }}</td>
+        <td class="{{ 'up' if row.diff > 0 else ('down' if row.diff < 0 else 'flat') }}">
+          {{ "%+.3f"|format(row.diff) if metric != 'Error %' else "%+.2f"|format(row.diff) }}
+        </td>
+        <td class="{{ 'up' if row.diff > 0 else ('down' if row.diff < 0 else 'flat') }}">
+          {% if row.change_pct is not none %}{{ "%+.2f"|format(row.change_pct) }}%{% else %}—{% endif %}
+        </td>
+        <td><span class="pill {{ row.status|replace(' ','-') }}">{{ row.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">No common transaction data is available for the selected filters.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h3>Comparison Observations</h3>
+  <ul>{% for obs in observations %}<li>{{ obs }}</li>{% endfor %}</ul>
+</section>
 </body>
 </html>
