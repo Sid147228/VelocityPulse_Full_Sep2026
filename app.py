@@ -12,7 +12,7 @@ from version import __version__, __build__, __codename__
 load_dotenv()
 
 # Helpers
-from jmeter_parser import parse_jmeter_csv
+from jmeter_parser import parse_jmeter_csv, detect_test_window
 from generate_TestResult import evaluate_sla
 from generate_graphs import generate_graphs
 from generate_transaction_progress import generate_transaction_progress
@@ -418,43 +418,128 @@ def logout():
     query = urlencode({"post_logout_redirect_uri": MICROSOFT_POST_LOGOUT_REDIRECT_URI})
     return redirect(f"{MICROSOFT_AUTHORITY}/oauth2/v2.0/logout?{query}")
 
+def _format_test_timestamp(timestamp_ms):
+    dt = datetime.fromtimestamp(int(timestamp_ms) / 1000.0)
+    return {
+        "display": dt.strftime("%d-%m-%Y %H:%M:%S"),
+        "input": dt.strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+def _parse_datetime_local(value):
+    if not value:
+        return None
+    for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"):
+        try:
+            return int(datetime.strptime(value, fmt).timestamp() * 1000)
+        except ValueError:
+            continue
+    return None
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if "user" not in session:
         return redirect(url_for("login"))
 
-    uploaded_file = session.get("uploaded_file")
-
-    if uploaded_file and request.method == "POST":
-        pass  # fall through to existing upload flow below
-
     if request.method == "POST":
-        if "file" in request.files:
-            file = request.files["file"]
-            if file.filename:
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(UPLOAD_FOLDER, filename)
-                file.save(file_path)
-                session["uploaded_file"] = filename
-                session["uploaded_file_path"] = file_path
-                return redirect(url_for("upload"))
+        file = request.files.get("file")
+        if not file or not file.filename:
+            flash("Please select a JMeter CSV or JTL file.", "error")
+            return redirect(url_for("upload"))
 
+        filename = secure_filename(file.filename)
+        if not filename.lower().endswith((".csv", ".jtl")):
+            flash("Unsupported file type. Please upload a .csv or .jtl JMeter result file.", "error")
+            return redirect(url_for("upload"))
+
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+
+        try:
+            test_start_ms, test_end_ms = detect_test_window(file_path)
+            test_start_ms, test_end_ms = int(test_start_ms), int(test_end_ms)
+            if test_end_ms < test_start_ms:
+                raise ValueError("Invalid test window")
+        except Exception:
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass
+            session.pop("uploaded_file", None)
+            session.pop("uploaded_file_path", None)
+            session.pop("test_window", None)
+            flash(
+                "The file was uploaded, but VelocityPulse could not detect a valid JMeter test window. "
+                "Make sure the file contains a valid timeStamp column.",
+                "error",
+            )
+            return redirect(url_for("upload"))
+
+        session["uploaded_file"] = filename
+        session["uploaded_file_path"] = file_path
+        session["test_window"] = {
+            "start_ms": test_start_ms,
+            "end_ms": test_end_ms,
+        }
+        flash(f"{filename} uploaded successfully. Test start and end times were detected.", "success")
+        return redirect(url_for("upload"))
+
+    uploaded_file = session.get("uploaded_file")
     transactions = []
-    if uploaded_file:
-        file_path = session["uploaded_file_path"]
-        green, amber, rag_basis = 2.0, 5.0, "avg"
-        summary, test_rag = parse_jmeter_csv(file_path, green, amber, rag_basis)
-        transactions = [row.get("Transaction") for row in summary if row.get("Transaction")]
-        session["summary"] = summary
+    test_window = None
 
-    return render_template("upload.html",
-                           uploaded_file=uploaded_file,
-                           uploaded_file_path=session.get("uploaded_file_path"),
-                           transactions=transactions)
+    if uploaded_file:
+        file_path = session.get("uploaded_file_path")
+        raw_window = session.get("test_window") or {}
+
+        if file_path and os.path.exists(file_path):
+            try:
+                green, amber, rag_basis = 2.0, 5.0, "avg"
+                summary, _ = parse_jmeter_csv(file_path, green, amber, rag_basis)
+                transactions = [
+                    row.get("Transaction")
+                    for row in summary
+                    if row.get("Transaction")
+                ]
+                session["summary"] = summary
+
+                start_ms = raw_window.get("start_ms")
+                end_ms = raw_window.get("end_ms")
+                if start_ms is None or end_ms is None:
+                    start_ms, end_ms = detect_test_window(file_path)
+                    start_ms, end_ms = int(start_ms), int(end_ms)
+                    session["test_window"] = {
+                        "start_ms": start_ms,
+                        "end_ms": end_ms,
+                    }
+
+                start_fmt = _format_test_timestamp(start_ms)
+                end_fmt = _format_test_timestamp(end_ms)
+                test_window = {
+                    "start_ms": int(start_ms),
+                    "end_ms": int(end_ms),
+                    "start_display": start_fmt["display"],
+                    "end_display": end_fmt["display"],
+                    "start_input": start_fmt["input"],
+                    "end_input": end_fmt["input"],
+                }
+            except Exception:
+                flash("Unable to read the uploaded JMeter result file.", "error")
+
+    return render_template(
+        "upload.html",
+        uploaded_file=uploaded_file,
+        uploaded_file_path=session.get("uploaded_file_path"),
+        transactions=transactions,
+        test_window=test_window,
+    )
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    file_path = request.form["file_path"]
+    file_path = session.get("uploaded_file_path")
+    if not file_path or not os.path.exists(file_path):
+        flash("Please upload a JMeter result file before generating a report.", "error")
+        return redirect(url_for("upload"))
+
     report_name = request.form["report_name"]
     transactions = request.form.getlist("transactions")
     metrics = request.form.getlist("metrics")
@@ -462,9 +547,47 @@ def analyze():
     include_error = "include_error" in request.form
     error_threshold = float(request.form.get("error_threshold", 0))
     green, amber = float(request.form["green"]), float(request.form["amber"])
-    start_time, end_time = request.form.get("start_time"), request.form.get("end_time")
 
-    summary, test_rag = parse_jmeter_csv(file_path, green, amber, rag_basis, start_time, end_time)
+    steady_start_raw = request.form.get("steady_state_start", "").strip()
+    steady_end_raw = request.form.get("steady_state_end", "").strip()
+    steady_start_ms = _parse_datetime_local(steady_start_raw) if steady_start_raw else None
+    steady_end_ms = _parse_datetime_local(steady_end_raw) if steady_end_raw else None
+
+    test_window = session.get("test_window") or {}
+    test_start_ms = test_window.get("start_ms")
+    test_end_ms = test_window.get("end_ms")
+
+    if bool(steady_start_raw) != bool(steady_end_raw):
+        flash("Please provide both steady-state start and end times, or leave both blank.", "error")
+        return redirect(url_for("upload"))
+
+    if steady_start_raw and (steady_start_ms is None or steady_end_ms is None):
+        flash("The steady-state period contains an invalid date/time.", "error")
+        return redirect(url_for("upload"))
+
+    if steady_start_ms is not None and steady_end_ms is not None:
+        if steady_end_ms <= steady_start_ms:
+            flash("Steady-state end time must be later than the start time.", "error")
+            return redirect(url_for("upload"))
+        if test_start_ms is not None and steady_start_ms < int(test_start_ms):
+            flash("Steady-state start time cannot be earlier than the detected test start time.", "error")
+            return redirect(url_for("upload"))
+        if test_end_ms is not None and steady_end_ms > int(test_end_ms):
+            flash("Steady-state end time cannot be later than the detected test end time.", "error")
+            return redirect(url_for("upload"))
+
+    summary, test_rag = parse_jmeter_csv(
+        file_path,
+        green,
+        amber,
+        rag_basis,
+        steady_start_ms,
+        steady_end_ms,
+    )
+    if not summary:
+        flash("No JMeter samples were found inside the selected steady-state period.", "error")
+        return redirect(url_for("upload"))
+
     summary, test_rag = evaluate_sla(summary, green, amber, rag_basis, include_error, error_threshold)
     filtered = [row for row in summary if row.get("Transaction") in transactions] if transactions else summary
 
@@ -477,11 +600,25 @@ def analyze():
         test_period = f"{start_dt.strftime('%d-%m-%Y %H:%M:%S')} to {end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
         total_duration = str(end_dt - start_dt)
         concurrent_users = int(df["allThreads"].max()) if "allThreads" in df.columns else None
-        steady_state = "Yes" if len(df) > 100 else "No"
+        if steady_start_ms is not None and steady_end_ms is not None:
+            steady_start_dt = datetime.fromtimestamp(steady_start_ms / 1000.0)
+            steady_end_dt = datetime.fromtimestamp(steady_end_ms / 1000.0)
+            steady_state = (
+                f"{steady_start_dt.strftime('%d-%m-%Y %H:%M:%S')} to "
+                f"{steady_end_dt.strftime('%d-%m-%Y %H:%M:%S')}"
+            )
+        else:
+            steady_state = "Full test period"
     else:
         test_date = test_period = total_duration = "Not Available"
         concurrent_users = None
-        steady_state = "Unknown"
+        steady_state = "Not Available"
+
+    if steady_start_ms is not None and steady_end_ms is not None:
+        df = df[
+            (df["timeStamp"] >= steady_start_ms)
+            & (df["timeStamp"] <= steady_end_ms)
+        ].copy()
 
     for row in filtered:
         for key in ["Avg (s)", "90th % (s)", "95th % (s)", "Error %"]:
