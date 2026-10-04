@@ -186,6 +186,41 @@ class FeatureSmokeTests(unittest.TestCase):
             self.assertEqual(os.path.dirname(jmx_path), run_dir)
             self.assertEqual(os.path.basename(jmx_path), "unsafe.jmx")
 
+    def test_live_jtl_parser_uses_header_names_and_reports_max_threads(self):
+        with tempfile.TemporaryDirectory() as root:
+            result_file = os.path.join(root, "results.jtl")
+            with open(result_file, "w", encoding="utf-8", newline="") as handle:
+                handle.write(
+                    "label,success,elapsed,timeStamp,allThreads,responseCode\n"
+                    "Login,true,100,1000,5,200\n"
+                    "Login,false,200,1200,7,500\n"
+                )
+
+            velocity_app.test_running = True
+            velocity_app.current_process = FailedProcess()
+
+            with (
+                patch.object(velocity_app.socketio, "emit") as emit_mock,
+                patch.object(velocity_app.time, "sleep", return_value=None),
+            ):
+                velocity_app.tail_results(result_file)
+
+            completion_calls = [
+                call
+                for call in emit_mock.call_args_list
+                if call.args and call.args[0] == "test_complete"
+            ]
+            self.assertEqual(len(completion_calls), 1)
+            summary = completion_calls[0].args[1]
+            self.assertEqual(summary["users"], 7)
+            self.assertEqual(len(summary["metrics"]), 1)
+            self.assertEqual(summary["metrics"][0]["label"], "Login")
+            self.assertEqual(summary["metrics"][0]["samples"], 2)
+            self.assertEqual(summary["metrics"][0]["avg"], 150.0)
+            self.assertEqual(summary["metrics"][0]["error_pct"], 50.0)
+            self.assertFalse(velocity_app.test_running)
+            self.assertIsNone(velocity_app.current_process)
+
     def test_start_monitoring_without_servers_stays_inactive(self):
         response = self.client.post("/start_monitoring", json={"servers": []})
         self.assertEqual(response.status_code, 400)
