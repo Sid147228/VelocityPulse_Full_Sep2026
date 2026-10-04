@@ -6,131 +6,51 @@
   <title>VelocityPulse | Sign in</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    :root {
-      color-scheme: light;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
+    :root { color-scheme: light; font-family: "Segoe UI", Arial, sans-serif; }
     body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, rgba(42, 82, 152, .14), transparent 34rem),
-        #f4f7fb;
+      margin: 0; min-height: 100vh; padding: 24px; box-sizing: border-box;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at top left, rgba(42,82,152,.14), transparent 34rem), #f4f7fb;
       color: #1f344d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      box-sizing: border-box;
     }
-    .login-shell {
-      width: min(430px, 100%);
-      margin: auto;
+    .auth-shell { width: min(430px, 100%); margin: auto; }
+    .auth-card {
+      background:#fff; border:1px solid #dfe7f1; border-radius:16px;
+      box-shadow:0 18px 45px rgba(24,48,86,.13); padding:36px;
     }
-    .login-card {
-      background: #fff;
-      border: 1px solid #dfe7f1;
-      border-radius: 16px;
-      box-shadow: 0 18px 45px rgba(24, 48, 86, .13);
-      padding: 36px;
+    .brand { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:28px; }
+    .brand img { height:42px; width:auto; }
+    .brand-copy strong { display:block; color:#21477f; font-size:1.05rem; }
+    .brand-copy span { color:#718096; font-size:.84rem; }
+    h1 { margin:0 0 8px; color:#1f3f70; font-size:1.7rem; text-align:center; }
+    .intro { margin:0 0 26px; color:#61738a; line-height:1.55; text-align:center; }
+    .field { margin-bottom:18px; }
+    .field label { display:block; margin-bottom:7px; font-weight:650; color:#273f5e; }
+    .field input {
+      width:100%; box-sizing:border-box; border:1px solid #c8d4e3; border-radius:8px;
+      padding:12px 13px; font:inherit; color:#1f344d; background:#fff;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 28px;
-      text-align: left;
+    .field input:focus { outline:3px solid rgba(42,82,152,.14); border-color:#2a5298; }
+    .pin-input { letter-spacing:.32em; font-weight:700; text-align:center; }
+    .auth-button {
+      width:100%; border:0; border-radius:8px; padding:12px 16px;
+      background:#2a5298; color:#fff; font:inherit; font-weight:700; cursor:pointer;
     }
-    .brand img {
-      height: 42px;
-      width: auto;
+    .auth-button:hover, .auth-button:focus-visible { background:#1f417a; }
+    .notice, .error, .success {
+      border-radius:8px; padding:12px 14px; margin-bottom:18px; line-height:1.45; font-size:.92rem;
     }
-    .brand-copy strong {
-      display: block;
-      color: #21477f;
-      font-size: 1.05rem;
-    }
-    .brand-copy span {
-      color: #718096;
-      font-size: .84rem;
-    }
-    h1 {
-      margin: 0 0 8px;
-      color: #1f3f70;
-      font-size: 1.7rem;
-      text-align: center;
-    }
-    .intro {
-      margin: 0 0 28px;
-      color: #61738a;
-      line-height: 1.55;
-      text-align: center;
-    }
-    .ms-button {
-      box-sizing: border-box;
-      width: 100%;
-      border: 1px solid #8c8c8c;
-      border-radius: 6px;
-      background: #fff;
-      color: #2f2f2f;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 12px 16px;
-      font-weight: 600;
-      transition: background .15s ease, box-shadow .15s ease;
-    }
-    .ms-button:hover,
-    .ms-button:focus-visible {
-      background: #f7f7f7;
-      box-shadow: 0 0 0 3px rgba(42, 82, 152, .12);
-      outline: none;
-    }
-    .ms-logo {
-      display: grid;
-      grid-template-columns: repeat(2, 9px);
-      grid-template-rows: repeat(2, 9px);
-      gap: 2px;
-      width: 20px;
-      height: 20px;
-    }
-    .ms-logo span:nth-child(1) { background: #f25022; }
-    .ms-logo span:nth-child(2) { background: #7fba00; }
-    .ms-logo span:nth-child(3) { background: #00a4ef; }
-    .ms-logo span:nth-child(4) { background: #ffb900; }
-    .notice,
-    .error {
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 18px;
-      line-height: 1.45;
-      font-size: .92rem;
-    }
-    .notice {
-      background: #fff8e5;
-      color: #704d00;
-      border: 1px solid #f0d88b;
-    }
-    .error {
-      background: #fff1f1;
-      color: #8b1e1e;
-      border: 1px solid #efc6c6;
-    }
-    .footer-note {
-      margin: 22px 0 0;
-      color: #8491a3;
-      font-size: .82rem;
-      line-height: 1.5;
-      text-align: center;
-    }
+    .notice { background:#eef5ff; color:#244771; border:1px solid #cfe0fb; }
+    .error { background:#fff1f1; color:#8b1e1e; border:1px solid #efc6c6; }
+    .success { background:#edf9f0; color:#21643b; border:1px solid #cbe8d3; }
+    .register-link { margin:22px 0 0; text-align:center; color:#64748b; font-size:.9rem; }
+    .register-link a { color:#2a5298; font-weight:650; }
+    .footer-note { margin:18px 0 0; color:#8491a3; font-size:.8rem; line-height:1.5; text-align:center; }
   </style>
 </head>
 <body>
-  <main class="login-shell">
-    <section class="login-card" aria-labelledby="login-title">
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="login-title">
       <div class="brand">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="VelocityPulse logo">
         <div class="brand-copy">
@@ -140,30 +60,30 @@
       </div>
 
       <h1 id="login-title">Sign in</h1>
-      <p class="intro">Use your Microsoft work or school account to access VelocityPulse.</p>
+      <p class="intro">Enter your work email and personal 6-digit PIN.</p>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
-          <div class="{{ 'error' if category == 'error' else 'notice' }}" role="alert">{{ message }}</div>
+          <div class="{{ 'error' if category == 'error' else ('success' if category == 'success' else 'notice') }}" role="alert">{{ message }}</div>
         {% endfor %}
       {% endwith %}
 
-      {% if error %}
-        <div class="error" role="alert">{{ error }}</div>
-      {% endif %}
-
-      {% if auth_configured %}
-        <a class="ms-button" href="{{ url_for('microsoft_login') }}">
-          <span class="ms-logo" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-          <span>Sign in with Microsoft</span>
-        </a>
-      {% else %}
-        <div class="notice">
-          Microsoft authentication has not been configured yet. Add the required Entra ID environment variables, then restart VelocityPulse.
+      <form method="post" action="{{ url_for('login') }}" autocomplete="on">
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" value="{{ email|default('') }}" autocomplete="username" required autofocus>
         </div>
-      {% endif %}
+        <div class="field">
+          <label for="pin">PIN</label>
+          <input id="pin" class="pin-input" name="pin" type="password" inputmode="numeric"
+                 pattern="[0-9]{6}" minlength="6" maxlength="6"
+                 autocomplete="current-password" required aria-describedby="pin-help">
+        </div>
+        <button class="auth-button" type="submit">Sign in</button>
+      </form>
 
-      <p class="footer-note">Authentication is handled by Microsoft Entra ID. VelocityPulse does not store your Microsoft password.</p>
+      <p class="register-link">First time here? <a href="{{ url_for('register') }}">Register your PIN</a></p>
+      <p class="footer-note">VelocityPulse stores a salted hash of your PIN, not the PIN itself. Repeated failed attempts are temporarily locked.</p>
     </section>
   </main>
 </body>
