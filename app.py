@@ -420,15 +420,20 @@ def logout():
 
 def _format_test_timestamp(timestamp_ms):
     dt = datetime.fromtimestamp(int(timestamp_ms) / 1000.0)
+    input_value = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
     return {
         "display": dt.strftime("%d-%m-%Y %H:%M:%S"),
-        "input": dt.strftime("%Y-%m-%dT%H:%M:%S"),
+        "input": input_value,
     }
 
 def _parse_datetime_local(value):
     if not value:
         return None
-    for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"):
+    for fmt in (
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M",
+    ):
         try:
             return int(datetime.strptime(value, fmt).timestamp() * 1000)
         except ValueError:
