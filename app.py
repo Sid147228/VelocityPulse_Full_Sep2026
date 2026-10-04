@@ -611,11 +611,13 @@ def build_comparison_data(r1, r2, metric="Avg (s)", selected_txns=None):
         else:
             status, color = "Improved", "green"
 
+        change_pct = (diff / abs(v1) * 100.0) if v1 else None
         comparisons.append({
             "transaction": txn,
             "v1": round(v1, 4),
             "v2": round(v2, 4),
             "diff": round(diff, 4),
+            "change_pct": round(change_pct, 2) if change_pct is not None else None,
             "status": status,
             "color": color,
         })
