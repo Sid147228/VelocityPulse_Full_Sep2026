@@ -252,6 +252,71 @@ def _transaction_table(report, styles):
     return table
 
 
+def _monitoring_table(report, styles):
+    stats = report.get("monitoring_stats") or []
+    if not stats:
+        return Paragraph(
+            "Monitoring data was not captured for this report.",
+            styles["small"],
+        )
+
+    headers = [
+        "Server", "Samples", "Avg CPU", "P95 CPU", "Peak CPU", "CPU >=85%",
+        "Avg Mem", "P95 Mem", "Peak Mem", "Mem >=85%", "Status",
+    ]
+    data = [headers]
+
+    for row in stats:
+        data.append([
+            str(row.get("server") or "—"),
+            str(row.get("samples") or 0),
+            _fmt(row.get("avg_cpu"), 1, "%"),
+            _fmt(row.get("p95_cpu"), 1, "%"),
+            _fmt(row.get("max_cpu"), 1, "%"),
+            _fmt(row.get("cpu_high_pct"), 1, "%"),
+            _fmt(row.get("avg_mem"), 1, "%"),
+            _fmt(row.get("p95_mem"), 1, "%"),
+            _fmt(row.get("max_mem"), 1, "%"),
+            _fmt(row.get("mem_high_pct"), 1, "%"),
+            str(row.get("status") or "—"),
+        ])
+
+    table = Table(
+        data,
+        repeatRows=1,
+        colWidths=[
+            42 * mm, 18 * mm, 22 * mm, 22 * mm, 22 * mm, 24 * mm,
+            22 * mm, 22 * mm, 22 * mm, 24 * mm, 20 * mm,
+        ],
+    )
+    commands = [
+        ("BACKGROUND", (0, 0), (-1, 0), LIGHT_BLUE),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("TEXTCOLOR", (0, 0), (-1, 0), TEXT),
+        ("FONTSIZE", (0, 0), (-1, -1), 6.8),
+        ("ALIGN", (1, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("GRID", (0, 0), (-1, -1), 0.35, BORDER),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]
+
+    for index, row in enumerate(stats, start=1):
+        status = str(row.get("status") or "")
+        if status == "GREEN":
+            commands.append(("BACKGROUND", (-1, index), (-1, index), GREEN_BG))
+            commands.append(("TEXTCOLOR", (-1, index), (-1, index), GREEN))
+        elif status == "AMBER":
+            commands.append(("BACKGROUND", (-1, index), (-1, index), AMBER_BG))
+            commands.append(("TEXTCOLOR", (-1, index), (-1, index), AMBER))
+        elif status == "RED":
+            commands.append(("BACKGROUND", (-1, index), (-1, index), RED_BG))
+            commands.append(("TEXTCOLOR", (-1, index), (-1, index), RED))
+
+    table.setStyle(TableStyle(commands))
+    return table
+
+
 def _chart_card(title, image, styles):
     card = Table(
         [
@@ -461,6 +526,9 @@ def build_single_report_pdf(report, overview, static_root="static"):
         Spacer(1, 5 * mm),
         Paragraph("Transaction Summary (Steady State Period)", styles["section"]),
         _transaction_table(report, styles),
+        Spacer(1, 4 * mm),
+        Paragraph("Infrastructure Monitoring", styles["section"]),
+        _monitoring_table(report, styles),
     ]
 
     primary_graphs = _primary_chart_flowables(report, styles)
