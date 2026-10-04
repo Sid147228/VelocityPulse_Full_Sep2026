@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
-import os, json, uuid, subprocess, threading, time, csv, secrets
-from urllib.parse import urlparse, urlencode
+import os, json, uuid, subprocess, threading, time, csv, secrets, sqlite3, re
+from urllib.parse import urlparse
 
-import msal
 import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 from version import __version__, __build__, __codename__
 
 load_dotenv()
@@ -42,36 +42,143 @@ HISTORY_FILE = "static/reports/history.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
 
-# Microsoft identity platform configuration.
-MICROSOFT_CLIENT_ID = os.getenv("MICROSOFT_CLIENT_ID", "").strip()
-MICROSOFT_CLIENT_SECRET = os.getenv("MICROSOFT_CLIENT_SECRET", "").strip()
-MICROSOFT_TENANT_ID = os.getenv("MICROSOFT_TENANT_ID", "common").strip() or "common"
-MICROSOFT_AUTHORITY = f"https://login.microsoftonline.com/{MICROSOFT_TENANT_ID}"
-MICROSOFT_REDIRECT_URI = os.getenv(
-    "MICROSOFT_REDIRECT_URI",
-    "http://localhost:5000/auth/callback",
+# Local PIN authentication configuration.
+AUTH_DB_PATH = os.getenv(
+    "PIN_AUTH_DB_PATH",
+    os.path.join("instance", "velocitypulse_auth.db"),
 ).strip()
-MICROSOFT_POST_LOGOUT_REDIRECT_URI = os.getenv(
-    "MICROSOFT_POST_LOGOUT_REDIRECT_URI",
-    "http://localhost:5000/login",
-).strip()
-MICROSOFT_SCOPES = [
-    scope
-    for scope in os.getenv("MICROSOFT_SCOPES", "User.Read").replace(",", " ").split()
-    if scope
-]
+PIN_LENGTH = 6
+PIN_MAX_FAILED_ATTEMPTS = max(1, int(os.getenv("PIN_MAX_FAILED_ATTEMPTS", "5")))
+PIN_LOCKOUT_MINUTES = max(1, int(os.getenv("PIN_LOCKOUT_MINUTES", "15")))
+PIN_SESSION_MINUTES = max(5, int(os.getenv("PIN_SESSION_MINUTES", "480")))
+PIN_PEPPER = os.getenv("PIN_PEPPER", "").strip()
+PIN_REGISTRATION_CODE = os.getenv("PIN_REGISTRATION_CODE", "").strip()
+PIN_ALLOWED_EMAIL_DOMAINS = {
+    domain.strip().lower().lstrip("@")
+    for domain in os.getenv("PIN_ALLOWED_EMAIL_DOMAINS", "").split(",")
+    if domain.strip()
+}
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-def microsoft_auth_configured():
-    return bool(MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET and MICROSOFT_TENANT_ID)
 
-def build_msal_app():
-    if not microsoft_auth_configured():
-        return None
-    return msal.ConfidentialClientApplication(
-        MICROSOFT_CLIENT_ID,
-        authority=MICROSOFT_AUTHORITY,
-        client_credential=MICROSOFT_CLIENT_SECRET,
-    )
+def _auth_db_connection():
+    directory = os.path.dirname(AUTH_DB_PATH)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    connection = sqlite3.connect(AUTH_DB_PATH, timeout=10)
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def init_auth_db():
+    with _auth_db_connection() as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                display_name TEXT NOT NULL,
+                pin_hash TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                last_login_at INTEGER,
+                failed_attempts INTEGER NOT NULL DEFAULT 0,
+                locked_until INTEGER NOT NULL DEFAULT 0,
+                is_active INTEGER NOT NULL DEFAULT 1
+            )
+            """
+        )
+
+
+def _normalise_email(value):
+    return str(value or "").strip().lower()
+
+
+def _email_allowed(email):
+    if not EMAIL_PATTERN.fullmatch(email):
+        return False
+    if not PIN_ALLOWED_EMAIL_DOMAINS:
+        return True
+    return email.rsplit("@", 1)[-1] in PIN_ALLOWED_EMAIL_DOMAINS
+
+
+def _valid_pin(pin):
+    return bool(re.fullmatch(rf"\d{{{PIN_LENGTH}}}", str(pin or "")))
+
+
+def _pin_secret(pin):
+    return f"{pin}{PIN_PEPPER}" if PIN_PEPPER else str(pin)
+
+
+def _pin_hash(pin):
+    return generate_password_hash(_pin_secret(pin), method="scrypt")
+
+
+def _pin_matches(pin_hash, pin):
+    return check_password_hash(pin_hash, _pin_secret(pin))
+
+
+def _load_auth_user(email):
+    with _auth_db_connection() as connection:
+        return connection.execute(
+            """
+            SELECT id, email, display_name, pin_hash, failed_attempts,
+                   locked_until, is_active
+            FROM users
+            WHERE email = ?
+            """,
+            (email,),
+        ).fetchone()
+
+
+def _record_failed_login(user_id, current_attempts):
+    attempts = int(current_attempts or 0) + 1
+    locked_until = 0
+    if attempts >= PIN_MAX_FAILED_ATTEMPTS:
+        locked_until = int(time.time()) + (PIN_LOCKOUT_MINUTES * 60)
+        attempts = 0
+
+    with _auth_db_connection() as connection:
+        connection.execute(
+            """
+            UPDATE users
+            SET failed_attempts = ?, locked_until = ?
+            WHERE id = ?
+            """,
+            (attempts, locked_until, user_id),
+        )
+    return locked_until
+
+
+def _record_successful_login(user_id):
+    with _auth_db_connection() as connection:
+        connection.execute(
+            """
+            UPDATE users
+            SET failed_attempts = 0, locked_until = 0, last_login_at = ?
+            WHERE id = ?
+            """,
+            (int(time.time()), user_id),
+        )
+
+
+def _establish_pin_session(user):
+    destination = session.pop("post_login_redirect", None)
+    session.clear()
+    now = int(time.time())
+    session["user"] = user["display_name"]
+    session["user_profile"] = {
+        "id": user["id"],
+        "name": user["display_name"],
+        "email": user["email"],
+        "auth_type": "pin",
+    }
+    session["authenticated_at"] = now
+    session["last_activity_at"] = now
+
+    if not is_safe_local_redirect(destination):
+        destination = url_for("upload")
+    return destination
+
 
 def is_safe_local_redirect(target):
     if not target:
@@ -79,24 +186,50 @@ def is_safe_local_redirect(target):
     parsed = urlparse(target)
     return not parsed.scheme and not parsed.netloc and target.startswith("/")
 
+
+init_auth_db()
+
+
 @app.before_request
-def require_microsoft_authentication():
-    """Require Microsoft sign-in for all application routes."""
-    public_endpoints = {"login", "microsoft_login", "auth_callback", "logout", "static"}
+def require_pin_authentication():
+    """Require a valid local PIN session for all application routes."""
+    public_endpoints = {"login", "register", "logout", "static"}
     if request.endpoint in public_endpoints or request.path.startswith("/socket.io/"):
         return None
 
-    if "user_profile" not in session:
+    profile = session.get("user_profile")
+    last_activity = int(session.get("last_activity_at") or 0)
+    now = int(time.time())
+    expired = (
+        not profile
+        or not last_activity
+        or now - last_activity > PIN_SESSION_MINUTES * 60
+    )
+
+    if expired:
+        destination = None
         if request.method == "GET" and is_safe_local_redirect(request.full_path.rstrip("?")):
-            session["post_login_redirect"] = request.full_path.rstrip("?")
+            destination = request.full_path.rstrip("?")
+        session.clear()
+        if destination:
+            session["post_login_redirect"] = destination
+        flash("Your session expired. Enter your PIN to continue.", "info")
         return redirect(url_for("login"))
+
+    session["last_activity_at"] = now
     return None
+
 
 @socketio.on("connect")
 def authenticated_socket_connection(auth=None):
-    # Reject unauthenticated real-time connections.
-    if "user_profile" not in session:
+    profile = session.get("user_profile")
+    last_activity = int(session.get("last_activity_at") or 0)
+    if not profile or not last_activity:
         return False
+    if int(time.time()) - last_activity > PIN_SESSION_MINUTES * 60:
+        return False
+    session["last_activity_at"] = int(time.time())
+
 
 # Inject version info into templates
 @app.context_processor
@@ -369,126 +502,138 @@ def about():
 def home():
     return redirect(url_for("upload"))
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if "user_profile" in session:
         return redirect(url_for("upload"))
 
-    error = request.args.get("error")
-    return render_template(
-        "login.html",
-        error=error,
-        auth_configured=microsoft_auth_configured(),
-    )
-
-@app.route("/login/microsoft")
-def microsoft_login():
-    if not microsoft_auth_configured():
-        flash(
-            "Microsoft authentication is not configured. Set the Microsoft Entra environment variables first.",
-            "error",
-        )
-        return redirect(url_for("login"))
-
     requested_next = request.args.get("next")
-    if is_safe_local_redirect(requested_next):
+    if request.method == "GET" and is_safe_local_redirect(requested_next):
         session["post_login_redirect"] = requested_next
 
-    msal_app = build_msal_app()
-    flow = msal_app.initiate_auth_code_flow(
-        scopes=MICROSOFT_SCOPES,
-        redirect_uri=MICROSOFT_REDIRECT_URI,
+    if request.method == "POST":
+        email = _normalise_email(request.form.get("email"))
+        pin = str(request.form.get("pin") or "").strip()
+
+        if not EMAIL_PATTERN.fullmatch(email) or not _valid_pin(pin):
+            flash("Enter a valid work email and 6-digit PIN.", "error")
+            return render_template("login.html", email=email), 400
+
+        user = _load_auth_user(email)
+        if not user or not user["is_active"]:
+            flash("Invalid email or PIN.", "error")
+            return render_template("login.html", email=email), 401
+
+        now = int(time.time())
+        locked_until = int(user["locked_until"] or 0)
+        if locked_until > now:
+            remaining_minutes = max(1, (locked_until - now + 59) // 60)
+            flash(
+                f"Too many failed attempts. Try again in {remaining_minutes} minute(s).",
+                "error",
+            )
+            return render_template("login.html", email=email), 429
+
+        if not _pin_matches(user["pin_hash"], pin):
+            new_lockout = _record_failed_login(user["id"], user["failed_attempts"])
+            if new_lockout:
+                flash(
+                    f"Too many failed attempts. Login is locked for "
+                    f"{PIN_LOCKOUT_MINUTES} minute(s).",
+                    "error",
+                )
+                return render_template("login.html", email=email), 429
+
+            flash("Invalid email or PIN.", "error")
+            return render_template("login.html", email=email), 401
+
+        _record_successful_login(user["id"])
+        return redirect(_establish_pin_session(user))
+
+    return render_template("login.html", email="")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if "user_profile" in session:
+        return redirect(url_for("upload"))
+
+    if request.method == "POST":
+        display_name = str(request.form.get("display_name") or "").strip()
+        email = _normalise_email(request.form.get("email"))
+        pin = str(request.form.get("pin") or "").strip()
+        confirm_pin = str(request.form.get("confirm_pin") or "").strip()
+        registration_code = str(request.form.get("registration_code") or "").strip()
+
+        if len(display_name) < 2 or len(display_name) > 80:
+            flash("Enter your name.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 400
+
+        if not _email_allowed(email):
+            if PIN_ALLOWED_EMAIL_DOMAINS:
+                flash("Use an approved organization email address.", "error")
+            else:
+                flash("Enter a valid work email address.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 400
+
+        if PIN_REGISTRATION_CODE and not secrets.compare_digest(
+            registration_code,
+            PIN_REGISTRATION_CODE,
+        ):
+            flash("The registration code is invalid.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 403
+
+        if not _valid_pin(pin):
+            flash(f"PIN must contain exactly {PIN_LENGTH} digits.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 400
+
+        if pin != confirm_pin:
+            flash("PIN and confirmation do not match.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 400
+
+        if pin in {"000000", "111111", "123456", "654321", "999999"}:
+            flash("Choose a less predictable PIN.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 400
+
+        try:
+            with _auth_db_connection() as connection:
+                cursor = connection.execute(
+                    """
+                    INSERT INTO users (
+                        email, display_name, pin_hash, created_at,
+                        failed_attempts, locked_until, is_active
+                    )
+                    VALUES (?, ?, ?, ?, 0, 0, 1)
+                    """,
+                    (email, display_name, _pin_hash(pin), int(time.time())),
+                )
+                user_id = cursor.lastrowid
+        except sqlite3.IntegrityError:
+            flash("An account with that email already exists. Sign in instead.", "error")
+            return render_template("register.html", display_name=display_name, email=email), 409
+
+        user = {
+            "id": user_id,
+            "display_name": display_name,
+            "email": email,
+        }
+        flash("PIN registration complete.", "success")
+        return redirect(_establish_pin_session(user))
+
+    return render_template(
+        "register.html",
+        display_name="",
+        email="",
+        registration_code_required=bool(PIN_REGISTRATION_CODE),
+        allowed_domains=sorted(PIN_ALLOWED_EMAIL_DOMAINS),
     )
-    if "auth_uri" not in flow:
-        flash(
-            flow.get("error_description") or "Unable to start Microsoft sign-in.",
-            "error",
-        )
-        return redirect(url_for("login"))
 
-    session["auth_flow"] = flow
-    return redirect(flow["auth_uri"])
-
-@app.route("/auth/callback")
-def auth_callback():
-    if not microsoft_auth_configured():
-        return redirect(url_for("login", error="Microsoft authentication is not configured."))
-
-    flow = session.get("auth_flow")
-    if not flow:
-        return redirect(url_for("login", error="Your sign-in session expired. Please try again."))
-
-    try:
-        result = build_msal_app().acquire_token_by_auth_code_flow(flow, request.args)
-    except ValueError:
-        # MSAL raises ValueError when the state/flow validation fails.
-        session.pop("auth_flow", None)
-        return redirect(url_for("login", error="Microsoft sign-in validation failed. Please try again."))
-
-    session.pop("auth_flow", None)
-
-    if "error" in result:
-        message = result.get("error_description") or result.get("error") or "Microsoft sign-in failed."
-        return redirect(url_for("login", error=message))
-
-    claims = result.get("id_token_claims") or {}
-    display_name = (
-        claims.get("name")
-        or claims.get("preferred_username")
-        or claims.get("email")
-        or "Microsoft user"
-    )
-    email = (
-        claims.get("preferred_username")
-        or claims.get("email")
-        or claims.get("upn")
-        or ""
-    )
-
-    destination = session.pop("post_login_redirect", None)
-    session.clear()
-    session["user"] = display_name  # backward compatibility with existing templates
-    session["user_profile"] = {
-        "name": display_name,
-        "email": email,
-        "tenant_id": claims.get("tid"),
-        "object_id": claims.get("oid") or claims.get("sub"),
-    }
-
-    if not is_safe_local_redirect(destination):
-        destination = url_for("upload")
-    return redirect(destination)
 
 @app.route("/logout")
 def logout():
     session.clear()
-    if not microsoft_auth_configured():
-        return redirect(url_for("login"))
+    return redirect(url_for("login"))
 
-    query = urlencode({"post_logout_redirect_uri": MICROSOFT_POST_LOGOUT_REDIRECT_URI})
-    return redirect(f"{MICROSOFT_AUTHORITY}/oauth2/v2.0/logout?{query}")
-
-def _format_test_timestamp(timestamp_ms):
-    dt = datetime.fromtimestamp(int(timestamp_ms) / 1000.0)
-    input_value = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
-    return {
-        "display": dt.strftime("%d-%m-%Y %H:%M:%S"),
-        "input": input_value,
-    }
-
-def _parse_datetime_local(value):
-    if not value:
-        return None
-    for fmt in (
-        "%Y-%m-%dT%H:%M:%S.%f",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%dT%H:%M",
-    ):
-        try:
-            return int(datetime.strptime(value, fmt).timestamp() * 1000)
-        except ValueError:
-            continue
-    return None
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
