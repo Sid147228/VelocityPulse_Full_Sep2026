@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+from jmeter_parser import JMETER_REPORT_GRANULARITY_MS
+
 def generate_transaction_progress(df, out_file="static/reports/graphs/transaction_progress.png"):
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
 
@@ -41,14 +43,15 @@ def generate_transaction_progress(df, out_file="static/reports/graphs/transactio
         frame["timestamp"] + frame["elapsed"], unit="ms", errors="coerce"
     )
     frame = frame.dropna(subset=["end_timestamp"])
-    frame["time_bucket"] = frame["end_timestamp"].dt.floor("min")
+    bucket_rule = f"{JMETER_REPORT_GRANULARITY_MS}ms"
+    frame["time_bucket"] = frame["end_timestamp"].dt.floor(bucket_rule)
     frame["status"] = frame["success"].map({True: "success", False: "failure"})
     frame["series"] = frame["label"] + "-" + frame["status"]
 
     grouped = (
         frame.groupby(["time_bucket", "series"])
         .size()
-        .div(60.0)
+        .div(JMETER_REPORT_GRANULARITY_MS / 1000.0)
         .unstack(fill_value=0.0)
         .sort_index()
     )
