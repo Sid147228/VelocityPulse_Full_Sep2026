@@ -201,14 +201,14 @@ def build_report_chart_data(df, summary):
         }
 
         series_avg_by_txn[txn] = [
-            round(float(avg_ms.get(bucket)) / 1000.0, 4)
+            round(float(avg_ms.get(bucket)), 4)
             if pd.notnull(avg_ms.get(bucket))
             else None
             for bucket in time_buckets
         ]
         # Retain per-transaction P90 as a VelocityPulse supplemental series.
         series_p90_by_txn[txn] = [
-            round(float(p90_by_bucket[bucket]) / 1000.0, 4)
+            round(float(p90_by_bucket[bucket]), 4)
             if bucket in p90_by_bucket and p90_by_bucket[bucket] is not None
             else None
             for bucket in time_buckets
@@ -256,12 +256,12 @@ def build_report_chart_data(df, summary):
             if not values:
                 points.append(None)
             elif series_name == "Min":
-                points.append(round(float(min(values)) / 1000.0, 4))
+                points.append(round(float(min(values)), 4))
             elif series_name == "Max":
-                points.append(round(float(max(values)) / 1000.0, 4))
+                points.append(round(float(max(values)), 4))
             else:
                 value = jmeter_percentile(values, percentile)
-                points.append(round(float(value) / 1000.0, 4) if value is not None else None)
+                points.append(round(float(value), 4) if value is not None else None)
         series_response_percentiles[series_name] = points
 
     total_counts = chart_df.groupby("time_bucket_ms").size()
