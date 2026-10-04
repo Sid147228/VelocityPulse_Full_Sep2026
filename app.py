@@ -42,6 +42,33 @@ HISTORY_FILE = "static/reports/history.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
 
+
+def _format_test_timestamp(timestamp_ms):
+    """Format a JMeter epoch-millisecond timestamp for display and datetime-local input."""
+    dt = datetime.fromtimestamp(int(timestamp_ms) / 1000.0)
+    return {
+        "display": dt.strftime("%d-%m-%Y %H:%M:%S"),
+        "input": dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3],
+    }
+
+
+def _parse_datetime_local(value):
+    """Convert a browser datetime-local value back to epoch milliseconds."""
+    if not value:
+        return None
+
+    for fmt in (
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M",
+    ):
+        try:
+            return int(datetime.strptime(value, fmt).timestamp() * 1000)
+        except ValueError:
+            continue
+    return None
+
+
 # Local PIN authentication configuration.
 AUTH_DB_PATH = os.getenv(
     "PIN_AUTH_DB_PATH",
@@ -677,6 +704,7 @@ def upload():
             flash(f"Unable to use this JMeter result file: {exc}", "error")
             return redirect(url_for("upload"))
         except Exception:
+            app.logger.exception("Unexpected error while validating uploaded JMeter result: %s", file_path)
             try:
                 os.remove(file_path)
             except OSError:
@@ -745,6 +773,7 @@ def upload():
                 test_window = None
                 flash(f"Unable to read the uploaded JMeter result file: {exc}", "error")
             except Exception:
+                app.logger.exception("Unexpected error while preparing uploaded JMeter result: %s", file_path)
                 session.pop("uploaded_file", None)
                 session.pop("uploaded_file_path", None)
                 session.pop("test_window", None)
