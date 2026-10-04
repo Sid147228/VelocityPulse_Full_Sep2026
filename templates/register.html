@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VelocityPulse | Register PIN</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    :root { color-scheme: light; font-family:"Segoe UI",Arial,sans-serif; }
+    body {
+      margin:0; min-height:100vh; padding:24px; box-sizing:border-box;
+      display:flex; align-items:center; justify-content:center;
+      background:radial-gradient(circle at top left,rgba(42,82,152,.14),transparent 34rem),#f4f7fb;
+      color:#1f344d;
+    }
+    .auth-shell { width:min(460px,100%); margin:auto; }
+    .auth-card { background:#fff; border:1px solid #dfe7f1; border-radius:16px; box-shadow:0 18px 45px rgba(24,48,86,.13); padding:36px; }
+    .brand { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:26px; }
+    .brand img { height:42px; width:auto; }
+    .brand-copy strong { display:block; color:#21477f; font-size:1.05rem; }
+    .brand-copy span { color:#718096; font-size:.84rem; }
+    h1 { margin:0 0 8px; color:#1f3f70; font-size:1.7rem; text-align:center; }
+    .intro { margin:0 0 24px; color:#61738a; line-height:1.5; text-align:center; }
+    .field { margin-bottom:16px; }
+    .field label { display:block; margin-bottom:7px; font-weight:650; color:#273f5e; }
+    .field input {
+      width:100%; box-sizing:border-box; border:1px solid #c8d4e3; border-radius:8px;
+      padding:12px 13px; font:inherit; color:#1f344d; background:#fff;
+    }
+    .field input:focus { outline:3px solid rgba(42,82,152,.14); border-color:#2a5298; }
+    .pin-input { letter-spacing:.32em; font-weight:700; text-align:center; }
+    .hint { margin-top:6px; color:#7a8899; font-size:.8rem; line-height:1.4; }
+    .auth-button { width:100%; border:0; border-radius:8px; padding:12px 16px; background:#2a5298; color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+    .auth-button:hover { background:#1f417a; }
+    .notice,.error,.success { border-radius:8px; padding:12px 14px; margin-bottom:18px; line-height:1.45; font-size:.92rem; }
+    .notice { background:#eef5ff; color:#244771; border:1px solid #cfe0fb; }
+    .error { background:#fff1f1; color:#8b1e1e; border:1px solid #efc6c6; }
+    .success { background:#edf9f0; color:#21643b; border:1px solid #cbe8d3; }
+    .back-link { margin:20px 0 0; text-align:center; }
+    .back-link a { color:#2a5298; font-weight:650; }
+  </style>
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="auth-card" aria-labelledby="register-title">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="VelocityPulse logo">
+        <div class="brand-copy"><strong>VelocityPulse</strong><span>Accelerate JMeter Reporting</span></div>
+      </div>
+
+      <h1 id="register-title">Register your PIN</h1>
+      <p class="intro">Create your VelocityPulse account once, then use your work email and PIN to sign in.</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="{{ 'error' if category == 'error' else ('success' if category == 'success' else 'notice') }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      {% if allowed_domains|default([]) %}
+        <div class="notice">Registration is limited to: {{ allowed_domains|join(', ') }}</div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('register') }}" autocomplete="off">
+        <div class="field">
+          <label for="display_name">Name</label>
+          <input id="display_name" name="display_name" type="text" minlength="2" maxlength="80"
+                 value="{{ display_name|default('') }}" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" value="{{ email|default('') }}" autocomplete="email" required>
+        </div>
+        {% if registration_code_required|default(false) %}
+        <div class="field">
+          <label for="registration_code">Organization registration code</label>
+          <input id="registration_code" name="registration_code" type="password" autocomplete="off" required>
+          <div class="hint">Ask the VelocityPulse administrator for the registration code.</div>
+        </div>
+        {% endif %}
+        <div class="field">
+          <label for="pin">Choose a 6-digit PIN</label>
+          <input id="pin" class="pin-input" name="pin" type="password" inputmode="numeric"
+                 pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="new-password" required>
+          <div class="hint">Avoid predictable values such as 123456 or repeated digits.</div>
+        </div>
+        <div class="field">
+          <label for="confirm_pin">Confirm PIN</label>
+          <input id="confirm_pin" class="pin-input" name="confirm_pin" type="password" inputmode="numeric"
+                 pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="new-password" required>
+        </div>
+        <button class="auth-button" type="submit">Register and sign in</button>
+      </form>
+
+      <p class="back-link"><a href="{{ url_for('login') }}">Back to sign in</a></p>
+    </section>
+  </main>
+</body>
+</html>
