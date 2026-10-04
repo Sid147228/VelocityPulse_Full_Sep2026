@@ -99,11 +99,16 @@ class FeatureSmokeTests(unittest.TestCase):
 
     def authenticate(self):
         with self.client.session_transaction() as session:
+            now = int(time.time())
             session["user"] = "Regression User"
             session["user_profile"] = {
+                "id": 999,
                 "name": "Regression User",
                 "email": "regression@example.invalid",
+                "auth_type": "pin",
             }
+            session["authenticated_at"] = now
+            session["last_activity_at"] = now
 
     def test_authentication_gate_redirects_anonymous_user(self):
         anonymous = velocity_app.app.test_client()
