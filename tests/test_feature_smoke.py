@@ -634,13 +634,75 @@ class FeatureSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        self.assertIn("Avg (ms)", html)
-        self.assertNotIn("<th>P90 (ms)</th>", html)
+        self.assertIn("Avg (s)", html)
+        self.assertNotIn("<th>P90 (s)</th>", html)
         self.assertNotIn("<th>Samples</th>", html)
+        self.assertNotIn("Avg (ms)", html)
+        self.assertIn("Response Time (seconds)", html)
         self.assertIn(
             "/static/reports/graphs/report123/response_distribution.png",
             html,
         )
+
+    def test_redesigned_single_report_uses_seconds_for_response_times(self):
+        current = report("Seconds Report", "2026-10-04T10:00:00", avg=1.234, p90=1.8)
+        current.update({
+            "selected_metrics": ["avg", "p90", "p95", "error", "samples"],
+            "chart_time_labels": ["10:00", "10:01"],
+            "series_avg_by_txn": {"Login": [1000.0, 1250.0]},
+            "series_response_percentiles_over_time": {
+                "P50 (Median)": [900.0, 1000.0],
+                "P90": [1500.0, 1750.0],
+                "P95": [1700.0, 1900.0],
+            },
+            "series_error_rate_by_txn": {"Login": [0.0, 1.0]},
+            "series_throughput_over_time": [1.0, 1.1],
+            "series_tps_by_txn": {},
+            "graph_paths": {},
+            "report_kpis": {
+                "total_samples": 100,
+                "successful_samples": 99,
+                "failed_samples": 1,
+                "error_pct": 1.0,
+                "avg_s": 1.234,
+                "p90_s": 1.8,
+                "p95_s": 2.0,
+                "throughput_tps": 1.1,
+            },
+        })
+
+        with patch.object(velocity_app, "load_history", return_value=[current]):
+            response = self.client.get("/report/0")
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("Average Response Time Over Time (seconds", html)
+        self.assertIn("Response Time Percentiles Over Time (seconds", html)
+        self.assertIn("Avg (s)", html)
+        self.assertIn("P90 (s)", html)
+        self.assertIn("P95 (s)", html)
+        self.assertNotIn("Avg (ms)", html)
+        self.assertNotIn("P90 (ms)", html)
+        self.assertNotIn("P95 (ms)", html)
+        self.assertIn("Number(value) / 1000", html)
+
+    def test_redesigned_compare_report_uses_seconds_and_delta_dashboard(self):
+        earlier = report("Earlier", "2026-10-01T10:00:00", avg=1.0, p90=1.2)
+        later = report("Later", "2026-10-02T10:00:00", avg=1.5, p90=1.7)
+
+        with patch.object(velocity_app, "load_history", return_value=[later, earlier]):
+            response = self.client.get(
+                "/compare?report_ids=1&report_ids=0&metric=Avg%20(s)"
+            )
+
+        self.assertEqual(response.status_code, 200)
+        html = response.get_data(as_text=True)
+        self.assertIn("VelocityPulse Comparison Report", html)
+        self.assertIn("Improved transactions", html)
+        self.assertIn("Degraded transactions", html)
+        self.assertIn("Absolute Δ (s)", html)
+        self.assertIn("Response Time (seconds)", html)
+        self.assertNotIn("(ms)", html)
 
     def test_trend_chart_orders_oldest_to_newest(self):
         reports = [
