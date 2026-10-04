@@ -64,11 +64,12 @@
     </style>
 </head>
 <body>
-{% include "_header.html" %}
+{% if not is_pdf|default(false) %}{% include "_header.html" %}{% endif %}
 <div class="container">
     <h2>Comparison Report</h2>
-    <p>Comparing <strong>{{ r1.name }}</strong> vs <strong>{{ r2.name }}</strong></p>
+    <p>Comparing <strong>{{ r1.report_name or r1.file_name or 'Report 1' }}</strong> vs <strong>{{ r2.report_name or r2.file_name or 'Report 2' }}</strong></p>
 
+    {% if not is_pdf|default(false) %}
     <!-- Filters -->
     <form method="get" action="{{ url_for('compare') }}" class="filters">
         <input type="hidden" name="report_ids" value="{{ request.args.getlist('report_ids')[0] }}">
@@ -93,14 +94,15 @@
             {% endfor %}
         </fieldset>
     </form>
+    {% endif %}
 
     <!-- Comparison Table -->
     <table>
         <thead>
             <tr>
                 <th>Transaction</th>
-                <th>{{ r1.name }} ({{ metric }})</th>
-                <th>{{ r2.name }} ({{ metric }})</th>
+                <th>{{ r1.report_name or r1.file_name or 'Report 1' }} ({{ metric }})</th>
+                <th>{{ r2.report_name or r2.file_name or 'Report 2' }} ({{ metric }})</th>
                 <th>Difference ({{ metric }})</th>
                 <th>Status</th>
             </tr>
@@ -128,6 +130,7 @@
         </ul>
     </div>
 
+    {% if not is_pdf|default(false) %}
     <!-- Comparison Bar Chart -->
     <canvas id="compareChart" width="900" height="400"></canvas>
     <script>
@@ -139,8 +142,8 @@
             data: {
                 labels: labels,
                 datasets: [
-                    { label: "{{ r1.name }} ({{ metric }})", data: data1, backgroundColor: '#2a5298' },
-                    { label: "{{ r2.name }} ({{ metric }})", data: data2, backgroundColor: '#f39c12' }
+                    { label: "{{ r1.report_name or r1.file_name or 'Report 1' }} ({{ metric }})", data: data1, backgroundColor: '#2a5298' },
+                    { label: "{{ r2.report_name or r2.file_name or 'Report 2' }} ({{ metric }})", data: data2, backgroundColor: '#f39c12' }
                 ]
             },
             options: {
@@ -153,6 +156,7 @@
             }
         });
     </script>
+    {% endif %}
 
     <!-- Overlay Line Chart for Transaction Progress -->
     {% if compare_progress %}
