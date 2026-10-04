@@ -1,6 +1,5 @@
 Flask>=3.0,<4
 Flask-SocketIO>=5.3,<6
-msal>=1.31,<2
 python-dotenv>=1.0,<2
 pandas>=2.0,<3
 numpy>=1.26,<3
@@ -9,4 +8,3 @@ seaborn>=0.13,<1
 psutil>=5.9,<8
 paramiko>=3.4,<5
 WeasyPrint>=62,<70
-pdfkit>=1.0,<2
