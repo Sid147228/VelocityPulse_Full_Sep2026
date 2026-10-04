@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+from jmeter_parser import JMETER_REPORT_GRANULARITY_MS
+
 def generate_graphs(df, green_sla=None, amber_sla=None):
     # ✅ Defensive conversion: ensure DataFrame
     if not isinstance(df, pd.DataFrame):
@@ -38,6 +40,7 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
         start_timestamp = pd.Series(pd.NaT, index=df.index)
 
     df['timestamp'] = start_timestamp + pd.to_timedelta(df['elapsed'], unit='ms')
+    bucket_rule = f"{JMETER_REPORT_GRANULARITY_MS}ms"
 
     # ✅ Success normalization
     if 'success' in df.columns:
@@ -68,7 +71,7 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
 
     # 📉 Error Trend Over Time
     if 'timestamp' in df.columns and not df['timestamp'].isna().all():
-        error_df = df.groupby(df['timestamp'].dt.floor('min'))['success'] \
+        error_df = df.groupby(df['timestamp'].dt.floor(bucket_rule))['success'] \
                      .apply(lambda x: 100.0 * (1.0 - x.sum() / len(x)))
         if not error_df.empty:
             plt.figure(figsize=(8, 4))
@@ -84,7 +87,7 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
     if all(col in df.columns for col in ['label', 'elapsed', 'timestamp']) and not df['timestamp'].isna().all():
         heatmap_data = df.pivot_table(
             index='label',
-            columns=df['timestamp'].dt.floor('min'),
+            columns=df['timestamp'].dt.floor(bucket_rule),
             values='elapsed',
             aggfunc='mean'
         )
@@ -102,7 +105,7 @@ def generate_graphs(df, green_sla=None, amber_sla=None):
 
     # 👥 Threads Over Time
     if 'threadName' in df.columns and 'timestamp' in df.columns and not df['timestamp'].isna().all():
-        thread_counts = df.groupby(df['timestamp'].dt.floor('min'))['threadName'].nunique()
+        thread_counts = df.groupby(df['timestamp'].dt.floor(bucket_rule))['threadName'].nunique()
         if not thread_counts.empty:
             plt.figure(figsize=(8, 4))
             thread_counts.plot(color='darkgreen')
