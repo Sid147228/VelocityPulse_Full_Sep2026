@@ -69,6 +69,7 @@
 {% set series_p90_by_txn = series_p90_by_txn or {} %}
 {% set series_error_rate_by_txn = series_error_rate_by_txn or {} %}
 {% set series_throughput_over_time = series_throughput_over_time or [] %}
+{% set series_tps_by_txn = series_tps_by_txn or {} %}
 {% set rag_counts = rag_counts or {'GREEN': 0, 'AMBER': 0, 'RED': 0} %}
 
 <div class="section">
@@ -93,22 +94,22 @@
           <td>{{ row.get("Transaction") }}</td>
           <td>
             {% if row.get("Avg (s)") is not none %}
-              {{ "%.2f"|format(row.get("Avg (s)")|float) }}
+              {{ "%.4f"|format(row.get("Avg (s)")|float) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("90th % (s)") is not none %}
-              {{ "%.2f"|format(row.get("90th % (s)")|float) }}
+              {{ "%.4f"|format(row.get("90th % (s)")|float) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("95th % (s)") is not none %}
-              {{ "%.2f"|format(row.get("95th % (s)")|float) }}
+              {{ "%.4f"|format(row.get("95th % (s)")|float) }}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if row.get("Error %") is not none %}
-              {{ "%.2f"|format(row.get("Error %")|float) }}
+              {{ "%.4f"|format(row.get("Error %")|float) }}
             {% else %}—{% endif %}
           </td>
           <td>
@@ -220,6 +221,7 @@
   const p90Series = {{ series_p90_by_txn|tojson }};
   const errorSeries = {{ series_error_rate_by_txn|tojson }};
   const throughput = {{ series_throughput_over_time|tojson }};
+  const tpsSeries = {{ series_tps_by_txn|tojson }};
 
   if (timeLabels.length > 0) {
     new Chart(document.getElementById('avgByTxnChart'), {
@@ -240,12 +242,20 @@
       options: { plugins: { title: { display: true, text: 'Error rate (%) by transaction' } } }
     });
 
+    const tpsDatasets = lineDatasetsFromSeries(tpsSeries);
     new Chart(document.getElementById('throughputChart'), {
       type: 'line',
-      data: { labels: timeLabels, datasets: [
-        { label: 'Throughput (requests/min)', data: throughput, borderColor: '#2a5298', fill: true }
-      ]},
-      options: { plugins: { title: { display: true, text: 'Throughput over time' } } }
+      data: {
+        labels: timeLabels,
+        datasets: tpsDatasets.length > 0
+          ? tpsDatasets
+          : [{ label: 'Total TPS', data: throughput, borderColor: '#2a5298', fill: false }]
+      },
+      options: {
+        plugins: {
+          title: { display: true, text: 'Transactions per second (JMeter-compatible)' }
+        }
+      }
     });
   }
 </script>
