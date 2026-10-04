@@ -9,12 +9,15 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (
     Image,
     KeepTogether,
+    PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
 )
+
+from matplotlib.figure import Figure
 
 
 NAVY = colors.HexColor("#0C3B6C")
@@ -249,6 +252,146 @@ def _transaction_table(report, styles):
     return table
 
 
+def _line_chart_image(title, labels, series, y_label, divide_by=1.0):
+    """Render a report data series to an in-memory PNG for ReportLab."""
+    valid_series = {
+        str(name): values
+        for name, values in (series or {}).items()
+        if isinstance(values, list) and any(value is not None for value in values)
+    }
+    if not labels or not valid_series:
+        return None
+
+    figure = Figure(figsize=(7.2, 3.5), dpi=120)
+    axis = figure.add_subplot(111)
+
+    x_values = list(range(len(labels)))
+    for name, values in valid_series.items():
+        plotted = []
+        for value in values:
+            if value is None:
+                plotted.append(float("nan"))
+            else:
+                plotted.append(float(value) / divide_by)
+        axis.plot(x_values[:len(plotted)], plotted, marker="o", markersize=2.5, linewidth=1.4, label=name)
+
+    axis.set_title(title, fontsize=10, fontweight="bold")
+    axis.set_ylabel(y_label, fontsize=8)
+    axis.grid(True, alpha=0.25)
+    axis.tick_params(axis="both", labelsize=7)
+
+    if len(labels) <= 12:
+        tick_indexes = x_values
+    else:
+        step = max(1, len(labels) // 10)
+        tick_indexes = x_values[::step]
+        if tick_indexes[-1] != x_values[-1]:
+            tick_indexes.append(x_values[-1])
+
+    axis.set_xticks(tick_indexes)
+    axis.set_xticklabels(
+        [labels[index] for index in tick_indexes],
+        rotation=35,
+        ha="right",
+        fontsize=7,
+    )
+
+    if len(valid_series) <= 8:
+        axis.legend(fontsize=6.5, loc="best", frameon=False)
+
+    figure.tight_layout()
+
+    buffer = BytesIO()
+    figure.savefig(buffer, format="png", dpi=140, bbox_inches="tight")
+    buffer.seek(0)
+
+    image = Image(buffer)
+    image._restrictSize(128 * mm, 68 * mm)
+    return image
+
+
+def _primary_chart_flowables(report, styles):
+    labels = report.get("chart_time_labels") or []
+    if not labels:
+        return []
+
+    charts = []
+
+    avg_image = _line_chart_image(
+        "Average Response Time Over Time",
+        labels,
+        report.get("series_avg_by_txn") or {},
+        "Response Time (seconds)",
+        divide_by=1000.0,
+    )
+    if avg_image:
+        charts.append(
+            KeepTogether([
+                Paragraph("Average Response Time Over Time (seconds, JMeter-compatible)", styles["small"]),
+                Spacer(1, 1.5 * mm),
+                avg_image,
+            ])
+        )
+
+    percentile_series = report.get("series_response_percentiles_over_time") or {}
+    if not percentile_series:
+        percentile_series = report.get("series_p90_by_txn") or {}
+
+    percentile_image = _line_chart_image(
+        "Response Time Percentiles Over Time",
+        labels,
+        percentile_series,
+        "Response Time (seconds)",
+        divide_by=1000.0,
+    )
+    if percentile_image:
+        charts.append(
+            KeepTogether([
+                Paragraph("Response Time Percentiles Over Time (seconds, JMeter-compatible)", styles["small"]),
+                Spacer(1, 1.5 * mm),
+                percentile_image,
+            ])
+        )
+
+    tps_series = report.get("series_tps_by_txn") or {}
+    if not tps_series:
+        throughput = report.get("series_throughput_over_time") or []
+        if throughput:
+            tps_series = {"Total TPS": throughput}
+
+    tps_image = _line_chart_image(
+        "Transactions Per Second",
+        labels,
+        tps_series,
+        "Transactions / second",
+    )
+    if tps_image:
+        charts.append(
+            KeepTogether([
+                Paragraph("Transactions Per Second (JMeter-compatible)", styles["small"]),
+                Spacer(1, 1.5 * mm),
+                tps_image,
+            ])
+        )
+
+    error_image = _line_chart_image(
+        "Error Rate Over Time",
+        labels,
+        report.get("series_error_rate_by_txn") or {},
+        "Error %",
+    )
+    if error_image:
+        charts.append(
+            KeepTogether([
+                Paragraph("Error Rate Over Time (%)", styles["small"]),
+                Spacer(1, 1.5 * mm),
+                error_image,
+            ])
+        )
+
+    return charts
+
+
 def _graph_flowables(report, static_root, styles):
     items = []
     graph_paths = report.get("graph_paths") or {}
@@ -305,17 +448,43 @@ def build_single_report_pdf(report, overview, static_root="static"):
         _transaction_table(report, styles),
     ]
 
-    graphs = _graph_flowables(report, static_root, styles)
-    if graphs:
-        story.extend([Spacer(1, 4 * mm), Paragraph("Performance Graphs", styles["section"])])
-        rows = [graphs[index:index + 2] for index in range(0, len(graphs), 2)]
+    primary_graphs = _primary_chart_flowables(report, styles)
+    supplemental_graphs = _graph_flowables(report, static_root, styles)
+
+    if primary_graphs or supplemental_graphs:
+        story.extend([PageBreak(), Paragraph("Performance Graphs", styles["section"])])
+
+    if primary_graphs:
+        rows = [
+            primary_graphs[index:index + 2]
+            for index in range(0, len(primary_graphs), 2)
+        ]
         graph_table = Table(rows, colWidths=[132 * mm, 132 * mm])
         graph_table.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("LEFTPADDING", (0, 0), (-1, -1), 3),
             ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
         ]))
         story.append(graph_table)
+
+    if supplemental_graphs:
+        story.extend([
+            Spacer(1, 4 * mm),
+            Paragraph("Supplemental Graphs", styles["section"]),
+        ])
+        rows = [
+            supplemental_graphs[index:index + 2]
+            for index in range(0, len(supplemental_graphs), 2)
+        ]
+        supplemental_table = Table(rows, colWidths=[132 * mm, 132 * mm])
+        supplemental_table.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 3),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+        ]))
+        story.append(supplemental_table)
 
     observations = report.get("observations") or []
     if observations:
