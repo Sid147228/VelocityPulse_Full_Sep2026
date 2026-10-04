@@ -1151,65 +1151,112 @@ def tail_results(results_file):
     start_time = time.time()
     wait_until = time.time() + 30
     while not os.path.exists(results_file) and time.time() < wait_until:
-        print("Waiting for results.jtl...")
         time.sleep(1)
+
     if not os.path.exists(results_file):
         test_running = False
-        socketio.emit("test_complete", {"duration": "0 sec", "start": "", "end": "", "users": "N/A", "metrics": []})
+        current_process = None
+        socketio.emit(
+            "test_complete",
+            {
+                "duration": "0 sec",
+                "start": "",
+                "end": "",
+                "users": "N/A",
+                "metrics": [],
+            },
+        )
         return
-    print("Found results file:", results_file)
 
-    last_emit = time.time()
-    with open(results_file, "r", encoding="utf-8", errors="replace") as f:
-        header_seen = False
+    last_emit = 0.0
+    header_map = None
+    max_users = 0
+
+    with open(results_file, "r", encoding="utf-8", errors="replace", newline="") as handle:
         while True:
-            line = f.readline()
+            line = handle.readline()
             if line:
-                if line.startswith("timeStamp"):
-                    header_seen = True
-                    continue
-                if not header_seen:
-                    continue
-
                 try:
                     parts = next(csv.reader([line]))
                 except csv.Error:
                     continue
-                if len(parts) < 8:
+
+                if header_map is None:
+                    headers = [str(value).strip() for value in parts]
+                    header_map = {name: index for index, name in enumerate(headers)}
+                    required = {"timeStamp", "elapsed", "label", "success"}
+                    if not required.issubset(header_map):
+                        socketio.emit(
+                            "log_update",
+                            {
+                                "line": (
+                                    "VelocityPulse live parser: JTL header is missing "
+                                    + ", ".join(sorted(required - set(header_map)))
+                                )
+                            },
+                        )
+                        test_running = False
+                        current_process = None
+                        return
                     continue
 
                 try:
-                    timestamp = parts[0]
-                    response_time = float(parts[1])  # elapsed (ms)
-                    label = parts[2]
-                    success = (parts[7].lower() == "true")
+                    response_time = float(parts[header_map["elapsed"]])
+                    label = parts[header_map["label"]]
+                    success = (
+                        str(parts[header_map["success"]]).strip().lower() == "true"
+                    )
+                    timestamp = parts[header_map["timeStamp"]]
+
+                    if "allThreads" in header_map:
+                        try:
+                            max_users = max(
+                                max_users,
+                                int(float(parts[header_map["allThreads"]])),
+                            )
+                        except (TypeError, ValueError, IndexError):
+                            pass
                 except (ValueError, IndexError):
                     continue
 
                 update_metrics(label, response_time, success)
 
-                socketio.emit("progress_update", {
-                    "timestamp": timestamp,
-                    "response_time": response_time,
-                    "error_rate": 0 if success else 100
-                })
+                total_samples = sum(len(records) for records in transaction_stats.values())
+                failed_samples = sum(
+                    1
+                    for records in transaction_stats.values()
+                    for _, record_success in records
+                    if not record_success
+                )
+                cumulative_error_rate = (
+                    100.0 * failed_samples / total_samples
+                    if total_samples
+                    else 0.0
+                )
 
-                socketio.emit("metrics_update", compute_summary())
-
-                if time.time() - last_emit > 120:
-                    socketio.emit("heartbeat", {"status": "running"})
-                    last_emit = time.time()
+                now = time.time()
+                if now - last_emit >= 0.5:
+                    socketio.emit(
+                        "progress_update",
+                        {
+                            "timestamp": timestamp,
+                            "response_time": response_time,
+                            "error_rate": round(cumulative_error_rate, 4),
+                        },
+                    )
+                    socketio.emit("metrics_update", compute_summary())
+                    last_emit = now
                 continue
 
             process_alive = bool(current_process and current_process.poll() is None)
             if not process_alive:
-                # Allow the OS to flush the final JTL lines before completing.
-                end_position = f.tell()
+                # Allow the OS to flush final JTL lines before completing.
+                end_position = handle.tell()
                 time.sleep(1)
-                f.seek(0, os.SEEK_END)
-                if f.tell() == end_position:
+                handle.seek(0, os.SEEK_END)
+                if handle.tell() == end_position:
                     break
-                f.seek(end_position)
+                handle.seek(end_position)
             else:
                 time.sleep(0.25)
 
@@ -1218,11 +1265,12 @@ def tail_results(results_file):
         "duration": f"{duration} sec",
         "start": time.strftime("%H:%M:%S", time.localtime(start_time)),
         "end": time.strftime("%H:%M:%S", time.localtime(time.time())),
-        "users": "N/A",
-        "metrics": compute_summary()
+        "users": max_users if max_users else "N/A",
+        "metrics": compute_summary(),
     }
     test_running = False
     current_process = None
+    socketio.emit("metrics_update", summary["metrics"])
     socketio.emit("test_complete", summary)
 
 def tail_logs(log_file):
