@@ -130,6 +130,19 @@ def _load_auth_user(email):
         ).fetchone()
 
 
+def _render_register(display_name="", email="", status=200):
+    return (
+        render_template(
+            "register.html",
+            display_name=display_name,
+            email=email,
+            registration_code_required=bool(PIN_REGISTRATION_CODE),
+            allowed_domains=sorted(PIN_ALLOWED_EMAIL_DOMAINS),
+        ),
+        status,
+    )
+
+
 def _record_failed_login(user_id, current_attempts):
     attempts = int(current_attempts or 0) + 1
     locked_until = 0
@@ -567,33 +580,33 @@ def register():
 
         if len(display_name) < 2 or len(display_name) > 80:
             flash("Enter your name.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 400
+            return _render_register(display_name, email, 400)
 
         if not _email_allowed(email):
             if PIN_ALLOWED_EMAIL_DOMAINS:
                 flash("Use an approved organization email address.", "error")
             else:
                 flash("Enter a valid work email address.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 400
+            return _render_register(display_name, email, 400)
 
         if PIN_REGISTRATION_CODE and not secrets.compare_digest(
             registration_code,
             PIN_REGISTRATION_CODE,
         ):
             flash("The registration code is invalid.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 403
+            return _render_register(display_name, email, 403)
 
         if not _valid_pin(pin):
             flash(f"PIN must contain exactly {PIN_LENGTH} digits.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 400
+            return _render_register(display_name, email, 400)
 
         if pin != confirm_pin:
             flash("PIN and confirmation do not match.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 400
+            return _render_register(display_name, email, 400)
 
         if pin in {"000000", "111111", "123456", "654321", "999999"}:
             flash("Choose a less predictable PIN.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 400
+            return _render_register(display_name, email, 400)
 
         try:
             with _auth_db_connection() as connection:
@@ -610,7 +623,7 @@ def register():
                 user_id = cursor.lastrowid
         except sqlite3.IntegrityError:
             flash("An account with that email already exists. Sign in instead.", "error")
-            return render_template("register.html", display_name=display_name, email=email), 409
+            return _render_register(display_name, email, 409)
 
         user = {
             "id": user_id,
@@ -620,13 +633,7 @@ def register():
         flash("PIN registration complete.", "success")
         return redirect(_establish_pin_session(user))
 
-    return render_template(
-        "register.html",
-        display_name="",
-        email="",
-        registration_code_required=bool(PIN_REGISTRATION_CODE),
-        allowed_domains=sorted(PIN_ALLOWED_EMAIL_DOMAINS),
-    )
+    return _render_register()[0]
 
 
 @app.route("/logout")
