@@ -87,6 +87,17 @@ class LocalPersistence:
                     ON baselines(project_id, row_id DESC);
                 CREATE INDEX IF NOT EXISTS idx_baselines_number
                     ON baselines(project_id, baseline_number);
+
+                CREATE TABLE IF NOT EXISTS run_contexts (
+                    run_key TEXT PRIMARY KEY,
+                    project_id TEXT,
+                    project_name TEXT,
+                    created_at TEXT,
+                    payload_json TEXT NOT NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_run_contexts_project
+                    ON run_contexts(project_id, created_at);
                 """
             )
 
@@ -239,6 +250,47 @@ class LocalPersistence:
                         self._json_payload(profile),
                     ),
                 )
+
+    def save_run_context(self, run_key, project):
+        run_key = str(run_key or "").strip()
+        if not run_key:
+            raise ValueError("run_key is required")
+        project = dict(project or {})
+        payload = {
+            "project_id": str(project.get("id") or project.get("project_id") or ""),
+            "project_name": str(project.get("name") or project.get("project_name") or ""),
+        }
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO run_contexts (
+                    run_key, project_id, project_name, created_at, payload_json
+                )
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(run_key) DO UPDATE SET
+                    project_id = excluded.project_id,
+                    project_name = excluded.project_name,
+                    payload_json = excluded.payload_json
+                """,
+                (
+                    run_key,
+                    payload["project_id"],
+                    payload["project_name"],
+                    datetime.now().isoformat(),
+                    self._json_payload(payload),
+                ),
+            )
+
+    def load_run_context(self, run_key):
+        run_key = str(run_key or "").strip()
+        if not run_key:
+            return {}
+        with self._connect() as connection:
+            row = connection.execute(
+                "SELECT payload_json FROM run_contexts WHERE run_key = ?",
+                (run_key,),
+            ).fetchone()
+        return self._decode_payload(row["payload_json"]) if row else {}
 
     def _meta_get(self, key):
         with self._connect() as connection:
