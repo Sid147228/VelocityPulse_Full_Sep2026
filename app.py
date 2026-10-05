@@ -40,6 +40,7 @@ socketio = SocketIO(app)
 
 UPLOAD_FOLDER = "uploads"
 HISTORY_FILE = "static/reports/history.json"
+BASELINE_FILE = "static/reports/baselines.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
 
@@ -1439,6 +1440,8 @@ def upload():
         uploaded_file_path=session.get("uploaded_file_path"),
         transactions=transactions,
         test_window=test_window,
+        baseline_profiles=load_baseline_profiles(),
+        selected_baseline_profile=request.args.get("baseline_profile"),
     )
 
 @app.route("/analyze", methods=["POST"])
@@ -1455,6 +1458,8 @@ def analyze():
     include_error = "include_error" in request.form
     error_threshold = float(request.form.get("error_threshold", 0))
     green, amber = float(request.form["green"]), float(request.form["amber"])
+    baseline_profile_id = str(request.form.get("baseline_profile_id") or "").strip()
+    baseline_profile = find_baseline_profile(baseline_profile_id)
 
     steady_start_raw = request.form.get("steady_state_start", "").strip()
     steady_end_raw = request.form.get("steady_state_end", "").strip()
@@ -1498,7 +1503,14 @@ def analyze():
 
     summary, test_rag = evaluate_sla(summary, green, amber, rag_basis, include_error, error_threshold)
     filtered = [row for row in summary if row.get("Transaction") in transactions] if transactions else summary
-    test_rag = overall_rag(filtered)
+    baseline_applied_count = 0
+    if baseline_profile:
+        filtered, test_rag, baseline_applied_count = apply_baseline_profile(
+            filtered,
+            baseline_profile,
+        )
+    else:
+        test_rag = overall_rag(filtered)
 
     df = pd.read_csv(file_path)
     df['timeStamp'] = pd.to_numeric(df['timeStamp'], errors='coerce').fillna(0).astype(int)
@@ -1554,19 +1566,34 @@ def analyze():
         print("Graph generation failed:", exc)
         graph_paths = {}
 
+    observations = build_report_observations(
+        filtered,
+        test_rag,
+        chart_data=chart_data,
+        report_kpis=report_kpis,
+        green_sla=green,
+        amber_sla=amber,
+    )
+    if baseline_profile:
+        observations.insert(1, {
+            "type": "info",
+            "category": "Baseline SLA",
+            "priority": 98,
+            "title": f"Historical baseline applied: {baseline_profile.get('name')}",
+            "text": (
+                f"Per-transaction P90 thresholds from the saved baseline were applied to "
+                f"{baseline_applied_count} transaction(s). Transactions not present in the "
+                f"baseline used the configured fallback SLA."
+            ),
+        })
+        observations = observations[:12]
+
     report_data = {
         "report_name": report_name,
         "file_name": os.path.basename(file_path),
         "summary": filtered,
         "rag_result": test_rag,
-        "observations": build_report_observations(
-            filtered,
-            test_rag,
-            chart_data=chart_data,
-            report_kpis=report_kpis,
-            green_sla=green,
-            amber_sla=amber,
-        ),
+        "observations": observations,
         "observation_engine_version": 3,
         "test_date": test_date,
         "test_period": test_period,
@@ -1579,6 +1606,9 @@ def analyze():
         "rag_basis": rag_basis,
         "include_error": include_error,
         "error_threshold": error_threshold if include_error else None,
+        "baseline_profile_id": baseline_profile.get("id") if baseline_profile else None,
+        "baseline_profile_name": baseline_profile.get("name") if baseline_profile else None,
+        "baseline_applied_count": baseline_applied_count,
         "graph_paths": graph_paths,
         "report_kpis": report_kpis,
         "monitoring_stats": [],
@@ -1806,85 +1836,319 @@ def trend():
         n=n,
         trend_observations=trend_observations
     )
-@app.route("/baseline")
+def load_baseline_profiles():
+    if not os.path.exists(BASELINE_FILE):
+        return []
+    try:
+        with open(BASELINE_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, list) else []
+    except Exception:
+        app.logger.exception("Unable to load baseline profiles")
+        return []
+
+
+def save_baseline_profiles(profiles):
+    os.makedirs(os.path.dirname(BASELINE_FILE), exist_ok=True)
+    with open(BASELINE_FILE, "w", encoding="utf-8") as handle:
+        json.dump(profiles, handle, indent=2)
+
+
+def _baseline_metric_stats(values):
+    cleaned = []
+    for value in values or []:
+        try:
+            numeric = float(value)
+        except (TypeError, ValueError):
+            continue
+        if np.isfinite(numeric):
+            cleaned.append(numeric)
+    if not cleaned:
+        return None
+    arr = np.array(cleaned, dtype=float)
+    mean = float(np.mean(arr))
+    std = float(np.std(arr, ddof=0))
+    cv_pct = (std / abs(mean) * 100.0) if mean else 0.0
+    return {
+        "count": len(cleaned),
+        "mean": round(mean, 4),
+        "median": round(float(np.median(arr)), 4),
+        "min": round(float(np.min(arr)), 4),
+        "max": round(float(np.max(arr)), 4),
+        "std": round(std, 4),
+        "cv_pct": round(cv_pct, 2),
+    }
+
+
+def build_baseline_analysis(reports, n=10, min_runs=3):
+    """Build a deterministic baseline from recent comparable historical reports."""
+    selected_reports = list(reports[: max(1, int(n))])
+    total_reports = len(selected_reports)
+    if not selected_reports:
+        return {
+            "reports_used": 0,
+            "transactions": [],
+            "eligible_count": 0,
+            "stable_count": 0,
+            "warnings": ["No historical reports are available."],
+        }
+
+    by_transaction = {}
+    # Oldest-to-newest series for trend charts.
+    for report in reversed(selected_reports):
+        label = (
+            report.get("test_date")
+            or str(report.get("timestamp") or "Unknown")[:10]
+            or "Unknown"
+        )
+        seen_this_report = set()
+        for row in report.get("summary") or []:
+            txn = str(row.get("Transaction") or "").strip()
+            if not txn or txn in seen_this_report:
+                continue
+            seen_this_report.add(txn)
+            bucket = by_transaction.setdefault(
+                txn,
+                {"avg": [], "p90": [], "p95": [], "error": [], "trend": []},
+            )
+            point = {"label": label}
+            for key, metric_name in (
+                ("Avg (s)", "avg"),
+                ("90th % (s)", "p90"),
+                ("95th % (s)", "p95"),
+                ("Error %", "error"),
+            ):
+                raw = row.get(key)
+                try:
+                    value = float(raw)
+                except (TypeError, ValueError):
+                    value = None
+                if value is not None and np.isfinite(value):
+                    bucket[metric_name].append(value)
+                    point[metric_name] = value
+                else:
+                    point[metric_name] = None
+            bucket["trend"].append(point)
+
+    results = []
+    warnings = []
+    for txn in sorted(by_transaction):
+        values = by_transaction[txn]
+        avg_stats = _baseline_metric_stats(values["avg"])
+        p90_stats = _baseline_metric_stats(values["p90"])
+        p95_stats = _baseline_metric_stats(values["p95"])
+        error_stats = _baseline_metric_stats(values["error"])
+        run_count = max(
+            len(values["avg"]),
+            len(values["p90"]),
+            len(values["p95"]),
+        )
+        coverage_pct = (100.0 * run_count / total_reports) if total_reports else 0.0
+        cvs = [
+            stats["cv_pct"]
+            for stats in (avg_stats, p90_stats, p95_stats)
+            if stats is not None
+        ]
+        max_cv = max(cvs) if cvs else None
+
+        if max_cv is None:
+            stability = "INSUFFICIENT"
+        elif max_cv <= 10.0:
+            stability = "STABLE"
+        elif max_cv <= 20.0:
+            stability = "VARIABLE"
+        else:
+            stability = "UNSTABLE"
+
+        eligible = bool(
+            run_count >= min_runs
+            and coverage_pct >= 60.0
+            and max_cv is not None
+            and max_cv <= 15.0
+            and p90_stats is not None
+        )
+
+        proposed_green = proposed_amber = None
+        if p90_stats is not None:
+            mean = float(p90_stats["mean"])
+            std = float(p90_stats["std"])
+            # Statistical headroom based on observed run-to-run variation, with
+            # small minimum buffers so perfectly flat histories do not create a
+            # zero-tolerance SLA.
+            proposed_green = max(mean + std, mean * 1.05)
+            proposed_amber = max(mean + (2.0 * std), mean * 1.15)
+            if proposed_amber <= proposed_green:
+                proposed_amber = proposed_green * 1.10
+
+        if eligible and run_count >= 7 and coverage_pct >= 80.0 and max_cv <= 10.0:
+            confidence = "HIGH"
+        elif eligible:
+            confidence = "MODERATE"
+        else:
+            confidence = "LOW"
+
+        if run_count < min_runs:
+            reason = f"Needs at least {min_runs} runs; only {run_count} available."
+        elif coverage_pct < 60.0:
+            reason = f"Appears in only {coverage_pct:.0f}% of selected reports."
+        elif max_cv is None:
+            reason = "Not enough valid response-time data."
+        elif max_cv > 15.0:
+            reason = f"Run-to-run variation is too high ({max_cv:.1f}% CV)."
+        else:
+            reason = "History is sufficiently consistent for baseline use."
+
+        results.append({
+            "transaction": txn,
+            "run_count": run_count,
+            "coverage_pct": round(coverage_pct, 1),
+            "avg": avg_stats,
+            "p90": p90_stats,
+            "p95": p95_stats,
+            "error": error_stats,
+            "max_cv_pct": round(max_cv, 2) if max_cv is not None else None,
+            "stability": stability,
+            "eligible": eligible,
+            "confidence": confidence,
+            "proposed_green_p90_s": round(proposed_green, 3) if proposed_green is not None else None,
+            "proposed_amber_p90_s": round(proposed_amber, 3) if proposed_amber is not None else None,
+            "reason": reason,
+            "trend": values["trend"],
+        })
+
+    eligible_count = sum(1 for row in results if row["eligible"])
+    stable_count = sum(1 for row in results if row["stability"] == "STABLE")
+    if total_reports < min_runs:
+        warnings.append(
+            f"Only {total_reports} report(s) are available. At least {min_runs} are required "
+            "before any transaction can be promoted to a baseline SLA."
+        )
+    if not eligible_count and total_reports >= min_runs:
+        warnings.append(
+            "No transaction currently has enough stable, consistent history to be promoted."
+        )
+
+    return {
+        "reports_used": total_reports,
+        "transactions": results,
+        "eligible_count": eligible_count,
+        "stable_count": stable_count,
+        "warnings": warnings,
+    }
+
+
+def find_baseline_profile(profile_id):
+    if not profile_id:
+        return None
+    return next(
+        (profile for profile in load_baseline_profiles() if profile.get("id") == profile_id),
+        None,
+    )
+
+
+def apply_baseline_profile(summary, profile):
+    """Apply per-transaction P90 baseline thresholds to a report summary."""
+    if not profile:
+        return summary, overall_rag(summary), 0
+
+    thresholds = profile.get("transactions") or {}
+    updated = []
+    applied = 0
+    for row in summary:
+        new_row = dict(row)
+        txn = str(new_row.get("Transaction") or "")
+        rule = thresholds.get(txn)
+        if rule:
+            p90 = _metric(new_row, "90th % (s)")
+            green = float(rule.get("green_p90_s") or 0)
+            amber = float(rule.get("amber_p90_s") or 0)
+            if amber > 0 and green > 0:
+                if p90 > amber:
+                    new_row["RAG"] = "RED"
+                elif p90 > green:
+                    new_row["RAG"] = "AMBER"
+                else:
+                    new_row["RAG"] = "GREEN"
+                new_row["Baseline Green P90 (s)"] = green
+                new_row["Baseline Amber P90 (s)"] = amber
+                new_row["Baseline SLA Applied"] = True
+                applied += 1
+        updated.append(new_row)
+    return updated, overall_rag(updated), applied
+
+
+@app.route("/baseline", methods=["GET", "POST"])
 def baseline():
-    n = bounded_query_int("n", 7)
+    try:
+        n = int(request.values.get("n", 10))
+    except (TypeError, ValueError):
+        n = 10
+    n = min(max(n, 3), 50)
+
     reports = load_history()
     if not reports:
         flash("No reports available for baseline calculation.")
         return redirect(url_for("history"))
 
-    selected_reports = reports[:n]  # newest first
-    txn_stats, warnings = {}, []
+    analysis = build_baseline_analysis(reports, n=n)
 
-    for r_index, r in enumerate(selected_reports):
-        for row_index, row in enumerate(r.get("summary", [])):
-            txn = row.get("Transaction")
-            if not txn:
-                continue
-            txn_stats.setdefault(txn, {"avg": [], "p90": []})
+    if request.method == "POST":
+        profile_name = str(request.form.get("profile_name") or "").strip()
+        if not profile_name:
+            profile_name = f"Baseline {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"
 
-            val = row.get("Avg (s)")
-            if val is not None:
-                try:
-                    txn_stats[txn]["avg"].append(float(val))
-                except (ValueError, TypeError):
-                    warnings.append(f"Invalid Avg '{val}' for {txn} in report {r_index+1}, row {row_index+1}")
+        eligible = [
+            row for row in analysis["transactions"]
+            if row.get("eligible")
+            and row.get("proposed_green_p90_s") is not None
+            and row.get("proposed_amber_p90_s") is not None
+        ]
+        if not eligible:
+            flash(
+                "No stable transactions are eligible for SLA promotion yet.",
+                "error",
+            )
+            return redirect(url_for("baseline", n=n))
 
-            val = row.get("90th % (s)")
-            if val is not None:
-                try:
-                    txn_stats[txn]["p90"].append(float(val))
-                except (ValueError, TypeError):
-                    warnings.append(f"Invalid 90th % '{val}' for {txn} in report {r_index+1}, row {row_index+1}")
-
-    baselines = {}
-    for txn, vals in txn_stats.items():
-        avg_val = round(sum(vals["avg"]) / len(vals["avg"]), 3) if vals["avg"] else None
-        p90_val = round(sum(vals["p90"]) / len(vals["p90"]), 3) if vals["p90"] else None
-
-        if avg_val is not None or p90_val is not None:
-            baselines[txn] = {
-                "avg": avg_val,
-                "p90": p90_val,
-                "sample_size": len(vals["avg"])
-            }
-        else:
-            warnings.append(f"No valid data for transaction '{txn}' across last {n} reports")
-
-    labels = list(baselines.keys())
-    avg_values = [baselines[label]["avg"] for label in labels]
-    p90_values = [baselines[label]["p90"] for label in labels]
-    avg_green_values = [
-        round(value * 1.2, 3) if value is not None else None
-        for value in avg_values
-    ]
-    avg_amber_values = [
-        round(value * 1.5, 3) if value is not None else None
-        for value in avg_values
-    ]
-    p90_green_values = [
-        round(value * 1.2, 3) if value is not None else None
-        for value in p90_values
-    ]
-    p90_amber_values = [
-        round(value * 1.5, 3) if value is not None else None
-        for value in p90_values
-    ]
+        profile = {
+            "id": uuid.uuid4().hex[:12],
+            "name": profile_name,
+            "created_at": datetime.utcnow().isoformat(),
+            "source_report_count": analysis["reports_used"],
+            "method": "P90 mean + observed run-to-run variation",
+            "transactions": {
+                row["transaction"]: {
+                    "green_p90_s": row["proposed_green_p90_s"],
+                    "amber_p90_s": row["proposed_amber_p90_s"],
+                    "baseline_avg_s": row["avg"]["mean"] if row.get("avg") else None,
+                    "baseline_p90_s": row["p90"]["mean"] if row.get("p90") else None,
+                    "baseline_p95_s": row["p95"]["mean"] if row.get("p95") else None,
+                    "run_count": row["run_count"],
+                    "coverage_pct": row["coverage_pct"],
+                    "max_cv_pct": row["max_cv_pct"],
+                    "confidence": row["confidence"],
+                }
+                for row in eligible
+            },
+        }
+        profiles = load_baseline_profiles()
+        profiles.insert(0, profile)
+        save_baseline_profiles(profiles)
+        flash(
+            f"Baseline profile '{profile_name}' saved with {len(eligible)} transaction(s).",
+            "success",
+        )
+        return redirect(url_for("baseline", n=n, saved=profile["id"]))
 
     return render_template(
         "baseline.html",
-        baselines=baselines,
+        analysis=analysis,
         n=n,
-        warnings=warnings,
-        labels=labels,
-        avg_values=avg_values,
-        p90_values=p90_values,
-        avg_green_values=avg_green_values,
-        avg_amber_values=avg_amber_values,
-        p90_green_values=p90_green_values,
-        p90_amber_values=p90_amber_values,
+        profiles=load_baseline_profiles(),
+        saved_profile_id=request.args.get("saved"),
     )
+
+
 test_running = False
 current_process = None  # track JMeter process globally
 current_run_dir = None
