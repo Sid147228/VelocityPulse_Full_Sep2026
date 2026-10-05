@@ -1,24 +1,340 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>About VelocityPulse</h1>
-<p class="subtext">VelocityPulse is a performance engineering portal designed to transform raw JMeter results into clean, customizable, and exportable reports.</p>
 
-<h3>Features</h3>
-<ul>
-  <li>Upload CSV/JTL files and select transactions</li>
-  <li>Customize SLA thresholds and RAG logic</li>
-  <li>Generate branded PDF reports with graphs</li>
-  <li>View and search report history</li>
-  <li>Export filtered data to CSV or PDF</li>
-</ul>
+<style>
+  .about-shell{max-width:1500px;margin:0 auto;padding:18px 20px 40px;color:#17324d}
+  .about-hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:18px}
+  .about-hero h1{margin:0;color:#173d68;font-size:2rem}
+  .about-hero p{margin:8px 0 0;max-width:900px;color:#60758b;line-height:1.55}
+  .version-box{min-width:230px;background:#f5f9fd;border:1px solid #d9e5ef;border-radius:12px;padding:12px 14px;color:#526b83}
+  .version-box strong{display:block;color:#173d68;font-size:1rem;margin-bottom:3px}
+  .jumpbar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 14px;background:#fff;border:1px solid #dbe5ef;border-radius:12px;box-shadow:0 4px 14px rgba(27,62,101,.05);margin-bottom:16px;position:sticky;top:8px;z-index:5}
+  .jumpbar a{padding:7px 10px;border-radius:999px;background:#edf4fb;color:#225fa1;text-decoration:none;font-size:.8rem;font-weight:800}
+  .panel{background:#fff;border:1px solid #dbe5ef;border-radius:14px;box-shadow:0 5px 16px rgba(27,62,101,.06);margin-top:14px;overflow:hidden}
+  .panel-head{padding:14px 16px;border-bottom:1px solid #e4ebf2;background:#fbfdff}
+  .panel-head h2{margin:0;color:#173d68;font-size:1.08rem}
+  .panel-head p{margin:5px 0 0;color:#71869a;font-size:.84rem;line-height:1.45}
+  .panel-body{padding:16px}
+  .feature-grid,.glossary-grid,.example-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+  .feature-card,.term-card,.example-card{border:1px solid #dbe5ef;border-radius:11px;padding:14px;background:#fbfdff}
+  .feature-card h3,.term-card h3,.example-card h3{margin:0 0 7px;color:#173d68;font-size:.98rem}
+  .feature-card p,.term-card p,.example-card p{margin:0;color:#566f87;line-height:1.5;font-size:.85rem}
+  .feature-card ul,.example-card ul{margin:8px 0 0 18px;padding:0;color:#566f87;font-size:.83rem;line-height:1.5}
+  .tag{display:inline-flex;padding:3px 7px;border-radius:999px;background:#eaf2fb;color:#225fa1;font-size:.68rem;font-weight:900;margin-bottom:8px}
+  .tag.green{background:#e5f6eb;color:#1d7b3e}.tag.amber{background:#fff4d7;color:#936000}.tag.red{background:#ffe5e5;color:#bd2d33}.tag.grey{background:#edf1f5;color:#66798b}
+  .definition-table{width:100%;border-collapse:collapse;font-size:.83rem}
+  .definition-table th{background:#f4f8fc;color:#284865;text-align:left;padding:10px;border-bottom:1px solid #dbe5ef}
+  .definition-table td{padding:10px;border-bottom:1px solid #edf1f5;vertical-align:top;color:#536c84;line-height:1.45}
+  .definition-table td:first-child{font-weight:900;color:#203b58;white-space:nowrap}
+  .callout{background:#f4f8fc;border:1px solid #d8e5f0;border-left:5px solid #225fa1;border-radius:10px;padding:12px 14px;color:#50677e;line-height:1.5}
+  .callout strong{color:#173d68}
+  .flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  .flow-step{padding:12px;border:1px solid #dbe5ef;border-radius:10px;background:#fbfdff;text-align:center;color:#526b83;font-size:.82rem}
+  .flow-step strong{display:block;color:#173d68;margin-bottom:5px}
+  .result-demo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}
+  .result-tile{border:1px solid #dbe5ef;border-radius:10px;padding:12px;background:#fff}
+  .result-tile small{display:block;color:#71869a;margin-bottom:5px}.result-tile strong{font-size:1.15rem;color:#173d68}
+  .status-line{margin-top:6px;font-size:.8rem;font-weight:800}
+  .status-line.green{color:#1d7b3e}.status-line.amber{color:#936000}.status-line.red{color:#bd2d33}
+  details{border-top:1px solid #edf1f5;padding:11px 0} details:first-child{border-top:0}
+  summary{cursor:pointer;font-weight:800;color:#274967}
+  details p{margin:7px 0 0;color:#60758b;line-height:1.5;font-size:.84rem}
+  .search-box{margin-bottom:12px}
+  .search-box input{width:100%;box-sizing:border-box;height:42px;border:1px solid #cfdbe7;border-radius:9px;padding:0 12px;color:#17324d}
+  @media(max-width:1000px){.flow{grid-template-columns:1fr 1fr}.result-demo{grid-template-columns:1fr 1fr}.about-hero{flex-direction:column}}
+  @media(max-width:600px){.flow,.result-demo{grid-template-columns:1fr}.definition-table{font-size:.78rem}.definition-table td:first-child{white-space:normal}}
+</style>
 
-<h3>How It Works</h3>
-<ol>
-  <li>Upload your JMeter result file via the Home page</li>
-  <li>Select transactions and configure SLA settings</li>
-  <li>Generate a report and export it as PDF or CSV</li>
-  <li>Visit the Reports page to view past reports</li>
-</ol>
+<section class="about-shell">
+  <div class="about-hero">
+    <div>
+      <h1>About VelocityPulse & Reference Guide</h1>
+      <p>
+        VelocityPulse is a local-first performance engineering portal for JMeter results. This page explains
+        the main features, metrics, statuses, baseline and trend terminology, and how to interpret common results.
+      </p>
+    </div>
+    <div class="version-box">
+      <strong>VelocityPulse {{ version }}</strong>
+      <div>Build: {{ build }}</div>
+      <div>Codename: {{ codename }}</div>
+      {% if active_project %}<div style="margin-top:5px;">Active project: <strong style="display:inline">{{ active_project.get('name') }}</strong></div>{% endif %}
+    </div>
+  </div>
 
-<p>VelocityPulse is built for analysts, testers, and performance engineers who demand clarity, polish, and speed. Every report is styled for presentation and backed by robust analytics.</p>
+  <nav class="jumpbar" aria-label="About page sections">
+    <a href="#workflow">Workflow</a>
+    <a href="#features">Features</a>
+    <a href="#metrics">Metrics</a>
+    <a href="#baseline">Baseline & Trend</a>
+    <a href="#statuses">Statuses</a>
+    <a href="#examples">Examples</a>
+    <a href="#storage">Storage</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+
+  <section class="panel" id="workflow">
+    <div class="panel-head">
+      <h2>How VelocityPulse Fits Together</h2>
+      <p>Each feature has a distinct purpose so the same result can be understood from several angles without conflicting logic.</p>
+    </div>
+    <div class="panel-body">
+      <div class="flow">
+        <div class="flow-step"><strong>1. Run / Upload</strong>Create or import a JMeter test result.</div>
+        <div class="flow-step"><strong>2. Report</strong>Understand one test in detail.</div>
+        <div class="flow-step"><strong>3. Compare</strong>Measure change between two tests.</div>
+        <div class="flow-step"><strong>4. Trend</strong>See movement across many tests.</div>
+        <div class="flow-step"><strong>5. Baseline</strong>Define historically acceptable performance.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="features">
+    <div class="panel-head">
+      <h2>Feature Definitions</h2>
+      <p>What each major page is for and when to use it.</p>
+    </div>
+    <div class="panel-body">
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="tag">PROJECTS</span><h3>Application / Project</h3>
+          <p>A logical workspace that keeps reports, trends, comparisons and baselines separated for one application.</p>
+          <ul><li>Prevents data from different applications being mixed.</li><li>The active project is shown in the header and can be switched safely.</li></ul>
+        </div>
+        <div class="feature-card">
+          <span class="tag">HOME</span><h3>Upload Result</h3>
+          <p>Imports a JMeter CSV/JTL result, parses transactions, calculates performance metrics and generates a report.</p>
+          <ul><li>Use when a test already ran outside VelocityPulse.</li><li>Can apply a saved baseline to the report.</li></ul>
+        </div>
+        <div class="feature-card">
+          <span class="tag">REPORT</span><h3>Single Test Report</h3>
+          <p>The detailed view of one performance test, including transaction metrics, graphs, observations and overall RAG status.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">HISTORY</span><h3>Report History</h3>
+          <p>The project-scoped list of saved reports. Use it to reopen past results and select reports for comparison or trend analysis.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">COMPARE</span><h3>Report Comparison</h3>
+          <p>Compares two test reports transaction-by-transaction. It highlights metric movement and whether performance improved or degraded.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">TREND</span><h3>Trend Analysis</h3>
+          <p>Shows how performance changes across multiple runs over time. Avg, P90, P95 and Error % can be trended.</p>
+          <ul><li>History Stability describes run-to-run consistency.</li><li>A saved baseline can be selected as an optional reference.</li></ul>
+        </div>
+        <div class="feature-card">
+          <span class="tag">BASELINE</span><h3>Performance Baseline</h3>
+          <p>Builds a statistically informed reference from recent historical runs and creates per-transaction P90 Green/Amber thresholds.</p>
+          <ul><li>Saved baseline versions are immutable.</li><li>Only sufficiently stable transactions are promoted.</li></ul>
+        </div>
+        <div class="feature-card">
+          <span class="tag">RUN TEST</span><h3>Run JMeter Test</h3>
+          <p>Launches a JMeter test from VelocityPulse using an uploaded JMX and supporting files, then saves the resulting report in the active project.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">LIVE</span><h3>Live Progress</h3>
+          <p>Shows progress and live test activity while a JMeter execution is running. Project switching is blocked during an active test to avoid cross-project contamination.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">MONITORING</span><h3>Real-time Monitoring</h3>
+          <p>Displays live server/performance monitoring data when monitoring is configured for the test environment.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">EXPORT</span><h3>PDF / CSV Export</h3>
+          <p>Creates portable output for sharing test results, comparisons and supporting evidence outside the web UI.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">AUTH</span><h3>User Login</h3>
+          <p>Local user authentication with project ownership. User and performance data remain local to the VelocityPulse installation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="metrics">
+    <div class="panel-head">
+      <h2>Performance Metric Glossary</h2>
+      <p>The most common terms used throughout reports, comparisons, trends and baselines.</p>
+    </div>
+    <div class="panel-body">
+      <div class="search-box"><input id="glossarySearch" type="search" placeholder="Search a term, e.g. P90, throughput, CV, baseline..."></div>
+      <div style="overflow:auto;">
+        <table class="definition-table" id="glossaryTable">
+          <thead><tr><th>Term</th><th>Definition</th><th>How to interpret it</th></tr></thead>
+          <tbody>
+            <tr><td>Transaction</td><td>A named JMeter request, sampler or transaction controller represented in the report.</td><td>Transactions are matched by exact name across reports, trends and baselines.</td></tr>
+            <tr><td># Samples</td><td>The number of requests/samples included for a transaction.</td><td>Higher sample counts usually provide stronger evidence than very small runs.</td></tr>
+            <tr><td>Average / Avg</td><td>The arithmetic mean response time across samples.</td><td>Useful for overall performance, but it can hide slower tail responses.</td></tr>
+            <tr><td>P90 / 90th Percentile</td><td>The response time at or below which 90% of samples completed.</td><td>VelocityPulse uses P90 as the primary baseline threshold signal.</td></tr>
+            <tr><td>P95 / 95th Percentile</td><td>The response time at or below which 95% of samples completed.</td><td>Shows slower tail behaviour and is included in stability analysis.</td></tr>
+            <tr><td>Error %</td><td>The percentage of samples that failed.</td><td>Higher error percentage indicates functional or performance-related failures during the test.</td></tr>
+            <tr><td>Throughput / TPS</td><td>The rate at which requests or transactions are processed over time.</td><td>Use with response time to understand whether the system stayed fast while handling load.</td></tr>
+            <tr><td>RAG</td><td>Red / Amber / Green status used to summarise performance against thresholds.</td><td>Green = acceptable, Amber = warning, Red = threshold breach.</td></tr>
+            <tr><td>Baseline</td><td>A saved, immutable performance reference created from stable historical runs.</td><td>Use it to judge whether later tests remain within accepted performance limits.</td></tr>
+            <tr><td>Green P90 Threshold</td><td>The P90 limit below which the transaction is considered Green.</td><td>Calculated from historical P90 mean plus observed variation, with minimum headroom.</td></tr>
+            <tr><td>Amber P90 Threshold</td><td>The higher P90 limit before the transaction becomes Red.</td><td>Crossing Green enters warning; crossing Amber becomes Red.</td></tr>
+            <tr><td>History Stability</td><td>How consistent Avg, P90 and P95 have been across the selected test history.</td><td>Stable ≤10% variation, Variable 10–20%, Unstable &gt;20%.</td></tr>
+            <tr><td>Baseline Status</td><td>The latest P90 result compared with a selected saved baseline.</td><td>It answers “Is the latest result acceptable against this baseline?”</td></tr>
+            <tr><td>Coefficient of Variation (CV)</td><td>Standard deviation divided by the mean, expressed as a percentage.</td><td>It measures relative run-to-run variation; lower is more consistent.</td></tr>
+            <tr><td>Coverage</td><td>The percentage of selected reports in which a transaction has valid data.</td><td>VelocityPulse requires at least 60% coverage for baseline eligibility.</td></tr>
+            <tr><td>Confidence</td><td>A qualitative indication of how strong the historical evidence is for a baseline candidate.</td><td>High confidence needs more runs, higher coverage and lower variability than Moderate confidence.</td></tr>
+            <tr><td>Baseline Eligible</td><td>A transaction that has enough history, coverage, P90 data and consistency to be promoted into a baseline.</td><td>Current rule: at least 3 runs, at least 60% coverage, P90 present and variation ≤15%.</td></tr>
+            <tr><td>Improved</td><td>A later result is faster/lower for the compared response-time metric.</td><td>Interpret with the selected metric and test conditions.</td></tr>
+            <tr><td>Degraded</td><td>A later result is slower/higher for the compared response-time metric.</td><td>A degradation does not automatically mean a baseline breach.</td></tr>
+            <tr><td>Not Comparable</td><td>There is not enough matching/valid data to make a fair comparison.</td><td>Often caused by missing transactions or missing metric values.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="baseline">
+    <div class="panel-head">
+      <h2>Baseline & Trend — What Is the Difference?</h2>
+      <p>These features are connected, but they answer different questions.</p>
+    </div>
+    <div class="panel-body">
+      <div class="glossary-grid">
+        <div class="term-card">
+          <span class="tag">BASELINE</span><h3>What is acceptable?</h3>
+          <p>Baseline Analysis learns from recent stable history and creates transaction-specific Green and Amber P90 thresholds.</p>
+        </div>
+        <div class="term-card">
+          <span class="tag">TREND</span><h3>Where are we heading?</h3>
+          <p>Trend Analysis plots multiple runs over time and highlights movement, variability and optional baseline status.</p>
+        </div>
+        <div class="term-card">
+          <span class="tag">COMPARISON</span><h3>What changed between two tests?</h3>
+          <p>Comparison focuses on exactly two reports and calculates metric deltas transaction-by-transaction.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:12px;">
+        <strong>Important:</strong> History Stability and Baseline Status can disagree without being contradictory.
+        A transaction can be <strong>Stable + Red</strong> (consistently slow) or <strong>Unstable + Green</strong>
+        (acceptable now, but historically inconsistent).
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="statuses">
+    <div class="panel-head">
+      <h2>Status Meanings</h2>
+      <p>The same words can appear in different parts of the tool; these definitions explain the context.</p>
+    </div>
+    <div class="panel-body">
+      <div class="glossary-grid">
+        <div class="term-card"><span class="tag green">GREEN</span><h3>Within accepted threshold</h3><p>For a baseline-applied report, P90 is at or below the baseline Green threshold.</p></div>
+        <div class="term-card"><span class="tag amber">AMBER</span><h3>Warning zone</h3><p>P90 is above the Green threshold but at or below the Amber threshold.</p></div>
+        <div class="term-card"><span class="tag red">RED</span><h3>Threshold breach</h3><p>P90 is above the baseline Amber threshold.</p></div>
+        <div class="term-card"><span class="tag green">STABLE</span><h3>Consistent history</h3><p>Maximum CV across Avg, P90 and P95 is at or below 10%.</p></div>
+        <div class="term-card"><span class="tag amber">VARIABLE</span><h3>Noticeable variation</h3><p>Maximum CV is greater than 10% and at or below 20%.</p></div>
+        <div class="term-card"><span class="tag red">UNSTABLE</span><h3>High variation</h3><p>Maximum CV is above 20%.</p></div>
+        <div class="term-card"><span class="tag grey">INSUFFICIENT</span><h3>Not enough evidence</h3><p>VelocityPulse does not have enough valid data to calculate a reliable stability result.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="examples">
+    <div class="panel-head">
+      <h2>How to Read Example Results</h2>
+      <p>Illustrative examples to show how multiple signals should be interpreted together.</p>
+    </div>
+    <div class="panel-body">
+      <div class="example-grid">
+        <div class="example-card">
+          <h3>Example A — Healthy and Consistent</h3>
+          <div class="result-demo">
+            <div class="result-tile"><small>Latest P90</small><strong>1.42s</strong></div>
+            <div class="result-tile"><small>Green limit</small><strong>1.80s</strong></div>
+            <div class="result-tile"><small>CV</small><strong>6.2%</strong></div>
+            <div class="result-tile"><small>Error</small><strong>0.2%</strong></div>
+          </div>
+          <div class="status-line green">Baseline Status: GREEN · History Stability: STABLE</div>
+          <p style="margin-top:8px;">The latest test is within the accepted baseline and recent history is consistent.</p>
+        </div>
+
+        <div class="example-card">
+          <h3>Example B — Consistently Slow</h3>
+          <div class="result-demo">
+            <div class="result-tile"><small>Latest P90</small><strong>2.35s</strong></div>
+            <div class="result-tile"><small>Amber limit</small><strong>2.20s</strong></div>
+            <div class="result-tile"><small>CV</small><strong>7.4%</strong></div>
+            <div class="result-tile"><small>Coverage</small><strong>100%</strong></div>
+          </div>
+          <div class="status-line red">Baseline Status: RED · History Stability: STABLE</div>
+          <p style="margin-top:8px;">Performance is consistently outside the accepted baseline. Stability does not mean performance is good; it means it is consistent.</p>
+        </div>
+
+        <div class="example-card">
+          <h3>Example C — Acceptable Now, Inconsistent History</h3>
+          <div class="result-demo">
+            <div class="result-tile"><small>Latest P90</small><strong>1.60s</strong></div>
+            <div class="result-tile"><small>Green limit</small><strong>1.80s</strong></div>
+            <div class="result-tile"><small>CV</small><strong>24.1%</strong></div>
+            <div class="result-tile"><small>Coverage</small><strong>90%</strong></div>
+          </div>
+          <div class="status-line amber">Baseline Status: GREEN · History Stability: UNSTABLE</div>
+          <p style="margin-top:8px;">The latest result is acceptable, but historical variation is high and should be investigated.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="storage">
+    <div class="panel-head">
+      <h2>Local Data, Privacy & Storage</h2>
+      <p>VelocityPulse is designed to run locally without requiring an external performance-data service.</p>
+    </div>
+    <div class="panel-body">
+      <div class="glossary-grid">
+        <div class="term-card"><h3>Local SQLite Database</h3><p>Projects, report history, baselines and run context are persisted in a local SQLite database created automatically on first use.</p></div>
+        <div class="term-card"><h3>No Separate Database Server</h3><p>SQLite is embedded. End users do not need to install or run MySQL, PostgreSQL or another database service.</p></div>
+        <div class="term-card"><h3>Automatic Backups</h3><p>Versioned local backups are created with retention controls so an accidental file issue is less likely to destroy all historical data.</p></div>
+        <div class="term-card"><h3>Integrity Checks</h3><p>The local persistence layer performs database integrity checks and provides guarded restore logic.</p></div>
+        <div class="term-card"><h3>Raw Test Evidence</h3><p>JMeter result files and generated runtime artefacts remain local to the installation and are separate from the SQLite metadata store.</p></div>
+        <div class="term-card"><h3>Project Isolation</h3><p>Reports and baselines are stamped with a project ID so one application's history does not appear in another application's analysis.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="faq">
+    <div class="panel-head">
+      <h2>Quick Interpretation FAQ</h2>
+      <p>Common questions a new user may have while reviewing results.</p>
+    </div>
+    <div class="panel-body">
+      <details open><summary>Why can a result be Stable but Red?</summary><p>Stable describes consistency across history. Red describes the latest P90 against the accepted baseline. Consistently slow results can therefore be Stable and Red.</p></details>
+      <details><summary>Why does Trend show a gap for one transaction?</summary><p>The transaction was missing or had no valid value in that test. VelocityPulse keeps the date aligned and shows a gap rather than shifting the next value to the wrong test date.</p></details>
+      <details><summary>Why is a transaction not eligible for Baseline?</summary><p>Typical reasons are too few runs, less than 60% coverage, missing P90 data, or run-to-run variation above the 15% promotion limit.</p></details>
+      <details><summary>Does “Degraded” always mean the test failed?</summary><p>No. Degraded means the selected metric is worse than the earlier comparison report. A degradation can still remain within the accepted baseline.</p></details>
+      <details><summary>What should I look at first in a report?</summary><p>Start with overall RAG, Error %, P90/P95, then check transaction-level outliers and supporting graphs. Use Trend for direction and Baseline for accepted limits.</p></details>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Recent Application Changes</h2>
+      <p>Latest changelog entries included with this build.</p>
+    </div>
+    <div class="panel-body">
+      <pre style="white-space:pre-wrap;margin:0;background:#f7f9fc;border:1px solid #e1e8f0;border-radius:9px;padding:12px;color:#50677e;font-size:.78rem;">{{ recent_changes }}</pre>
+    </div>
+  </section>
+</section>
+
+<script>
+  (function(){
+    const input = document.getElementById("glossarySearch");
+    const rows = Array.from(document.querySelectorAll("#glossaryTable tbody tr"));
+    if (!input) return;
+    input.addEventListener("input", function(){
+      const query = this.value.trim().toLowerCase();
+      rows.forEach(function(row){
+        row.style.display = !query || row.textContent.toLowerCase().includes(query) ? "" : "none";
+      });
+    });
+  })();
+</script>
+
 {% endblock %}
