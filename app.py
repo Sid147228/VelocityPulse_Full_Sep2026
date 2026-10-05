@@ -154,11 +154,25 @@ def create_project(name, user_id, migrate_legacy=False):
 
 
 def set_active_project(project):
+    previous_project_id = str(session.get("active_project_id") or "")
+    next_project_id = str((project or {}).get("id") or "")
+
+    if previous_project_id != next_project_id:
+        # Never carry an in-progress upload/analysis from one application into another.
+        for key in (
+            "uploaded_file",
+            "uploaded_file_path",
+            "test_window",
+            "summary",
+        ):
+            session.pop(key, None)
+
     if not project:
         session.pop("active_project_id", None)
         session.pop("active_project_name", None)
         return
-    session["active_project_id"] = str(project.get("id"))
+
+    session["active_project_id"] = next_project_id
     session["active_project_name"] = str(project.get("name") or "")
 
 
