@@ -1254,36 +1254,206 @@ def bounded_query_int(name, default, minimum=1, maximum=50):
     return min(max(value, minimum), maximum)
 
 
-def build_trend_observations(txn_trends):
-    """Summarise oldest-to-newest transaction movement in concise bullets."""
+def build_trend_analysis(reports, n=10, baseline_profile=None):
+    """Build aligned multi-run trend data using the same stability rules as Baseline."""
+    selected_reports = list(reversed(reports[: max(1, int(n))]))
+    labels = []
+    txn_series = {}
+
+    for report_index, report in enumerate(selected_reports):
+        label = (
+            report.get("test_date")
+            or str(report.get("timestamp") or "Unknown")[:10]
+            or "Unknown"
+        )
+        labels.append(label)
+
+        seen = set()
+        for row in report.get("summary") or []:
+            txn = str(row.get("Transaction") or "").strip()
+            if not txn or txn in seen:
+                continue
+            seen.add(txn)
+
+            if txn not in txn_series:
+                txn_series[txn] = [
+                    {
+                        "label": labels[idx] if idx < len(labels) else "",
+                        "avg": None,
+                        "p90": None,
+                        "p95": None,
+                        "error": None,
+                        "rag": "UNKNOWN",
+                    }
+                    for idx in range(len(selected_reports))
+                ]
+
+            point = txn_series[txn][report_index]
+            point["label"] = label
+            point["rag"] = row.get("RAG", "UNKNOWN")
+            for source_key, target_key in (
+                ("Avg (s)", "avg"),
+                ("90th % (s)", "p90"),
+                ("95th % (s)", "p95"),
+                ("Error %", "error"),
+            ):
+                try:
+                    value = float(row.get(source_key))
+                except (TypeError, ValueError):
+                    value = None
+                point[target_key] = value if value is not None and np.isfinite(value) else None
+
+    summary_table = []
+    baseline_rules = (baseline_profile or {}).get("transactions") or {}
+
+    for txn in sorted(txn_series):
+        points = txn_series[txn]
+        metric_stats = {}
+        for metric in ("avg", "p90", "p95", "error"):
+            metric_stats[metric] = _baseline_metric_stats(
+                [point.get(metric) for point in points if point.get(metric) is not None]
+            )
+
+        cvs = [
+            stats["cv_pct"]
+            for stats in (metric_stats["avg"], metric_stats["p90"], metric_stats["p95"])
+            if stats is not None
+        ]
+        max_cv = max(cvs) if cvs else None
+        if max_cv is None:
+            stability = "INSUFFICIENT"
+        elif max_cv <= 10.0:
+            stability = "STABLE"
+        elif max_cv <= 20.0:
+            stability = "VARIABLE"
+        else:
+            stability = "UNSTABLE"
+
+        valid_p90 = [point["p90"] for point in points if point.get("p90") is not None]
+        latest_p90 = valid_p90[-1] if valid_p90 else None
+        baseline_status = "NO BASELINE"
+        green = amber = None
+        rule = baseline_rules.get(txn)
+        if rule:
+            try:
+                green = float(rule.get("green_p90_s") or 0)
+                amber = float(rule.get("amber_p90_s") or 0)
+            except (TypeError, ValueError):
+                green = amber = 0
+            if latest_p90 is None:
+                baseline_status = "NO DATA"
+            elif green > 0 and amber > 0:
+                if latest_p90 > amber:
+                    baseline_status = "RED"
+                elif latest_p90 > green:
+                    baseline_status = "AMBER"
+                else:
+                    baseline_status = "GREEN"
+
+        tests_executed = sum(
+            1 for point in points
+            if any(point.get(metric) is not None for metric in ("avg", "p90", "p95", "error"))
+        )
+        coverage_pct = (100.0 * tests_executed / len(selected_reports)) if selected_reports else 0.0
+
+        summary_table.append({
+            "transaction": txn,
+            "tests_executed": tests_executed,
+            "coverage_pct": round(coverage_pct, 1),
+            "avg_of_avg": metric_stats["avg"]["mean"] if metric_stats["avg"] else None,
+            "avg_of_p90": metric_stats["p90"]["mean"] if metric_stats["p90"] else None,
+            "avg_of_p95": metric_stats["p95"]["mean"] if metric_stats["p95"] else None,
+            "avg_error": metric_stats["error"]["mean"] if metric_stats["error"] else None,
+            "max_cv_pct": round(max_cv, 2) if max_cv is not None else None,
+            "stability": stability,
+            "latest_p90": round(latest_p90, 3) if latest_p90 is not None else None,
+            "baseline_green_p90": round(green, 3) if green else None,
+            "baseline_amber_p90": round(amber, 3) if amber else None,
+            "baseline_status": baseline_status,
+        })
+
+    return {
+        "labels": labels,
+        "txn_trends": txn_series,
+        "summary_table": summary_table,
+        "all_txns": sorted(txn_series),
+        "reports_used": len(selected_reports),
+    }
+
+
+def build_trend_observations(analysis, baseline_profile=None):
+    """Explain P90 movement and baseline status without creating a second SLA rule-set."""
+    rows = analysis.get("summary_table") or []
+    txn_trends = analysis.get("txn_trends") or {}
+    observations = []
+
+    if baseline_profile:
+        red = [row for row in rows if row.get("baseline_status") == "RED"]
+        amber = [row for row in rows if row.get("baseline_status") == "AMBER"]
+        if red:
+            observations.append({
+                "type": "danger",
+                "title": "Baseline regression",
+                "text": f"{len(red)} transaction(s) are above the selected baseline's Amber P90 threshold: "
+                        + ", ".join(row["transaction"] for row in red[:4]) + ".",
+            })
+        if amber:
+            observations.append({
+                "type": "warning",
+                "title": "Baseline warning",
+                "text": f"{len(amber)} transaction(s) are above the selected baseline's Green P90 threshold: "
+                        + ", ".join(row["transaction"] for row in amber[:4]) + ".",
+            })
+
     movements = []
     for txn, points in txn_trends.items():
-        valid = [p for p in points if p.get("avg", 0) > 0]
+        valid = [point for point in points if point.get("p90") is not None and point.get("p90") > 0]
         if len(valid) < 2:
             continue
-        oldest, latest = valid[0], valid[-1]  # trend points are oldest to newest
-        baseline = oldest["avg"]
-        change = ((latest["avg"] - baseline) / baseline * 100) if baseline else 0
-        movements.append((txn, change, baseline, latest["avg"], len(valid)))
+        oldest, latest = valid[0], valid[-1]
+        change = ((latest["p90"] - oldest["p90"]) / oldest["p90"]) * 100.0
+        movements.append((txn, change, oldest["p90"], latest["p90"], len(valid)))
 
-    observations = []
-    if not movements:
-        return [{"type": "info", "title": "Insufficient trend history", "text": "At least two tests with valid data are needed to identify transaction trends."}]
-
-    degrading = sorted([m for m in movements if m[1] > 10], key=lambda m: m[1], reverse=True)
-    improving = sorted([m for m in movements if m[1] < -10], key=lambda m: m[1])
-    stable = [m for m in movements if -10 <= m[1] <= 10]
+    degrading = sorted([m for m in movements if m[1] > 10.0], key=lambda m: m[1], reverse=True)
+    improving = sorted([m for m in movements if m[1] < -10.0], key=lambda m: m[1])
 
     if degrading:
         txn, change, old, new, count = degrading[0]
-        observations.append({"type": "danger", "title": f"Regression detected: {txn}", "text": f"Average response time increased by {change:.1f}% ({old:.2f}s to {new:.2f}s) across {count} tests."})
-        if len(degrading) > 1:
-            observations.append({"type": "warning", "title": "Additional degrading transactions", "text": ", ".join(f"{m[0]} (+{m[1]:.1f}%)" for m in degrading[1:4])})
+        observations.append({
+            "type": "danger",
+            "title": f"P90 degradation: {txn}",
+            "text": f"P90 increased by {change:.1f}% ({old:.2f}s to {new:.2f}s) across {count} comparable tests.",
+        })
     if improving:
         txn, change, old, new, count = improving[0]
-        observations.append({"type": "success", "title": f"Improvement detected: {txn}", "text": f"Average response time reduced by {abs(change):.1f}% ({old:.2f}s to {new:.2f}s) across {count} tests."})
-    if stable:
-        observations.append({"type": "info", "title": "Stable transactions", "text": f"{len(stable)} transaction(s) changed by no more than 10% between the oldest and latest test."})
+        observations.append({
+            "type": "success",
+            "title": f"P90 improvement: {txn}",
+            "text": f"P90 reduced by {abs(change):.1f}% ({old:.2f}s to {new:.2f}s) across {count} comparable tests.",
+        })
+
+    unstable = [row for row in rows if row.get("stability") == "UNSTABLE"]
+    if unstable:
+        observations.append({
+            "type": "warning",
+            "title": "Run-to-run variability",
+            "text": f"{len(unstable)} transaction(s) are unstable using the same Avg/P90/P95 variation bands as Baseline.",
+        })
+
+    low_coverage = [row for row in rows if row.get("coverage_pct", 0) < 60.0]
+    if low_coverage:
+        observations.append({
+            "type": "info",
+            "title": "Incomplete history",
+            "text": f"{len(low_coverage)} transaction(s) appear in fewer than 60% of the selected tests; gaps are shown rather than shifted to another date.",
+        })
+
+    if not observations:
+        observations.append({
+            "type": "info",
+            "title": "No material P90 movement",
+            "text": "No transaction has moved by more than 10% from its oldest to newest comparable P90 value in this window.",
+        })
     return observations
 ALLOWED_COMPARE_METRICS = {"Avg (s)", "90th % (s)", "95th % (s)", "Error %"}
 
@@ -2054,56 +2224,64 @@ def trend():
         flash("No reports available for trend analysis.")
         return redirect(url_for("history"))
 
-    selected_reports = list(reversed(reports[:n]))  # oldest to newest for charting
-    txn_trends = {}
-    all_txns = set()
+    allowed_metrics = {"avg", "p90", "p95", "error"}
+    selected_metric = request.args.get("metric", "p90")
+    if selected_metric not in allowed_metrics:
+        selected_metric = "p90"
 
-    for r in selected_reports:
-        test_label = r.get("test_date") or str(r.get("timestamp") or "Unknown")[:10]
-        for row in r.get("summary", []):
-            txn = row.get("Transaction")
-            if not txn:
-                continue
-            all_txns.add(txn)
-            txn_trends.setdefault(txn, []).append({
-                "label": test_label,
-                "avg": float(row.get("Avg (s)", 0)),
-                "p90": float(row.get("90th % (s)", 0)),
-                "error": float(row.get("Error %", 0)),
-                "rag": row.get("RAG", "UNKNOWN")
-            })
+    baseline_id = str(request.args.get("baseline_profile") or "").strip()
+    baseline_profile = find_baseline_profile(baseline_id) if baseline_id else None
+    baseline_profiles = load_baseline_profiles()
 
-    # Build summary table
-    summary_table = []
-    for txn, data in txn_trends.items():
-        avg_vals = [d["avg"] for d in data if d["avg"] > 0]
-        p90_vals = [d["p90"] for d in data if d["p90"] > 0]
-        summary_table.append({
-            "transaction": txn,
-            "tests_executed": len(data),
-            "avg_of_avg": round(sum(avg_vals)/len(avg_vals), 3) if avg_vals else None,
-            "avg_of_p90": round(sum(p90_vals)/len(p90_vals), 3) if p90_vals else None
-        })
-
-    # Get selected metric and transactions from query params
-    selected_metric = request.args.get("metric", "avg")
-    selected_txns = request.args.getlist("transactions")
-
-    # Default to all if none selected
+    analysis = build_trend_analysis(reports, n=n, baseline_profile=baseline_profile)
+    selected_txns = [
+        txn for txn in request.args.getlist("transactions")
+        if txn in analysis["all_txns"]
+    ]
     if not selected_txns:
-        selected_txns = sorted(all_txns)
+        selected_txns = analysis["all_txns"]
 
-    trend_observations = build_trend_observations(txn_trends)
+    trend_observations = build_trend_observations(
+        analysis,
+        baseline_profile=baseline_profile,
+    )
+
+    threshold_overlay = None
+    if (
+        baseline_profile
+        and selected_metric == "p90"
+        and len(selected_txns) == 1
+    ):
+        txn = selected_txns[0]
+        rule = (baseline_profile.get("transactions") or {}).get(txn)
+        if rule:
+            try:
+                green = float(rule.get("green_p90_s") or 0)
+                amber = float(rule.get("amber_p90_s") or 0)
+            except (TypeError, ValueError):
+                green = amber = 0
+            if green > 0 and amber > 0:
+                threshold_overlay = {
+                    "transaction": txn,
+                    "green": round(green, 3),
+                    "amber": round(amber, 3),
+                }
 
     return render_template(
         "trend.html",
-        summary_table=summary_table,
-        txn_trends=txn_trends,
-        all_txns=sorted(all_txns),
+        summary_table=analysis["summary_table"],
+        txn_trends=analysis["txn_trends"],
+        chart_labels=analysis["labels"],
+        all_txns=analysis["all_txns"],
         selected_metric=selected_metric,
         selected_txns=selected_txns,
         n=n,
-        trend_observations=trend_observations
+        reports_used=analysis["reports_used"],
+        trend_observations=trend_observations,
+        baseline_profiles=baseline_profiles,
+        selected_baseline=baseline_profile,
+        selected_baseline_id=str((baseline_profile or {}).get("id") or ""),
+        threshold_overlay=threshold_overlay,
     )
 def load_baseline_profiles(project_id=None, include_all=False):
     try:
