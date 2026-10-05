@@ -1854,6 +1854,110 @@ def save_baseline_profiles(profiles):
         json.dump(profiles, handle, indent=2)
 
 
+def baseline_profile_number(profile):
+    """Return the immutable numeric baseline identifier when available."""
+    try:
+        number = int(profile.get("number"))
+        if number > 0:
+            return number
+    except (TypeError, ValueError, AttributeError):
+        pass
+
+    profile_id = str((profile or {}).get("id") or "").strip()
+    if profile_id.isdigit():
+        return int(profile_id)
+
+    match = re.fullmatch(r"(?:BL-|B)?(\d+)", profile_id, flags=re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+
+    name_match = re.match(r"Baseline\s+(\d+)\b", str((profile or {}).get("name") or ""), flags=re.IGNORECASE)
+    return int(name_match.group(1)) if name_match else None
+
+
+def next_baseline_number(profiles):
+    numbers = [baseline_profile_number(profile) for profile in profiles or []]
+    valid = [number for number in numbers if number is not None]
+    return (max(valid) + 1) if valid else 1
+
+
+def baseline_profile_label(profile):
+    number = baseline_profile_number(profile)
+    name = str((profile or {}).get("name") or "").strip()
+    prefix = f"Baseline {number}" if number is not None else "Saved Baseline"
+    if name and name.lower() != prefix.lower():
+        return f"{prefix} — {name}"
+    return prefix
+
+
+def build_baseline_comparison(profile_a, profile_b, stable_tolerance_pct=5.0):
+    """Compare two immutable baseline snapshots using P90 as the primary signal."""
+    if not profile_a or not profile_b:
+        return None
+
+    txns_a = profile_a.get("transactions") or {}
+    txns_b = profile_b.get("transactions") or {}
+    all_transactions = sorted(set(txns_a) | set(txns_b))
+    rows = []
+    counts = {"improved": 0, "degraded": 0, "stable": 0, "not_comparable": 0}
+
+    def numeric(rule, key):
+        try:
+            value = float((rule or {}).get(key))
+        except (TypeError, ValueError):
+            return None
+        return value if np.isfinite(value) else None
+
+    for transaction in all_transactions:
+        left = txns_a.get(transaction)
+        right = txns_b.get(transaction)
+        row = {
+            "transaction": transaction,
+            "avg_a": numeric(left, "baseline_avg_s"),
+            "avg_b": numeric(right, "baseline_avg_s"),
+            "p90_a": numeric(left, "baseline_p90_s"),
+            "p90_b": numeric(right, "baseline_p90_s"),
+            "p95_a": numeric(left, "baseline_p95_s"),
+            "p95_b": numeric(right, "baseline_p95_s"),
+            "green_a": numeric(left, "green_p90_s"),
+            "green_b": numeric(right, "green_p90_s"),
+            "amber_a": numeric(left, "amber_p90_s"),
+            "amber_b": numeric(right, "amber_p90_s"),
+            "delta_p90_s": None,
+            "change_pct": None,
+            "status": "NOT COMPARABLE",
+        }
+
+        if row["p90_a"] is not None and row["p90_b"] is not None:
+            delta = row["p90_b"] - row["p90_a"]
+            change_pct = (delta / row["p90_a"]) * 100.0 if row["p90_a"] != 0 else None
+            row["delta_p90_s"] = round(delta, 3)
+            row["change_pct"] = round(change_pct, 2) if change_pct is not None else None
+
+            if change_pct is None or abs(change_pct) <= stable_tolerance_pct:
+                row["status"] = "STABLE"
+                counts["stable"] += 1
+            elif change_pct < 0:
+                row["status"] = "IMPROVED"
+                counts["improved"] += 1
+            else:
+                row["status"] = "DEGRADED"
+                counts["degraded"] += 1
+        else:
+            counts["not_comparable"] += 1
+        rows.append(row)
+
+    return {
+        "baseline_a": profile_a,
+        "baseline_b": profile_b,
+        "label_a": baseline_profile_label(profile_a),
+        "label_b": baseline_profile_label(profile_b),
+        "rows": rows,
+        "counts": counts,
+        "stable_tolerance_pct": stable_tolerance_pct,
+    }
+
+
 def _baseline_metric_stats(values):
     cleaned = []
     for value in values or []:
@@ -2040,8 +2144,9 @@ def build_baseline_analysis(reports, n=10, min_runs=3):
 def find_baseline_profile(profile_id):
     if not profile_id:
         return None
+    requested = str(profile_id)
     return next(
-        (profile for profile in load_baseline_profiles() if profile.get("id") == profile_id),
+        (profile for profile in load_baseline_profiles() if str(profile.get("id")) == requested),
         None,
     )
 
@@ -2094,8 +2199,6 @@ def baseline():
 
     if request.method == "POST":
         profile_name = str(request.form.get("profile_name") or "").strip()
-        if not profile_name:
-            profile_name = f"Baseline {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"
 
         eligible = [
             row for row in analysis["transactions"]
@@ -2110,11 +2213,29 @@ def baseline():
             )
             return redirect(url_for("baseline", n=n))
 
+        profiles = load_baseline_profiles()
+        baseline_number = next_baseline_number(profiles)
+        if not profile_name:
+            profile_name = f"Baseline {baseline_number}"
+
+        source_reports = [
+            {
+                "report_name": report.get("report_name"),
+                "file_name": report.get("file_name"),
+                "test_date": report.get("test_date"),
+                "timestamp": report.get("timestamp"),
+            }
+            for report in reports[:n]
+        ]
+
         profile = {
-            "id": uuid.uuid4().hex[:12],
+            "id": str(baseline_number),
+            "number": baseline_number,
             "name": profile_name,
             "created_at": datetime.utcnow().isoformat(),
             "source_report_count": analysis["reports_used"],
+            "source_reports": source_reports,
+            "baseline_engine_version": 1,
             "method": "P90 mean + observed run-to-run variation",
             "transactions": {
                 row["transaction"]: {
@@ -2131,21 +2252,44 @@ def baseline():
                 for row in eligible
             },
         }
-        profiles = load_baseline_profiles()
         profiles.insert(0, profile)
         save_baseline_profiles(profiles)
         flash(
-            f"Baseline profile '{profile_name}' saved with {len(eligible)} transaction(s).",
+            f"Baseline {baseline_number} saved with {len(eligible)} transaction(s).",
             "success",
         )
         return redirect(url_for("baseline", n=n, saved=profile["id"]))
+
+    profiles = load_baseline_profiles()
+    compare_a_id = str(request.args.get("compare_a") or "").strip()
+    compare_b_id = str(request.args.get("compare_b") or "").strip()
+    comparison = None
+    comparison_error = None
+
+    if compare_a_id or compare_b_id:
+        if not compare_a_id or not compare_b_id:
+            comparison_error = "Select both baselines before comparing."
+        elif compare_a_id == compare_b_id:
+            comparison_error = "Choose two different baselines to compare."
+        else:
+            profile_a = next((item for item in profiles if str(item.get("id")) == compare_a_id), None)
+            profile_b = next((item for item in profiles if str(item.get("id")) == compare_b_id), None)
+            if not profile_a or not profile_b:
+                comparison_error = "One of the selected baselines could not be found."
+            else:
+                comparison = build_baseline_comparison(profile_a, profile_b)
 
     return render_template(
         "baseline.html",
         analysis=analysis,
         n=n,
-        profiles=load_baseline_profiles(),
+        profiles=profiles,
         saved_profile_id=request.args.get("saved"),
+        compare_a_id=compare_a_id,
+        compare_b_id=compare_b_id,
+        comparison=comparison,
+        comparison_error=comparison_error,
+        baseline_profile_label=baseline_profile_label,
     )
 
 
