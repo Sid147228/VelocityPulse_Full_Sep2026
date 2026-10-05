@@ -149,6 +149,7 @@
     <div class="hero-meta">
       <div><strong>Generated:</strong> {{ timestamp[:19].replace('T',' ') if timestamp else 'Not available' }}</div>
       <div><strong>Report:</strong> {{ report_name or file_name or 'Untitled Report' }}</div>
+      <div><strong>Project:</strong> {{ project_name or 'Not available' }}</div>
       <div><strong>File:</strong> {{ file_name or 'Not available' }}</div>
       {% if baseline_profile_id %}
       <div><strong>Baseline:</strong> Baseline {{ baseline_profile_id }}{% if baseline_profile_name and baseline_profile_name != ('Baseline ' ~ baseline_profile_id) %} — {{ baseline_profile_name }}{% endif %}</div>
