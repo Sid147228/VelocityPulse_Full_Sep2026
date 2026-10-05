@@ -1491,6 +1491,10 @@ def project_select():
     user_id = _current_user_id()
     projects = projects_for_user(user_id)
 
+    requested_next = request.args.get("next")
+    if request.method == "GET" and is_safe_local_redirect(requested_next):
+        session["post_project_redirect"] = requested_next
+
     if request.method == "POST":
         project_id = str(request.form.get("project_id") or "").strip()
         project = find_user_project(project_id, user_id)
