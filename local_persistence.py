@@ -106,7 +106,6 @@ class LocalPersistence:
             raise RuntimeError(f"VelocityPulse data database integrity check failed: {status}")
 
         self._migrate_legacy_json_if_needed()
-        self.backup_if_due()
 
     def integrity_check(self):
         try:
@@ -136,6 +135,9 @@ class LocalPersistence:
             row = connection.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()
         return int(row[0] if row else 0)
 
+    def _backup_after_write(self):
+        self.backup_now(label="autosave")
+
     def load_projects(self):
         with self._connect() as connection:
             rows = connection.execute(
@@ -164,6 +166,7 @@ class LocalPersistence:
                         self._json_payload(project),
                     ),
                 )
+        self._backup_after_write()
 
     def load_reports(self):
         with self._connect() as connection:
@@ -190,6 +193,7 @@ class LocalPersistence:
                     self._json_payload(report),
                 ),
             )
+        self._backup_after_write()
 
     def replace_reports(self, reports):
         reports = [dict(item) for item in (reports or []) if isinstance(item, dict)]
@@ -213,6 +217,7 @@ class LocalPersistence:
                         self._json_payload(report),
                     ),
                 )
+        self._backup_after_write()
 
     def load_baselines(self):
         with self._connect() as connection:
@@ -250,6 +255,7 @@ class LocalPersistence:
                         self._json_payload(profile),
                     ),
                 )
+        self._backup_after_write()
 
     def save_run_context(self, run_key, project):
         run_key = str(run_key or "").strip()
@@ -280,6 +286,7 @@ class LocalPersistence:
                     self._json_payload(payload),
                 ),
             )
+        self._backup_after_write()
 
     def load_run_context(self, run_key):
         run_key = str(run_key or "").strip()
@@ -427,10 +434,22 @@ class LocalPersistence:
         safety_copy = self.backup_now(label="pre_restore")
         restore_temp = self.db_path + ".restore"
         shutil.copy2(backup_path, restore_temp)
+
+        for suffix in ("-wal", "-shm"):
+            try:
+                os.remove(self.db_path + suffix)
+            except FileNotFoundError:
+                pass
+
         os.replace(restore_temp, self.db_path)
 
         status = self.integrity_check()
         if status != "ok":
             shutil.copy2(safety_copy, self.db_path)
+            for suffix in ("-wal", "-shm"):
+                try:
+                    os.remove(self.db_path + suffix)
+                except FileNotFoundError:
+                    pass
             raise RuntimeError(f"Restore failed integrity check and was rolled back: {status}")
         return safety_copy
