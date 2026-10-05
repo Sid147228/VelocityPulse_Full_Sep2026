@@ -72,6 +72,20 @@
           <input id="reportName" type="text" name="report_name" placeholder="e.g. Checkout Load Test - Build 2026.10.04" required>
         </div>
 
+        <div class="form-field form-field--wide">
+          <label for="baselineProfile">Historical baseline (optional)</label>
+          <select id="baselineProfile" name="baseline_profile_id">
+            <option value="">Use configured global SLA only</option>
+            {% for profile in baseline_profiles %}
+              {% set number = profile.get('number') or profile.get('id') %}
+              <option value="{{ profile.get('id') }}" {% if selected_baseline_profile and (selected_baseline_profile|string) == (profile.get('id')|string) %}selected{% endif %}>
+                Baseline {{ number }}{% if profile.get('name') and profile.get('name') != ('Baseline ' ~ number) %} — {{ profile.get('name') }}{% endif %}
+              </option>
+            {% endfor %}
+          </select>
+          <span class="helper-text">When selected, matching transactions use the baseline's per-transaction P90 thresholds. Transactions not present in that baseline keep the global SLA below.</span>
+        </div>
+
         <div class="form-field">
           <label for="greenSla">Green SLA (seconds)</label>
           <input id="greenSla" type="number" step="0.01" min="0" name="green" value="1.5" required>
