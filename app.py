@@ -1528,6 +1528,23 @@ def project_select():
         if not project:
             flash("Select a valid project.", "error")
         else:
+            current = active_project()
+            switching_projects = (
+                current
+                and str(current.get("id")) != str(project.get("id"))
+            )
+            live_test_active = bool(
+                test_running
+                and current_process
+                and current_process.poll() is None
+            )
+            if switching_projects and live_test_active:
+                flash(
+                    "Finish or stop the active JMeter test before switching projects.",
+                    "warning",
+                )
+                return redirect(url_for("project_select"))
+
             set_active_project(project)
             destination = session.pop("post_project_redirect", None)
             if not is_safe_local_redirect(destination):
