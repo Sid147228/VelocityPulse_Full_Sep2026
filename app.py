@@ -41,8 +41,125 @@ socketio = SocketIO(app)
 UPLOAD_FOLDER = "uploads"
 HISTORY_FILE = "static/reports/history.json"
 BASELINE_FILE = "static/reports/baselines.json"
+PROJECTS_FILE = "static/reports/projects.json"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
+
+
+def load_projects():
+    if not os.path.exists(PROJECTS_FILE):
+        return []
+    try:
+        with open(PROJECTS_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, list) else []
+    except Exception:
+        app.logger.exception("Unable to load projects")
+        return []
+
+
+def save_projects(projects):
+    os.makedirs(os.path.dirname(PROJECTS_FILE), exist_ok=True)
+    with open(PROJECTS_FILE, "w", encoding="utf-8") as handle:
+        json.dump(projects, handle, indent=2)
+
+
+def _current_user_id():
+    profile = session.get("user_profile") or {}
+    try:
+        return int(profile.get("id"))
+    except (TypeError, ValueError):
+        return None
+
+
+def projects_for_user(user_id=None):
+    user_id = _current_user_id() if user_id is None else user_id
+    if user_id is None:
+        return []
+    return [
+        project
+        for project in load_projects()
+        if str(project.get("owner_user_id")) == str(user_id)
+    ]
+
+
+def find_user_project(project_id, user_id=None):
+    if not project_id:
+        return None
+    requested = str(project_id)
+    return next(
+        (
+            project
+            for project in projects_for_user(user_id)
+            if str(project.get("id")) == requested
+        ),
+        None,
+    )
+
+
+def active_project():
+    return find_user_project(session.get("active_project_id"))
+
+
+def _migrate_legacy_records_to_project(project):
+    """Assign pre-project reports/baselines to the first project without losing data."""
+    project_id = str(project.get("id"))
+    project_name = str(project.get("name") or "")
+
+    for file_path in (HISTORY_FILE, BASELINE_FILE):
+        if not os.path.exists(file_path):
+            continue
+        try:
+            with open(file_path, "r", encoding="utf-8") as handle:
+                records = json.load(handle)
+            if not isinstance(records, list):
+                continue
+            changed = False
+            for record in records:
+                if not isinstance(record, dict) or record.get("project_id"):
+                    continue
+                record["project_id"] = project_id
+                record["project_name"] = project_name
+                changed = True
+            if changed:
+                with open(file_path, "w", encoding="utf-8") as handle:
+                    json.dump(records, handle, indent=2)
+        except Exception:
+            app.logger.exception("Unable to migrate legacy records in %s", file_path)
+
+
+def create_project(name, user_id, migrate_legacy=False):
+    clean_name = re.sub(r"\s+", " ", str(name or "").strip())
+    if len(clean_name) < 2 or len(clean_name) > 80:
+        raise ValueError("Project name must contain between 2 and 80 characters.")
+
+    user_projects = projects_for_user(user_id)
+    if any(str(item.get("name") or "").casefold() == clean_name.casefold() for item in user_projects):
+        raise ValueError("A project with that name already exists.")
+
+    project = {
+        "id": uuid.uuid4().hex[:12],
+        "name": clean_name,
+        "owner_user_id": int(user_id),
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    projects = load_projects()
+    projects.append(project)
+    save_projects(projects)
+
+    if migrate_legacy:
+        _migrate_legacy_records_to_project(project)
+
+    return project
+
+
+def set_active_project(project):
+    if not project:
+        session.pop("active_project_id", None)
+        session.pop("active_project_name", None)
+        return
+    session["active_project_id"] = str(project.get("id"))
+    session["active_project_name"] = str(project.get("name") or "")
 
 
 def _format_test_timestamp(timestamp_ms):
@@ -159,12 +276,13 @@ def _load_auth_user(email):
         ).fetchone()
 
 
-def _render_register(display_name="", email="", status=200):
+def _render_register(display_name="", email="", project_name="", status=200):
     return (
         render_template(
             "register.html",
             display_name=display_name,
             email=email,
+            project_name=project_name,
             registration_code_required=bool(PIN_REGISTRATION_CODE),
             allowed_domains=sorted(PIN_ALLOWED_EMAIL_DOMAINS),
         ),
@@ -217,9 +335,9 @@ def _establish_pin_session(user):
     session["authenticated_at"] = now
     session["last_activity_at"] = now
 
-    if not is_safe_local_redirect(destination):
-        destination = url_for("upload")
-    return destination
+    if is_safe_local_redirect(destination):
+        session["post_project_redirect"] = destination
+    return url_for("project_select")
 
 
 def is_safe_local_redirect(target):
@@ -259,6 +377,20 @@ def require_pin_authentication():
         return redirect(url_for("login"))
 
     session["last_activity_at"] = now
+
+    project_exempt_endpoints = {
+        "project_select",
+        "project_create",
+        "logout",
+        "about",
+        "static",
+    }
+    if request.endpoint not in project_exempt_endpoints and not active_project():
+        if request.method == "GET" and is_safe_local_redirect(request.full_path.rstrip("?")):
+            session["post_project_redirect"] = request.full_path.rstrip("?")
+        flash("Select the application/project you want to work with.", "info")
+        return redirect(url_for("project_select"))
+
     return None
 
 
@@ -279,21 +411,46 @@ def inject_version():
     return {
         "app_version": __version__,
         "build": __build__,
-        "codename": __codename__
+        "codename": __codename__,
+        "active_project": active_project(),
+        "available_projects": projects_for_user(),
     }
 
 # History helpers
-def load_history():
+def load_history(project_id=None, include_all=False):
     if not os.path.exists(HISTORY_FILE):
         return []
     try:
         with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            history = json.load(f)
     except Exception:
         return []
 
+    if not isinstance(history, list):
+        return []
+    if include_all:
+        return history
+
+    project_id = str(project_id or session.get("active_project_id") or "")
+    if not project_id:
+        return []
+    return [
+        report
+        for report in history
+        if str((report or {}).get("project_id") or "") == project_id
+    ]
+
+
 def save_report(report_data):
-    history = load_history()
+    project = active_project()
+    if not project:
+        raise ValueError("An active project is required before saving a report.")
+
+    report_data = dict(report_data)
+    report_data["project_id"] = str(project.get("id"))
+    report_data["project_name"] = str(project.get("name") or "")
+
+    history = load_history(include_all=True)
     history.insert(0, report_data)  # newest first
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
@@ -1251,6 +1408,7 @@ def register():
 
     if request.method == "POST":
         display_name = str(request.form.get("display_name") or "").strip()
+        project_name = re.sub(r"\s+", " ", str(request.form.get("project_name") or "").strip())
         email = _normalise_email(request.form.get("email"))
         pin = str(request.form.get("pin") or "").strip()
         confirm_pin = str(request.form.get("confirm_pin") or "").strip()
@@ -1258,33 +1416,37 @@ def register():
 
         if len(display_name) < 2 or len(display_name) > 80:
             flash("Enter your name.", "error")
-            return _render_register(display_name, email, 400)
+            return _render_register(display_name, email, project_name, 400)
+
+        if len(project_name) < 2 or len(project_name) > 80:
+            flash("Enter the application/project name for your performance results.", "error")
+            return _render_register(display_name, email, project_name, 400)
 
         if not _email_allowed(email):
             if PIN_ALLOWED_EMAIL_DOMAINS:
                 flash("Use an approved organization email address.", "error")
             else:
                 flash("Enter a valid work email address.", "error")
-            return _render_register(display_name, email, 400)
+            return _render_register(display_name, email, project_name, 400)
 
         if PIN_REGISTRATION_CODE and not secrets.compare_digest(
             registration_code,
             PIN_REGISTRATION_CODE,
         ):
             flash("The registration code is invalid.", "error")
-            return _render_register(display_name, email, 403)
+            return _render_register(display_name, email, project_name, 403)
 
         if not _valid_pin(pin):
             flash(f"PIN must contain exactly {PIN_LENGTH} digits.", "error")
-            return _render_register(display_name, email, 400)
+            return _render_register(display_name, email, project_name, 400)
 
         if pin != confirm_pin:
             flash("PIN and confirmation do not match.", "error")
-            return _render_register(display_name, email, 400)
+            return _render_register(display_name, email, project_name, 400)
 
         if pin in {"000000", "111111", "123456", "654321", "999999"}:
             flash("Choose a less predictable PIN.", "error")
-            return _render_register(display_name, email, 400)
+            return _render_register(display_name, email, project_name, 400)
 
         try:
             with _auth_db_connection() as connection:
@@ -1301,15 +1463,19 @@ def register():
                 user_id = cursor.lastrowid
         except sqlite3.IntegrityError:
             flash("An account with that email already exists. Sign in instead.", "error")
-            return _render_register(display_name, email, 409)
+            return _render_register(display_name, email, project_name, 409)
 
         user = {
             "id": user_id,
             "display_name": display_name,
             "email": email,
         }
-        flash("PIN registration complete.", "success")
-        return redirect(_establish_pin_session(user))
+        migrate_legacy = not load_projects()
+        project = create_project(project_name, user_id, migrate_legacy=migrate_legacy)
+        destination = _establish_pin_session(user)
+        set_active_project(project)
+        flash(f"Registration complete. Active project: {project['name']}.", "success")
+        return redirect(url_for("upload"))
 
     return _render_register()[0]
 
@@ -1318,6 +1484,49 @@ def register():
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+
+@app.route("/projects/select", methods=["GET", "POST"])
+def project_select():
+    user_id = _current_user_id()
+    projects = projects_for_user(user_id)
+
+    if request.method == "POST":
+        project_id = str(request.form.get("project_id") or "").strip()
+        project = find_user_project(project_id, user_id)
+        if not project:
+            flash("Select a valid project.", "error")
+        else:
+            set_active_project(project)
+            destination = session.pop("post_project_redirect", None)
+            if not is_safe_local_redirect(destination):
+                destination = url_for("upload")
+            return redirect(destination)
+
+    return render_template(
+        "projects.html",
+        projects=projects,
+        active_project=active_project(),
+    )
+
+
+@app.route("/projects/create", methods=["POST"])
+def project_create():
+    user_id = _current_user_id()
+    project_name = str(request.form.get("project_name") or "").strip()
+    try:
+        migrate_legacy = not load_projects()
+        project = create_project(project_name, user_id, migrate_legacy=migrate_legacy)
+    except ValueError as exc:
+        flash(str(exc), "error")
+        return redirect(url_for("project_select"))
+
+    set_active_project(project)
+    flash(f"Project '{project['name']}' created and selected.", "success")
+    destination = session.pop("post_project_redirect", None)
+    if not is_safe_local_redirect(destination):
+        destination = url_for("upload")
+    return redirect(destination)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -1588,8 +1797,11 @@ def analyze():
         })
         observations = observations[:12]
 
+    project = active_project()
     report_data = {
         "report_name": report_name,
+        "project_id": str(project.get("id")),
+        "project_name": str(project.get("name") or ""),
         "file_name": os.path.basename(file_path),
         "summary": filtered,
         "rag_result": test_rag,
@@ -1836,16 +2048,28 @@ def trend():
         n=n,
         trend_observations=trend_observations
     )
-def load_baseline_profiles():
+def load_baseline_profiles(project_id=None, include_all=False):
     if not os.path.exists(BASELINE_FILE):
         return []
     try:
         with open(BASELINE_FILE, "r", encoding="utf-8") as handle:
             data = json.load(handle)
-        return data if isinstance(data, list) else []
+        profiles = data if isinstance(data, list) else []
     except Exception:
         app.logger.exception("Unable to load baseline profiles")
         return []
+
+    if include_all:
+        return profiles
+
+    project_id = str(project_id or session.get("active_project_id") or "")
+    if not project_id:
+        return []
+    return [
+        profile
+        for profile in profiles
+        if str((profile or {}).get("project_id") or "") == project_id
+    ]
 
 
 def save_baseline_profiles(profiles):
@@ -2228,10 +2452,13 @@ def baseline():
             for report in reports[:n]
         ]
 
+        project = active_project()
         profile = {
             "id": str(baseline_number),
             "number": baseline_number,
             "name": profile_name,
+            "project_id": str(project.get("id")),
+            "project_name": str(project.get("name") or ""),
             "created_at": datetime.utcnow().isoformat(),
             "source_report_count": analysis["reports_used"],
             "source_reports": source_reports,
@@ -2252,8 +2479,9 @@ def baseline():
                 for row in eligible
             },
         }
-        profiles.insert(0, profile)
-        save_baseline_profiles(profiles)
+        all_profiles = load_baseline_profiles(include_all=True)
+        all_profiles.insert(0, profile)
+        save_baseline_profiles(all_profiles)
         flash(
             f"Baseline {baseline_number} saved with {len(eligible)} transaction(s).",
             "success",
