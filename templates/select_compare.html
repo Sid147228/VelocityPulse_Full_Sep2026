@@ -40,7 +40,7 @@
     </nav>
     <div class="account">
         {% if active_project %}
-        <a href="{{ url_for('project_select') }}" style="color:white;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 10px;border-radius:4px;">
+        <a href="{{ url_for('project_select', next=request.path) }}" style="color:white;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 10px;border-radius:4px;">
           Project: <strong>{{ active_project.get('name') }}</strong>
         </a>
         {% endif %}
