@@ -23,3 +23,11 @@ uploads/
 Thumbs.db
 .vscode/
 .idea/
+
+# Generated VelocityPulse performance data
+static/reports/history.json
+static/reports/baselines.json
+static/reports/projects.json
+static/reports/graphs/
+backups/
+data/
