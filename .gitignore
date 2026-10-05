@@ -31,3 +31,7 @@ static/reports/projects.json
 static/reports/graphs/
 backups/
 data/
+
+# Legacy/generated report storage that must never be committed
+report_history.json
+reports/
