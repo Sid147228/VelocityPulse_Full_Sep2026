@@ -23,6 +23,7 @@ from generate_graphs import generate_graphs
 from generate_transaction_progress import generate_transaction_progress
 from generate_rag_pie import generate_rag_pie
 from pdf_export import build_single_report_pdf, build_compare_report_pdf
+from local_persistence import LocalPersistence
 
 from flask_socketio import SocketIO
 from collections import defaultdict, deque
@@ -42,26 +43,42 @@ UPLOAD_FOLDER = "uploads"
 HISTORY_FILE = "static/reports/history.json"
 BASELINE_FILE = "static/reports/baselines.json"
 PROJECTS_FILE = "static/reports/projects.json"
+DATA_DB_PATH = os.getenv(
+    "VELOCITYPULSE_DATA_DB_PATH",
+    os.path.join("instance", "velocitypulse_data.db"),
+).strip()
+DATA_BACKUP_DIR = os.getenv(
+    "VELOCITYPULSE_BACKUP_DIR",
+    os.path.join("instance", "backups"),
+).strip()
+DATA_BACKUP_RETENTION = max(
+    3,
+    int(os.getenv("VELOCITYPULSE_BACKUP_RETENTION", "30")),
+)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs("static/reports", exist_ok=True)  # ensure reports dir exists
+os.makedirs("static/reports", exist_ok=True)
+
+data_store = LocalPersistence(
+    db_path=DATA_DB_PATH,
+    backup_dir=DATA_BACKUP_DIR,
+    legacy_history_path=HISTORY_FILE,
+    legacy_baselines_path=BASELINE_FILE,
+    legacy_projects_path=PROJECTS_FILE,
+    backup_retention=DATA_BACKUP_RETENTION,
+)
+data_store.initialize()
 
 
 def load_projects():
-    if not os.path.exists(PROJECTS_FILE):
-        return []
     try:
-        with open(PROJECTS_FILE, "r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        return data if isinstance(data, list) else []
+        return data_store.load_projects()
     except Exception:
-        app.logger.exception("Unable to load projects")
+        app.logger.exception("Unable to load projects from local SQLite storage")
         return []
 
 
 def save_projects(projects):
-    os.makedirs(os.path.dirname(PROJECTS_FILE), exist_ok=True)
-    with open(PROJECTS_FILE, "w", encoding="utf-8") as handle:
-        json.dump(projects, handle, indent=2)
+    data_store.replace_projects(projects)
 
 
 def _current_user_id():
@@ -106,26 +123,25 @@ def _migrate_legacy_records_to_project(project):
     project_id = str(project.get("id"))
     project_name = str(project.get("name") or "")
 
-    for file_path in (HISTORY_FILE, BASELINE_FILE):
-        if not os.path.exists(file_path):
-            continue
-        try:
-            with open(file_path, "r", encoding="utf-8") as handle:
-                records = json.load(handle)
-            if not isinstance(records, list):
-                continue
-            changed = False
-            for record in records:
-                if not isinstance(record, dict) or record.get("project_id"):
-                    continue
-                record["project_id"] = project_id
-                record["project_name"] = project_name
-                changed = True
-            if changed:
-                with open(file_path, "w", encoding="utf-8") as handle:
-                    json.dump(records, handle, indent=2)
-        except Exception:
-            app.logger.exception("Unable to migrate legacy records in %s", file_path)
+    reports = data_store.load_reports()
+    report_changed = False
+    for record in reports:
+        if isinstance(record, dict) and not record.get("project_id"):
+            record["project_id"] = project_id
+            record["project_name"] = project_name
+            report_changed = True
+    if report_changed:
+        data_store.replace_reports(reports)
+
+    baselines = data_store.load_baselines()
+    baseline_changed = False
+    for record in baselines:
+        if isinstance(record, dict) and not record.get("project_id"):
+            record["project_id"] = project_id
+            record["project_name"] = project_name
+            baseline_changed = True
+    if baseline_changed:
+        data_store.replace_baselines(baselines)
 
 
 def create_project(name, user_id, migrate_legacy=False):
@@ -438,16 +454,12 @@ def inject_version():
 
 # History helpers
 def load_history(project_id=None, include_all=False):
-    if not os.path.exists(HISTORY_FILE):
-        return []
     try:
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            history = json.load(f)
+        history = data_store.load_reports()
     except Exception:
+        app.logger.exception("Unable to load report history from local SQLite storage")
         return []
 
-    if not isinstance(history, list):
-        return []
     if include_all:
         return history
 
@@ -477,10 +489,7 @@ def save_report(report_data):
     report_data["project_id"] = str(project.get("id"))
     report_data["project_name"] = str(project.get("name") or "")
 
-    history = load_history(include_all=True)
-    history.insert(0, report_data)  # newest first
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2)
+    data_store.insert_report(report_data)
 
 
 def overall_rag(summary):
@@ -2097,14 +2106,10 @@ def trend():
         trend_observations=trend_observations
     )
 def load_baseline_profiles(project_id=None, include_all=False):
-    if not os.path.exists(BASELINE_FILE):
-        return []
     try:
-        with open(BASELINE_FILE, "r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        profiles = data if isinstance(data, list) else []
+        profiles = data_store.load_baselines()
     except Exception:
-        app.logger.exception("Unable to load baseline profiles")
+        app.logger.exception("Unable to load baseline profiles from local SQLite storage")
         return []
 
     if include_all:
@@ -2121,9 +2126,7 @@ def load_baseline_profiles(project_id=None, include_all=False):
 
 
 def save_baseline_profiles(profiles):
-    os.makedirs(os.path.dirname(BASELINE_FILE), exist_ok=True)
-    with open(BASELINE_FILE, "w", encoding="utf-8") as handle:
-        json.dump(profiles, handle, indent=2)
+    data_store.replace_baselines(profiles)
 
 
 def baseline_profile_number(profile):
