@@ -456,11 +456,18 @@ def load_history(project_id=None, include_all=False):
 
 
 def save_report(report_data):
-    project = active_project()
+    report_data = dict(report_data)
+    explicit_project_id = str(report_data.get("project_id") or "").strip()
+    if explicit_project_id:
+        project = find_user_project(explicit_project_id)
+        if not project:
+            raise ValueError("The report project does not belong to the signed-in user.")
+    else:
+        project = active_project()
+
     if not project:
         raise ValueError("An active project is required before saving a report.")
 
-    report_data = dict(report_data)
     report_data["project_id"] = str(project.get("id"))
     report_data["project_name"] = str(project.get("name") or "")
 
@@ -2558,6 +2565,31 @@ def _latest_run_dir():
         candidates.append((os.path.getmtime(sort_path), path))
     return max(candidates, default=(None, None), key=lambda item: item[0])[1]
 
+def _write_run_project_metadata(run_dir, project):
+    if not run_dir or not project:
+        return
+    metadata = {
+        "project_id": str(project.get("id")),
+        "project_name": str(project.get("name") or ""),
+    }
+    with open(os.path.join(run_dir, "project.json"), "w", encoding="utf-8") as handle:
+        json.dump(metadata, handle, indent=2)
+
+
+def _read_run_project_metadata(run_dir):
+    if not run_dir:
+        return {}
+    path = os.path.join(run_dir, "project.json")
+    if not os.path.isfile(path):
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
 def make_run_dir():
     run_id = uuid.uuid4().hex[:8]
     run_dir = os.path.join("uploads", f"run_{run_id}")
@@ -2642,6 +2674,7 @@ def run_test():
         socketio.emit("run_reset", {"status": "new test"})
         run_dir = make_run_dir()
         current_run_dir = run_dir
+        _write_run_project_metadata(run_dir, active_project())
 
         jmx_path = os.path.join(run_dir, jmx_name)
         jmx_file.save(jmx_path)
@@ -2969,6 +3002,7 @@ def generate_report():
         return redirect(url_for("live_progress"))
 
     latest_run = os.path.basename(run_dir)
+    run_project = _read_run_project_metadata(run_dir)
     results_file = os.path.join(run_dir, "results.jtl")
 
     if not os.path.exists(results_file):
@@ -3006,6 +3040,8 @@ def generate_report():
 
     report_data = {
         "report_name": f"Live Test {latest_run}",
+        "project_id": run_project.get("project_id"),
+        "project_name": run_project.get("project_name"),
         "file_name": os.path.basename(results_file),
         "summary": summary,
         "rag_result": test_rag,
