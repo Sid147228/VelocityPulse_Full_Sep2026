@@ -3,8 +3,8 @@
 {% block content %}
 <section class="history-page" aria-labelledby="history-title">
   <div class="history-heading">
-    <h2 id="history-title">Report History</h2>
-    <p class="history-subtitle">Review previously generated performance reports.</p>
+    <h2 id="history-title">Report History{% if active_project %} — {{ active_project.get('name') }}{% endif %}</h2>
+    <p class="history-subtitle">Review previously generated performance reports for the active project only.</p>
   </div>
 
   {% if reports and reports|length > 0 %}
