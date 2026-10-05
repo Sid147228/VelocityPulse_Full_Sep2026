@@ -54,7 +54,7 @@
 <section class="baseline-shell">
   <div class="baseline-hero">
     <div>
-      <h1>Performance Baselines</h1>
+      <h1>Performance Baselines{% if active_project %} — {{ active_project.get('name') }}{% endif %}</h1>
       <p>Build a proposed baseline from recent historical runs, review transaction stability, then save it as a permanent numbered snapshot. Saved baselines remain immutable and can be compared later.</p>
     </div>
   </div>
