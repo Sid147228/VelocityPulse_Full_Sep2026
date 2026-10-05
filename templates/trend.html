@@ -1,153 +1,317 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card">
-  <h2 class="card-title">📈 Trend Analysis{% if active_project %} — {{ active_project.get('name') }}{% endif %} (Last {{ n }} Tests)</h2>
+<style>
+  .trend-shell{max-width:1500px;margin:0 auto;padding:18px 20px 34px;color:#17324d}
+  .trend-hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:16px}
+  .trend-hero h1{margin:0;color:#173d68;font-size:2rem}
+  .trend-hero p{margin:7px 0 0;color:#60758b;max-width:900px;line-height:1.45}
+  .toolbar,.panel{background:#fff;border:1px solid #dbe5ef;border-radius:14px;box-shadow:0 5px 16px rgba(27,62,101,.06)}
+  .toolbar{display:flex;gap:12px;align-items:end;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:170px}
+  .field.wide{min-width:270px}
+  .field label{font-size:.78rem;font-weight:800;color:#4f6880;text-transform:uppercase;letter-spacing:.04em}
+  .field input,.field select{min-height:40px;border:1px solid #cfdbe7;border-radius:8px;padding:7px 10px;background:#fff;color:#17324d}
+  .field select[multiple]{min-height:112px}
+  .btn{height:40px;border:0;border-radius:8px;padding:0 14px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .btn-primary{background:#225fa1;color:#fff}
+  .summary-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+  .summary-card{background:#fff;border:1px solid #dbe5ef;border-radius:14px;padding:15px;box-shadow:0 5px 16px rgba(27,62,101,.05)}
+  .summary-card .value{font-size:1.5rem;font-weight:900;color:#173d68}
+  .summary-card .label{margin-top:4px;color:#71869a;font-size:.82rem}
+  .panel{margin-top:14px;overflow:hidden}
+  .panel-head{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid #e4ebf2;background:#fbfdff}
+  .panel-head h2{margin:0;font-size:1.03rem;color:#173d68}
+  .panel-head p{margin:4px 0 0;color:#71869a;font-size:.82rem}
+  .panel-body{padding:16px}
+  .method{background:#f4f8fc;border:1px solid #d8e5f0;border-radius:10px;padding:12px 14px;color:#50677e;line-height:1.45}
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:.82rem}
+  th{background:#f4f8fc;color:#284865;text-align:center;font-weight:800;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #dbe5ef}
+  td{padding:10px 8px;border-bottom:1px solid #edf1f5;text-align:center;white-space:nowrap}
+  td:first-child{text-align:left;font-weight:800;color:#203b58}
+  .badge{display:inline-flex;border-radius:999px;padding:4px 8px;font-size:.7rem;font-weight:900}
+  .stable,.green{background:#e5f6eb;color:#1d7b3e}
+  .variable,.amber{background:#fff4d7;color:#936000}
+  .unstable,.red{background:#ffe5e5;color:#bd2d33}
+  .insufficient,.no-baseline,.no-data{background:#edf1f5;color:#66798b}
+  .trend-insight-list{display:grid;gap:10px}
+  .trend-insight{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-left:5px solid #2a5298;border-radius:6px;background:#f5f8fc;color:#334155;line-height:1.45}
+  .trend-insight strong{color:#1e3c72}
+  .trend-insight--success{border-left-color:#28a745;background:#effaf1}
+  .trend-insight--warning{border-left-color:#e0a800;background:#fff9e8}
+  .trend-insight--danger{border-left-color:#dc3545;background:#fff1f2}
+  .chart-wrap{position:relative;min-height:430px}
+  .baseline-note{margin-top:10px;color:#60758b;font-size:.82rem}
+  @media(max-width:900px){.summary-strip{grid-template-columns:repeat(2,1fr)}.trend-hero{flex-direction:column}}
+  @media(max-width:600px){.summary-strip{grid-template-columns:1fr}}
+</style>
 
-  <form method="get" action="{{ url_for('trend') }}">
-    <label for="metric">Metric:</label>
-    <select name="metric" id="metric">
-      <option value="avg" {% if selected_metric == "avg" %}selected{% endif %}>Avg (s)</option>
-      <option value="p90" {% if selected_metric == "p90" %}selected{% endif %}>90th % (s)</option>
-    </select>
+<section class="trend-shell">
+  <div class="trend-hero">
+    <div>
+      <h1>Trend Analysis{% if active_project %} — {{ active_project.get('name') }}{% endif %}</h1>
+      <p>
+        Track how transaction performance changes across test runs. Trend shows historical movement;
+        a saved Baseline can be selected as an optional reference for the latest P90 result.
+      </p>
+    </div>
+  </div>
 
-    <label for="transactions">Transactions:</label>
-    <select id="transactions" name="transactions" multiple>
-      {% for txn in all_txns %}
-        <option value="{{ txn }}" {% if txn in selected_txns %}selected{% endif %}>{{ txn }}</option>
-      {% endfor %}
-    </select>
+  <form class="toolbar" method="get" action="{{ url_for('trend') }}">
+    <div class="field">
+      <label for="n">Recent tests</label>
+      <input id="n" name="n" type="number" min="1" max="50" value="{{ n }}">
+    </div>
 
-    <button type="submit" class="btn btn-primary">Update Graph</button>
+    <div class="field">
+      <label for="metric">Trend metric</label>
+      <select name="metric" id="metric">
+        <option value="avg" {% if selected_metric == "avg" %}selected{% endif %}>Average response time</option>
+        <option value="p90" {% if selected_metric == "p90" %}selected{% endif %}>P90 response time</option>
+        <option value="p95" {% if selected_metric == "p95" %}selected{% endif %}>P95 response time</option>
+        <option value="error" {% if selected_metric == "error" %}selected{% endif %}>Error %</option>
+      </select>
+    </div>
+
+    <div class="field wide">
+      <label for="baseline_profile">Baseline reference (optional)</label>
+      <select name="baseline_profile" id="baseline_profile">
+        <option value="">No baseline reference</option>
+        {% for profile in baseline_profiles %}
+          <option value="{{ profile.id }}" {% if selected_baseline_id == (profile.id|string) %}selected{% endif %}>
+            Baseline {{ profile.number or profile.id }}{% if profile.name and profile.name != ('Baseline ' ~ (profile.number or profile.id)) %} — {{ profile.name }}{% endif %}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field wide">
+      <label for="transactions">Transactions</label>
+      <select id="transactions" name="transactions" multiple>
+        {% for txn in all_txns %}
+          <option value="{{ txn }}" {% if txn in selected_txns %}selected{% endif %}>{{ txn }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Trend</button>
   </form>
 
-  <h3 class="section-title">Summary Table</h3>
-  <table class="metrics-table">
-    <thead>
-      <tr>
-        <th>S.NO.</th>
-        <th>Transaction</th>
-        <th>Tests Executed</th>
-        <th>Avg of Avg</th>
-        <th>Avg of 90th</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in summary_table %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ row.transaction }}</td>
-        <td>{{ row.tests_executed }}</td>
-        <td>{{ row.avg_of_avg }}</td>
-        <td>{{ row.avg_of_p90 }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="summary-strip">
+    <div class="summary-card">
+      <div class="value">{{ reports_used }}</div>
+      <div class="label">Tests in trend window</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">{{ all_txns|length }}</div>
+      <div class="label">Transactions observed</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">{{ summary_table|selectattr('stability','equalto','STABLE')|list|length }}</div>
+      <div class="label">Stable transactions</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">{{ selected_baseline.name if selected_baseline else 'None' }}</div>
+      <div class="label">Baseline reference</div>
+    </div>
+  </div>
 
-  <section class="trend-insights" aria-labelledby="trend-insights-title">
-    <h3 id="trend-insights-title" class="section-title">Trend insights</h3>
-    <div class="trend-insight-list">
-      {% for observation in trend_observations|default([]) %}
-        <div class="trend-insight trend-insight--{{ observation.type|default('info') }}">
-          <strong>{{ observation.title }}</strong>
-          <span>{{ observation.text }}</span>
-        </div>
-      {% else %}
-        <div class="trend-insight trend-insight--info">No trend insights are available.</div>
-      {% endfor %}
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>How to read this page</h2>
+        <p>Trend and Baseline have distinct roles, but use consistent performance rules.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="method">
+        <strong>Trend</strong> shows movement across runs. <strong>Stability</strong> uses the same Avg/P90/P95
+        variation bands as Baseline: Stable ≤10%, Variable 10–20%, Unstable &gt;20%.
+        {% if selected_baseline %}
+          <strong>Baseline status</strong> compares the latest P90 with the selected baseline's Green and Amber thresholds.
+        {% else %}
+          Select a saved baseline only when you want to judge the latest P90 against an accepted reference.
+        {% endif %}
+      </div>
     </div>
   </section>
 
-  <h3 class="section-title">Trend Graph</h3>
-  <canvas id="trendChart" width="800" height="400"></canvas>
-</div>
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Trend insights</h2>
+        <p>P90 is used for regression wording so the insight logic stays consistent with Baseline.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="trend-insight-list">
+        {% for observation in trend_observations|default([]) %}
+          <div class="trend-insight trend-insight--{{ observation.type|default('info') }}">
+            <strong>{{ observation.title }}</strong>
+            <span>{{ observation.text }}</span>
+          </div>
+        {% else %}
+          <div class="trend-insight">No trend insights are available.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Trend graph</h2>
+        <p>Missing transaction results remain as gaps on the correct test date instead of shifting the series.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="chart-wrap">
+        <canvas id="trendChart"></canvas>
+      </div>
+      {% if selected_baseline and selected_metric == 'p90' and selected_txns|length > 1 %}
+        <div class="baseline-note">Baseline thresholds are transaction-specific. Select one transaction to overlay its Green and Amber P90 thresholds on the graph.</div>
+      {% elif threshold_overlay %}
+        <div class="baseline-note">
+          Showing {{ threshold_overlay.transaction }} thresholds:
+          Green ≤ {{ "%.3f"|format(threshold_overlay.green) }}s,
+          Amber ≤ {{ "%.3f"|format(threshold_overlay.amber) }}s.
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Transaction summary</h2>
+        <p>Historical stability is separate from the selected baseline status to avoid conflicting labels.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction</th>
+            <th>Tests</th>
+            <th>Coverage</th>
+            <th>Avg mean</th>
+            <th>P90 mean</th>
+            <th>P95 mean</th>
+            <th>Error mean</th>
+            <th>Variation</th>
+            <th>History stability</th>
+            {% if selected_baseline %}
+              <th>Latest P90</th>
+              <th>Baseline status</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in summary_table %}
+          <tr>
+            <td>{{ row.transaction }}</td>
+            <td>{{ row.tests_executed }}</td>
+            <td>{{ "%.0f"|format(row.coverage_pct) }}%</td>
+            <td>{{ "%.3f"|format(row.avg_of_avg) if row.avg_of_avg is not none else "—" }}</td>
+            <td>{{ "%.3f"|format(row.avg_of_p90) if row.avg_of_p90 is not none else "—" }}</td>
+            <td>{{ "%.3f"|format(row.avg_of_p95) if row.avg_of_p95 is not none else "—" }}</td>
+            <td>{{ "%.2f"|format(row.avg_error) ~ "%" if row.avg_error is not none else "—" }}</td>
+            <td>{{ "%.1f"|format(row.max_cv_pct) ~ "%" if row.max_cv_pct is not none else "—" }}</td>
+            <td><span class="badge {{ row.stability|lower }}">{{ row.stability }}</span></td>
+            {% if selected_baseline %}
+              <td>{{ "%.3f"|format(row.latest_p90) if row.latest_p90 is not none else "—" }}</td>
+              <td><span class="badge {{ row.baseline_status|lower|replace(' ','-') }}">{{ row.baseline_status }}</span></td>
+            {% endif %}
+          </tr>
+          {% else %}
+          <tr><td colspan="{{ 11 if selected_baseline else 9 }}">No trend data is available.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById('trendChart').getContext('2d');
+  const metricLabels = {
+    avg: "Average Response Time (s)",
+    p90: "P90 Response Time (s)",
+    p95: "P95 Response Time (s)",
+    error: "Error (%)"
+  };
 
   const colorPalette = [
     "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-    "#f39c12", "#1abc9c", "#c0392b", "#9b59b6", "#34495e"
+    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
   ];
 
-  const chartData = {
-    labels: {% if selected_txns %}
-              {{ txn_trends[selected_txns[0]] | map(attribute='label') | list | tojson }}
-            {% else %}
-              []
-            {% endif %},
-    datasets: [
-      {% for txn in selected_txns %}
-      {% if txn in txn_trends %}
-      {
-        label: "{{ txn }}",
-        data: {{ txn_trends[txn] | map(attribute=selected_metric) | list | tojson }},
-        borderColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
-        backgroundColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        pointBackgroundColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
-        pointBorderColor: "#fff",
-        pointBorderWidth: 2,
-        fill: false
-      },
-      {% endif %}
-      {% endfor %}
-    ]
-  };
+  const datasets = [
+    {% for txn in selected_txns %}
+    {% if txn in txn_trends %}
+    {
+      label: {{ txn|tojson }},
+      data: {{ txn_trends[txn] | map(attribute=selected_metric) | list | tojson }},
+      borderColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
+      backgroundColor: colorPalette[{{ loop.index0 }} % colorPalette.length],
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      pointBorderWidth: 1,
+      spanGaps: false,
+      tension: 0.15
+    },
+    {% endif %}
+    {% endfor %}
+  ];
 
-  new Chart(ctx, {
-    type: 'line',
-    data: chartData,
+  {% if threshold_overlay %}
+  datasets.push({
+    label: "Baseline Green P90",
+    data: {{ ([threshold_overlay.green] * chart_labels|length) | tojson }},
+    borderColor: "#2e8b57",
+    borderDash: [7, 5],
+    pointRadius: 0,
+    spanGaps: true
+  });
+  datasets.push({
+    label: "Baseline Amber P90",
+    data: {{ ([threshold_overlay.amber] * chart_labels|length) | tojson }},
+    borderColor: "#d18b00",
+    borderDash: [7, 5],
+    pointRadius: 0,
+    spanGaps: true
+  });
+  {% endif %}
+
+  new Chart(document.getElementById("trendChart").getContext("2d"), {
+    type: "line",
+    data: {
+      labels: {{ chart_labels|tojson }},
+      datasets: datasets
+    },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
       plugins: {
-        legend: { position: 'top' },
+        legend: { position: "top" },
         title: {
           display: true,
-          text: '{{ "Average Response Time (s)" if selected_metric == "avg" else "90th Percentile Response Time (s)" }}'
-        },
-        tooltip: {
-          mode: 'index',
-          intersect: false
+          text: metricLabels[{{ selected_metric|tojson }}]
         }
       },
       scales: {
         x: {
-          title: {
-            display: true,
-            text: 'Test Date'
-          }
+          title: { display: true, text: "Test date" }
         },
         y: {
-          title: {
-            display: true,
-            text: '{{ "Avg Response Time (s)" if selected_metric == "avg" else "90th % Response Time (s)" }}'
-          },
-          beginAtZero: false
-        }
-      },
-      elements: {
-        point: {
-          radius: 5,
-          hoverRadius: 7
+          title: { display: true, text: metricLabels[{{ selected_metric|tojson }}] },
+          beginAtZero: {{ 'true' if selected_metric == 'error' else 'false' }}
         }
       }
     }
   });
 </script>
-
-<style>
-  .trend-insights { margin-top: 28px; }
-  .trend-insight-list { display:grid; gap:10px; }
-  .trend-insight { display:flex; flex-direction:column; gap:4px; padding:12px 14px; border-left:5px solid #2a5298; border-radius:6px; background:#f5f8fc; color:#334155; line-height:1.45; }
-  .trend-insight strong { color:#1e3c72; }
-  .trend-insight--success { border-left-color:#28a745; background:#effaf1; }
-  .trend-insight--warning { border-left-color:#e0a800; background:#fff9e8; }
-  .trend-insight--danger { border-left-color:#dc3545; background:#fff1f2; }
-</style>
 
 {% endblock %}
