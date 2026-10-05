@@ -2,174 +2,265 @@
 
 {% block content %}
 <style>
-  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-  th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: center; }
-  th { background-color: #f8f9fa; }
-  .alert { margin: 10px 0; padding: 10px; border: 1px solid #d6d8db; background-color: #f8f9fa; border-radius: 4px; }
-  .form-inline { margin-bottom: 15px; }
-  .btn { padding: 6px 12px; border-radius: 4px; text-decoration: none; }
-  .btn-primary { background-color: #2a5298; color: #fff; }
-  .btn-primary:hover { background-color: #1d3c72; }
-  .warnings { margin: 15px 0; padding: 10px; border: 1px solid #ffeeba; background-color: #fff3cd; color: #856404; border-radius: 4px; }
-  .warnings ul { margin: 0; padding-left: 20px; }
-  .chart-container { margin-top: 30px; }
-  .definition { margin: 20px 0; padding: 12px; border: 1px solid #cce5ff; background-color: #e9f7ff; border-radius: 4px; color: #004085; }
-  .definition ul { margin: 0; padding-left: 20px; }
+  .baseline-shell{max-width:1500px;margin:0 auto;padding:18px 20px 34px;color:#17324d}
+  .baseline-hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:16px}
+  .baseline-hero h1{margin:0;color:#173d68;font-size:2rem}
+  .baseline-hero p{margin:7px 0 0;color:#60758b;max-width:820px;line-height:1.45}
+  .toolbar,.panel{background:#fff;border:1px solid #dbe5ef;border-radius:14px;box-shadow:0 5px 16px rgba(27,62,101,.06)}
+  .toolbar{display:flex;gap:12px;align-items:end;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:170px}
+  .field label{font-size:.78rem;font-weight:800;color:#4f6880;text-transform:uppercase;letter-spacing:.04em}
+  .field input,.field select{height:40px;border:1px solid #cfdbe7;border-radius:8px;padding:0 10px;background:#fff;color:#17324d}
+  .btn{height:40px;border:0;border-radius:8px;padding:0 14px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .btn-primary{background:#225fa1;color:#fff}
+  .btn-secondary{background:#eef4fa;color:#225fa1;border:1px solid #cad9e8}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+  .summary-card{background:#fff;border:1px solid #dbe5ef;border-radius:14px;padding:16px;box-shadow:0 5px 16px rgba(27,62,101,.05)}
+  .summary-card .value{font-size:1.65rem;font-weight:900;color:#173d68}
+  .summary-card .label{margin-top:4px;color:#71869a;font-size:.82rem}
+  .summary-card.good .value{color:#1f8c4b}.summary-card.warn .value{color:#a96a00}
+  .panel{margin-top:14px;overflow:hidden}
+  .panel-head{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid #e4ebf2;background:#fbfdff}
+  .panel-head h2{margin:0;font-size:1.03rem;color:#173d68}
+  .panel-head p{margin:4px 0 0;color:#71869a;font-size:.82rem}
+  .panel-body{padding:16px}
+  .method{background:#f4f8fc;border:1px solid #d8e5f0;border-radius:10px;padding:12px 14px;color:#50677e;line-height:1.45}
+  .alert{margin-bottom:12px;padding:11px 13px;border-radius:9px;background:#fff8e7;border:1px solid #f0dda6;color:#855800}
+  .alert.error{background:#fff0f0;border-color:#f0caca;color:#ad2d33}
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:.83rem}
+  th{background:#f4f8fc;color:#284865;text-align:center;font-weight:800;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #dbe5ef}
+  td{padding:10px 8px;border-bottom:1px solid #edf1f5;text-align:center;white-space:nowrap}
+  td:first-child{text-align:left;font-weight:800;color:#203b58}
+  .badge{display:inline-flex;border-radius:999px;padding:4px 8px;font-size:.7rem;font-weight:900}
+  .stable,.eligible,.improved{background:#e5f6eb;color:#1d7b3e}
+  .variable{background:#fff4d7;color:#936000}
+  .unstable,.degraded{background:#ffe5e5;color:#bd2d33}
+  .insufficient,.not-comparable{background:#edf1f5;color:#66798b}
+  .saved-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+  .saved-card{border:1px solid #dbe5ef;border-radius:11px;padding:13px;background:#fbfdff}
+  .saved-card strong{display:block;color:#173d68}
+  .saved-card small{display:block;color:#71869a;margin-top:4px;line-height:1.45}
+  .save-form{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:10px;align-items:end}
+  .compare-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+  .compare-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .compare-mini{border:1px solid #dbe5ef;border-radius:10px;padding:12px;text-align:center;background:#fbfdff}
+  .compare-mini strong{font-size:1.35rem;display:block}
+  .compare-caption{font-size:.78rem;color:#71869a;margin-top:10px}
+  @media(max-width:900px){.summary-grid,.compare-summary{grid-template-columns:repeat(2,1fr)}.compare-controls,.save-form{grid-template-columns:1fr}.baseline-hero{flex-direction:column}}
+  @media(max-width:600px){.summary-grid,.compare-summary{grid-template-columns:1fr}}
 </style>
 
-<h1>Baseline Analysis</h1>
-<p>This page calculates baseline response times (Avg, 90th percentile) across the last <strong>{{ n }}</strong> test reports and proposes SLA thresholds.</p>
+<section class="baseline-shell">
+  <div class="baseline-hero">
+    <div>
+      <h1>Performance Baselines</h1>
+      <p>Build a proposed baseline from recent historical runs, review transaction stability, then save it as a permanent numbered snapshot. Saved baselines remain immutable and can be compared later.</p>
+    </div>
+  </div>
 
-<form method="get" action="{{ url_for('baseline') }}" class="form-inline">
-  <label for="n">Number of reports to include:</label>
-  <input type="number" id="n" name="n" value="{{ n }}" min="1" max="50" style="width:80px; margin:0 8px;">
-  <button type="submit" class="btn btn-primary">Recalculate</button>
-</form>
+  <form class="toolbar" method="get" action="{{ url_for('baseline') }}">
+    <div class="field">
+      <label for="n">Historical reports</label>
+      <input id="n" name="n" type="number" min="3" max="50" value="{{ n }}">
+    </div>
+    <button class="btn btn-primary" type="submit">Generate Baseline</button>
+  </form>
 
-{# ⚠ Show warnings if any #}
-{% if warnings and warnings|length > 0 %}
-<div class="warnings">
-  <strong>⚠ Warnings:</strong>
-  <ul>
-    {% for w in warnings %}
-      <li>{{ w }}</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
+  <div class="summary-grid">
+    <div class="summary-card"><div class="value">{{ analysis.reports_used }}</div><div class="label">Reports analysed</div></div>
+    <div class="summary-card"><div class="value">{{ analysis.transactions|length }}</div><div class="label">Transactions observed</div></div>
+    <div class="summary-card good"><div class="value">{{ analysis.stable_count }}</div><div class="label">Stable transactions</div></div>
+    <div class="summary-card warn"><div class="value">{{ analysis.eligible_count }}</div><div class="label">Eligible for baseline</div></div>
+  </div>
 
-{# 📘 Definition of Proposed SLA thresholds #}
-<div class="definition">
-  <strong>Definition of Proposed SLA thresholds:</strong>
-  <ul>
-    <li><b>Avg SLA</b>: Calculated from the baseline average response time.  
-        <em>Green</em> = Baseline Avg × 1.2 (acceptable buffer),  
-        <em>Amber</em> = Baseline Avg × 1.5 (warning threshold).</li>
-    <li><b>90th Percentile SLA</b>: Calculated from the baseline 90th percentile response time.  
-        <em>Green</em> = Baseline P90 × 1.2,  
-        <em>Amber</em> = Baseline P90 × 1.5.</li>
-  </ul>
-  These multipliers provide headroom above the observed baseline to set realistic but challenging SLA targets.
-</div>
+  {% for warning in analysis.warnings %}
+    <div class="alert">{{ warning }}</div>
+  {% endfor %}
 
-{% if baselines %}
-<table>
-  <thead>
-    <tr>
-      <th rowspan="2">Transaction</th>
-      <th rowspan="2">Baseline Avg (s)</th>
-      <th rowspan="2">Baseline 90th % (s)</th>
-      <th rowspan="2">Sample Size</th>
-      <th colspan="2">Proposed SLA Avg (s)</th>
-      <th colspan="2">Proposed SLA 90th % (s)</th>
-    </tr>
-    <tr>
-      <th>Green (×1.2)</th>
-      <th>Amber (×1.5)</th>
-      <th>Green (×1.2)</th>
-      <th>Amber (×1.5)</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for txn, vals in baselines.items() %}
-    {% set avg_green = "%.2f"|format(vals.avg * 1.2) if vals.avg is not none else "—" %}
-    {% set avg_amber = "%.2f"|format(vals.avg * 1.5) if vals.avg is not none else "—" %}
-    {% set p90_green = "%.2f"|format(vals.p90 * 1.2) if vals.p90 is not none else "—" %}
-    {% set p90_amber = "%.2f"|format(vals.p90 * 1.5) if vals.p90 is not none else "—" %}
-    <tr>
-      <td>{{ txn }}</td>
-      <td>{{ "%.2f"|format(vals.avg) if vals.avg is not none else "—" }}</td>
-      <td>{{ "%.2f"|format(vals.p90) if vals.p90 is not none else "—" }}</td>
-      <td>{{ vals.sample_size }}</td>
-      <td>{{ avg_green }}</td>
-      <td>{{ avg_amber }}</td>
-      <td>{{ p90_green }}</td>
-      <td>{{ p90_amber }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Baseline Method</h2>
+        <p>Run-to-run consistency is checked using Avg, P90 and P95 variation.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="method">
+        Stable means the maximum coefficient of variation across Avg, P90 and P95 is at or below 10%.
+        Variable is 10–20%; Unstable is above 20%. For promotion into a baseline, VelocityPulse uses a stricter
+        rule: at least 3 runs, at least 60% report coverage, P90 data present, and variation at or below 15%.
+        Proposed P90 thresholds use the observed mean plus measured run-to-run variation rather than fixed multipliers.
+      </div>
+    </div>
+  </section>
 
-<div class="chart-container">
-  <h3>Visual Representation</h3>
-  <canvas id="baselineChart" width="900" height="400"></canvas>
-</div>
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Candidate Baseline Results</h2>
+        <p>Review the historical evidence before creating a permanent baseline.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction</th><th>Runs</th><th>Coverage</th><th>Avg Mean (s)</th><th>P90 Mean (s)</th>
+            <th>P95 Mean (s)</th><th>Variation</th><th>Stability</th><th>Confidence</th>
+            <th>Green P90 (s)</th><th>Amber P90 (s)</th><th>Promotion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in analysis.transactions %}
+          <tr>
+            <td>{{ row.transaction }}</td>
+            <td>{{ row.run_count }}</td>
+            <td>{{ "%.0f"|format(row.coverage_pct) }}%</td>
+            <td>{{ "%.3f"|format(row.avg.mean) if row.avg else "—" }}</td>
+            <td>{{ "%.3f"|format(row.p90.mean) if row.p90 else "—" }}</td>
+            <td>{{ "%.3f"|format(row.p95.mean) if row.p95 else "—" }}</td>
+            <td>{{ "%.1f"|format(row.max_cv_pct) ~ "%" if row.max_cv_pct is not none else "—" }}</td>
+            <td><span class="badge {{ row.stability|lower }}">{{ row.stability }}</span></td>
+            <td>{{ row.confidence }}</td>
+            <td>{{ "%.3f"|format(row.proposed_green_p90_s) if row.proposed_green_p90_s is not none else "—" }}</td>
+            <td>{{ "%.3f"|format(row.proposed_amber_p90_s) if row.proposed_amber_p90_s is not none else "—" }}</td>
+            <td>
+              {% if row.eligible %}
+                <span class="badge eligible">ELIGIBLE</span>
+              {% else %}
+                <span class="badge insufficient" title="{{ row.reason }}">NOT ELIGIBLE</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="12">No baseline data is available.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const ctx = document.getElementById('baselineChart');
-if (ctx) {
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: {{ labels|default([])|tojson }},
-      datasets: [
-        {
-          label: 'Baseline Avg (s)',
-          data: {{ avg_values|default([])|tojson }},
-          backgroundColor: 'rgba(54, 162, 235, 0.6)'
-        },
-        {
-          label: 'Baseline P90 (s)',
-          data: {{ p90_values|default([])|tojson }},
-          backgroundColor: 'rgba(255, 99, 132, 0.6)'
-        },
-        {
-          label: 'SLA Avg Green (×1.2)',
-          data: {{ avg_green_values|default([])|tojson }},
-          type: 'line',
-          borderColor: 'green',
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 3
-        },
-        {
-          label: 'SLA Avg Amber (×1.5)',
-          data: {{ avg_amber_values|default([])|tojson }},
-          type: 'line',
-          borderColor: 'orange',
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 3
-        },
-        {
-          label: 'SLA P90 Green (×1.2)',
-          data: {{ p90_green_values|default([])|tojson }},
-          type: 'line',
-          borderColor: 'darkgreen',
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 3
-        },
-        {
-          label: 'SLA P90 Amber (×1.5)',
-          data: {{ p90_amber_values|default([])|tojson }},
-          type: 'line',
-          borderColor: 'darkorange',
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: { display: true, text: 'Baseline vs Proposed SLA Thresholds' },
-        legend: { position: 'bottom' }
-      },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Response Time (s)' } },
-        x: { title: { display: true, text: 'Transactions' } }
-      }
-    }
-  });
-}
-</script>
-{% else %}
-<div class="alert">
-  No baseline data available. Try uploading and analyzing more reports first.
-</div>
-{% endif %}
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Save as New Baseline</h2>
+        <p>This creates the next permanent Baseline number. Existing versions are not overwritten.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <form method="post" action="{{ url_for('baseline') }}" class="save-form">
+        <input type="hidden" name="n" value="{{ n }}">
+        <div class="field">
+          <label for="profile_name">Friendly name (optional)</label>
+          <input id="profile_name" name="profile_name" type="text" placeholder="e.g. Pre-Migration or Release 4.2">
+        </div>
+        <button class="btn btn-primary" type="submit" {% if analysis.eligible_count == 0 %}disabled{% endif %}>Save as New Baseline</button>
+      </form>
+    </div>
+  </section>
 
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Saved Baselines</h2>
+        <p>Permanent snapshots available for future reports and comparisons.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      {% if profiles %}
+      <div class="saved-grid">
+        {% for profile in profiles %}
+        <div class="saved-card">
+          <strong>{{ baseline_profile_label(profile) }}</strong>
+          <small>{{ profile.created_at[:19].replace('T',' ') if profile.created_at else 'Date unavailable' }}</small>
+          <small>{{ profile.source_report_count or 0 }} source reports · {{ (profile.transactions or {})|length }} transactions</small>
+          <small>{{ profile.method or 'Historical baseline' }}</small>
+          <a class="btn btn-secondary" style="margin-top:10px" href="{{ url_for('upload', baseline_profile=profile.id) }}">Use for New Report</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <div class="method">No permanent baselines have been saved yet.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Compare Baselines</h2>
+        <p>Select any two saved baseline versions. Comparison uses P90 as the primary signal, with ±5% treated as stable.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <form method="get" action="{{ url_for('baseline') }}" class="compare-controls">
+        <input type="hidden" name="n" value="{{ n }}">
+        <div class="field">
+          <label for="compare_a">Baseline A</label>
+          <select id="compare_a" name="compare_a" required>
+            <option value="">Select baseline</option>
+            {% for profile in profiles %}
+              <option value="{{ profile.id }}" {% if compare_a_id == (profile.id|string) %}selected{% endif %}>{{ baseline_profile_label(profile) }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="compare_b">Baseline B</label>
+          <select id="compare_b" name="compare_b" required>
+            <option value="">Select baseline</option>
+            {% for profile in profiles %}
+              <option value="{{ profile.id }}" {% if compare_b_id == (profile.id|string) %}selected{% endif %}>{{ baseline_profile_label(profile) }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit" {% if profiles|length < 2 %}disabled{% endif %}>Compare Baselines</button>
+      </form>
+
+      {% if comparison_error %}
+        <div class="alert error" style="margin-top:14px">{{ comparison_error }}</div>
+      {% endif %}
+
+      {% if comparison %}
+        <div class="compare-summary" style="margin-top:16px">
+          <div class="compare-mini"><strong>{{ comparison.counts.improved }}</strong>Improved</div>
+          <div class="compare-mini"><strong>{{ comparison.counts.degraded }}</strong>Degraded</div>
+          <div class="compare-mini"><strong>{{ comparison.counts.stable }}</strong>Stable</div>
+          <div class="compare-mini"><strong>{{ comparison.counts.not_comparable }}</strong>Not comparable</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction</th>
+                <th>{{ comparison.label_a }} Avg</th><th>{{ comparison.label_b }} Avg</th>
+                <th>{{ comparison.label_a }} P90</th><th>{{ comparison.label_b }} P90</th>
+                <th>{{ comparison.label_a }} P95</th><th>{{ comparison.label_b }} P95</th>
+                <th>Δ P90 (s)</th><th>Change %</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in comparison.rows %}
+              <tr>
+                <td>{{ row.transaction }}</td>
+                <td>{{ "%.3f"|format(row.avg_a) if row.avg_a is not none else "—" }}</td>
+                <td>{{ "%.3f"|format(row.avg_b) if row.avg_b is not none else "—" }}</td>
+                <td>{{ "%.3f"|format(row.p90_a) if row.p90_a is not none else "—" }}</td>
+                <td>{{ "%.3f"|format(row.p90_b) if row.p90_b is not none else "—" }}</td>
+                <td>{{ "%.3f"|format(row.p95_a) if row.p95_a is not none else "—" }}</td>
+                <td>{{ "%.3f"|format(row.p95_b) if row.p95_b is not none else "—" }}</td>
+                <td>{{ "%+.3f"|format(row.delta_p90_s) if row.delta_p90_s is not none else "—" }}</td>
+                <td>{{ "%+.2f"|format(row.change_pct) ~ "%" if row.change_pct is not none else "—" }}</td>
+                <td><span class="badge {{ row.status|lower|replace(' ','-') }}">{{ row.status }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="compare-caption">Negative P90 change means the later selected baseline is faster. Positive change means it is slower.</div>
+      {% endif %}
+    </div>
+  </section>
+</section>
 {% endblock %}
