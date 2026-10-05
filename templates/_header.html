@@ -12,6 +12,13 @@
   </nav>
   {% set profile = session.get('user_profile', {}) %}
   <div class="vp-account">
+    {% if active_project %}
+    <a href="{{ url_for('project_select') }}" title="Switch application/project"
+       style="display:inline-flex;flex-direction:column;gap:1px;padding:6px 10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;color:inherit;text-decoration:none;">
+      <small style="opacity:.78;">Active project</small>
+      <strong>{{ active_project.get('name') }}</strong>
+    </a>
+    {% endif %}
     <span>
       Signed in as {{ profile.get('name') or session.get('user', 'VelocityPulse user') }}
       {% if profile.get('email') %}<small style="display:block; opacity:.8;">{{ profile.get('email') }}</small>{% endif %}
