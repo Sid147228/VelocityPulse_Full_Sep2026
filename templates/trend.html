@@ -247,6 +247,7 @@
     "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
   ];
 
+  const chartLabels = {{ chart_labels|tojson }};
   const datasets = [
     {% for txn in selected_txns %}
     {% if txn in txn_trends %}
@@ -268,7 +269,7 @@
   {% if threshold_overlay %}
   datasets.push({
     label: "Baseline Green P90",
-    data: {{ ([threshold_overlay.green] * chart_labels|length) | tojson }},
+    data: Array(chartLabels.length).fill({{ threshold_overlay.green|tojson }}),
     borderColor: "#2e8b57",
     borderDash: [7, 5],
     pointRadius: 0,
@@ -276,7 +277,7 @@
   });
   datasets.push({
     label: "Baseline Amber P90",
-    data: {{ ([threshold_overlay.amber] * chart_labels|length) | tojson }},
+    data: Array(chartLabels.length).fill({{ threshold_overlay.amber|tojson }}),
     borderColor: "#d18b00",
     borderDash: [7, 5],
     pointRadius: 0,
@@ -287,7 +288,7 @@
   new Chart(document.getElementById("trendChart").getContext("2d"), {
     type: "line",
     data: {
-      labels: {{ chart_labels|tojson }},
+      labels: chartLabels,
       datasets: datasets
     },
     options: {
