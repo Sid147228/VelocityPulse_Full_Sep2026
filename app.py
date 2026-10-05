@@ -2594,25 +2594,16 @@ def _latest_run_dir():
 def _write_run_project_metadata(run_dir, project):
     if not run_dir or not project:
         return
-    metadata = {
-        "project_id": str(project.get("id")),
-        "project_name": str(project.get("name") or ""),
-    }
-    with open(os.path.join(run_dir, "project.json"), "w", encoding="utf-8") as handle:
-        json.dump(metadata, handle, indent=2)
+    data_store.save_run_context(os.path.basename(run_dir), project)
 
 
 def _read_run_project_metadata(run_dir):
     if not run_dir:
         return {}
-    path = os.path.join(run_dir, "project.json")
-    if not os.path.isfile(path):
-        return {}
     try:
-        with open(path, "r", encoding="utf-8") as handle:
-            data = json.load(handle)
-        return data if isinstance(data, dict) else {}
+        return data_store.load_run_context(os.path.basename(run_dir))
     except Exception:
+        app.logger.exception("Unable to load live run project context from SQLite")
         return {}
 
 
