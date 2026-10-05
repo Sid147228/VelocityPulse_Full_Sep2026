@@ -150,6 +150,11 @@
       <div><strong>Generated:</strong> {{ timestamp[:19].replace('T',' ') if timestamp else 'Not available' }}</div>
       <div><strong>Report:</strong> {{ report_name or file_name or 'Untitled Report' }}</div>
       <div><strong>File:</strong> {{ file_name or 'Not available' }}</div>
+      {% if baseline_profile_id %}
+      <div><strong>Baseline:</strong> Baseline {{ baseline_profile_id }}{% if baseline_profile_name and baseline_profile_name != ('Baseline ' ~ baseline_profile_id) %} — {{ baseline_profile_name }}{% endif %}</div>
+      {% else %}
+      <div><strong>Baseline:</strong> Global SLA only</div>
+      {% endif %}
     </div>
     <div class="hero-user">
       {% set profile = session.get('user_profile', {}) %}
@@ -180,6 +185,15 @@
         <div class="status-lines">{{ steady_state or 'Not available' }}<br>Concurrent users: {{ concurrent_users if concurrent_users is not none else 'N/A' }}</div>
       </div>
     </div>
+    {% if baseline_profile_id %}
+    <div class="status-block">
+      <div class="status-icon">B</div>
+      <div>
+        <div class="status-title">Historical Baseline Applied</div>
+        <div class="status-lines">Baseline {{ baseline_profile_id }}{% if baseline_profile_name and baseline_profile_name != ('Baseline ' ~ baseline_profile_id) %} — {{ baseline_profile_name }}{% endif %}<br>{{ baseline_applied_count or 0 }} transaction(s) matched</div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 
   <div class="kpi-grid">
