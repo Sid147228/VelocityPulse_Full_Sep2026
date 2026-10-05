@@ -33,17 +33,23 @@
         <a href="{{ url_for('history') }}">📄 Report History</a>
         <a href="{{ url_for('select_compare') }}" aria-current="page">📊 Compare</a>
         <a href="{{ url_for('trend') }}">📈 Trends Analysis</a>
+        <a href="{{ url_for('baseline') }}">🎯 Baselines</a>
         <a href="{{ url_for('run_test') }}">▶️ Run Test</a>
         <a href="{{ url_for('monitor') }}">🖥️ Monitor</a>
         <a href="{{ url_for('about') }}">ℹ️ About Me</a>
     </nav>
     <div class="account">
+        {% if active_project %}
+        <a href="{{ url_for('project_select') }}" style="color:white;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 10px;border-radius:4px;">
+          Project: <strong>{{ active_project.get('name') }}</strong>
+        </a>
+        {% endif %}
         <div class="user">Logged in as {{ session.get('user', 'Guest') }}</div>
         <a href="{{ url_for('logout') }}" class="logout">Logout</a>
     </div>
 </header>
 <div class="container">
-    <h2>Select Reports to Compare</h2>
+    <h2>Select Reports to Compare{% if active_project %} — {{ active_project.get('name') }}{% endif %}</h2>
     <form method="GET" action="{{ url_for('compare') }}">
         <div class="section">
             <p><strong>Choose exactly 2 reports:</strong></p>
