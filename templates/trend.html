@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="card">
-  <h2 class="card-title">📈 Trend Analysis (Last {{ n }} Tests)</h2>
+  <h2 class="card-title">📈 Trend Analysis{% if active_project %} — {{ active_project.get('name') }}{% endif %} (Last {{ n }} Tests)</h2>
 
   <form method="get" action="{{ url_for('trend') }}">
     <label for="metric">Metric:</label>
