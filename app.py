@@ -277,6 +277,12 @@ def _pin_matches(pin_hash, pin):
     return check_password_hash(pin_hash, _pin_secret(pin))
 
 
+def _auth_user_count():
+    with _auth_db_connection() as connection:
+        row = connection.execute("SELECT COUNT(*) AS count FROM users").fetchone()
+    return int(row["count"] if row else 0)
+
+
 def _load_auth_user(email):
     with _auth_db_connection() as connection:
         return connection.execute(
@@ -1491,7 +1497,7 @@ def register():
             "display_name": display_name,
             "email": email,
         }
-        migrate_legacy = not load_projects()
+        migrate_legacy = (not load_projects() and _auth_user_count() == 1)
         project = create_project(project_name, user_id, migrate_legacy=migrate_legacy)
         destination = _establish_pin_session(user)
         set_active_project(project)
@@ -1540,7 +1546,7 @@ def project_create():
     user_id = _current_user_id()
     project_name = str(request.form.get("project_name") or "").strip()
     try:
-        migrate_legacy = not load_projects()
+        migrate_legacy = (not load_projects() and _auth_user_count() == 1)
         project = create_project(project_name, user_id, migrate_legacy=migrate_legacy)
     except ValueError as exc:
         flash(str(exc), "error")
