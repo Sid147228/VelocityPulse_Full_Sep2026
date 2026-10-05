@@ -110,6 +110,8 @@ def _header(report, styles, title="VelocityPulse Performance Test Report"):
         Paragraph(
             f"<b>Generated:</b> {generated}<br/>"
             f"<b>Report:</b> {report_name}<br/>"
+            f"<b>Project:</b> {report.get('project_name') or 'Not available'}<br/>"
+            f"<b>Baseline:</b> {('Baseline ' + str(report.get('baseline_profile_id'))) if report.get('baseline_profile_id') else 'Global SLA only'}<br/>"
             f"<b>File:</b> {file_name}",
             styles["subtitle"],
         ),
@@ -630,6 +632,7 @@ def build_compare_report_pdf(r1, r2, overview1, overview2, metric, comparisons, 
 
     pseudo = {
         "report_name": f"{r1.get('report_name') or 'Earlier'} vs {r2.get('report_name') or 'Later'}",
+        "project_name": r1.get("project_name") or r2.get("project_name") or "Not available",
         "file_name": "Comparison",
         "timestamp": "",
     }
