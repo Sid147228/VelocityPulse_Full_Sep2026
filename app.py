@@ -361,10 +361,37 @@ def _establish_pin_session(user):
 
 
 def is_safe_local_redirect(target):
+    """Allow only real in-app navigation targets, never browser asset/auth routes."""
     if not target:
         return False
+
     parsed = urlparse(target)
-    return not parsed.scheme and not parsed.netloc and target.startswith("/")
+    if parsed.scheme or parsed.netloc or not target.startswith("/"):
+        return False
+
+    path = parsed.path or "/"
+    blocked_paths = {
+        "/favicon.ico",
+        "/login",
+        "/logout",
+        "/register",
+        "/projects/select",
+        "/projects/create",
+    }
+    if (
+        path in blocked_paths
+        or path.startswith("/static/")
+        or path.startswith("/socket.io/")
+    ):
+        return False
+
+    return True
+
+
+@app.route("/favicon.ico")
+def favicon():
+    """Serve an existing local image so favicon requests never enter project routing."""
+    return app.send_static_file("logo.png")
 
 
 init_auth_db()
@@ -373,7 +400,7 @@ init_auth_db()
 @app.before_request
 def require_pin_authentication():
     """Require a valid local PIN session for all application routes."""
-    public_endpoints = {"login", "register", "logout", "static"}
+    public_endpoints = {"login", "register", "logout", "static", "favicon"}
     if request.endpoint in public_endpoints or request.path.startswith("/socket.io/"):
         return None
 
