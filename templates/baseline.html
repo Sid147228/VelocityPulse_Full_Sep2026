@@ -13,6 +13,7 @@
   .field input,.field select{height:40px;border:1px solid #cfdbe7;border-radius:8px;padding:0 10px;background:#fff;color:#17324d}
   .btn{height:40px;border:0;border-radius:8px;padding:0 14px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
   .btn-primary{background:#225fa1;color:#fff}
+  .btn:disabled{background:#cbd6e2!important;color:#6f8193!important;cursor:not-allowed;opacity:1}
   .btn-secondary{background:#eef4fa;color:#225fa1;border:1px solid #cad9e8}
   .summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
   .summary-card{background:#fff;border:1px solid #dbe5ef;border-radius:14px;padding:16px;box-shadow:0 5px 16px rgba(27,62,101,.05)}
@@ -149,13 +150,36 @@
       </div>
     </div>
     <div class="panel-body">
+      {% if analysis.eligible_count == 0 %}
+        <div class="alert error">
+          <strong>Baseline cannot be saved yet.</strong>
+          None of the transactions in the selected {{ analysis.reports_used }} report(s) currently meet the promotion rules.
+          A transaction needs at least 3 runs, at least 60% coverage, valid P90 data, and run-to-run variation of 15% or less.
+          Review the <strong>Promotion</strong> and <strong>Variation</strong> columns above, or choose a different historical window.
+        </div>
+      {% else %}
+        <div class="method" style="margin-bottom:12px">
+          {{ analysis.eligible_count }} eligible transaction(s) will be included in the new baseline.
+          Transactions marked <strong>NOT ELIGIBLE</strong> will not be promoted into the baseline.
+        </div>
+      {% endif %}
+
       <form method="post" action="{{ url_for('baseline') }}" class="save-form">
         <input type="hidden" name="n" value="{{ n }}">
         <div class="field">
           <label for="profile_name">Friendly name (optional)</label>
-          <input id="profile_name" name="profile_name" type="text" placeholder="e.g. Pre-Migration or Release 4.2">
+          <input id="profile_name" name="profile_name" type="text"
+                 placeholder="e.g. Pre-Migration or Release 4.2"
+                 {% if analysis.eligible_count == 0 %}disabled{% endif %}>
         </div>
-        <button class="btn btn-primary" type="submit" {% if analysis.eligible_count == 0 %}disabled{% endif %}>Save as New Baseline</button>
+        <button class="btn btn-primary" type="submit"
+                {% if analysis.eligible_count == 0 %}disabled title="No transactions currently meet the baseline promotion rules"{% endif %}>
+          {% if analysis.eligible_count == 0 %}
+            Cannot Save — No Eligible Transactions
+          {% else %}
+            Save as New Baseline
+          {% endif %}
+        </button>
       </form>
     </div>
   </section>
